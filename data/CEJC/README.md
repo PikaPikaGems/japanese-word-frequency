@@ -1,3 +1,38 @@
+# TODO:
+
+## First Task
+
+Rerun the following to get top 25,000 words instead
+
+1. Run: `python3 scripts/tsv_to_json.py <input.tsv> <output_dir> [top_n]`
+2. Run: `python3 scripts/tsv_to_csv.py <input.tsv> <output_dir> [top_n]`
+3. Run: all the other scripts in ./data/CEJC/scripts folder to generate the data insights
+4. Update the markdown files in ./data/CEJC/insights/ accordingly
+
+## Second Task
+
+Create a CSV file with the top 25,000 words (use combined.csv to get the frequency ranking). Name it CONSOLIDATED.csv
+Update this README accordingly.
+
+**These are tha columns (use better names)**
+
+- Word
+- combined frequency ranke
+- `combined.csv`
+- `domain.small_talk.csv`
+- `domain.consultation.csv`
+- `domain.meeting.csv`
+- `domain.class.csv`
+- `domain.outdoors.csv`
+- `domain.school.csv`
+- `domain.transportation.csv`
+- `domain.public_commercial.csv`
+- `domain.home.csv`
+- `domain.indoors.csv`
+- `domain.workplace.csv`
+- `demographics.m.csv`
+- `demographics.f.csv`
+
 # Source
 
 - https://github.com/forsakeninfinity/CEJC_yomichan_freq_dict
