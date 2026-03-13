@@ -15,61 +15,61 @@ Pairs ranked by Jaccard similarity of their top-300 vocabulary. Higher = more sh
 
 | Domain A          | Domain B          | Shared Words | Jaccard | Pearson r |
 | ----------------- | ----------------- | ------------ | ------- | --------- |
-| Small Talk        | Public/Commercial | 262          | 0.888   | 0.656     |
-| Small Talk        | Home              | 261          | 0.879   | 0.666     |
-| Small Talk        | Indoors           | 258          | 0.851   | 0.645     |
-| Consultation      | Workplace         | 254          | 0.847   | 0.626     |
-| Meeting           | Workplace         | 251          | 0.837   | 0.715     |
-| Public/Commercial | Home              | 250          | 0.814   | 0.537     |
-| Home              | Indoors           | 250          | 0.804   | 0.522     |
-| Consultation      | Public/Commercial | 248          | 0.803   | 0.534     |
-| Public/Commercial | Workplace         | 244          | 0.790   | 0.506     |
-| Consultation      | Home              | 246          | 0.788   | 0.546     |
-| Public/Commercial | Indoors           | 246          | 0.783   | 0.521     |
-| Small Talk        | Consultation      | 242          | 0.766   | 0.375     |
-| Consultation      | Indoors           | 243          | 0.764   | 0.460     |
-| Small Talk        | Workplace         | 238          | 0.753   | 0.355     |
-| Home              | Workplace         | 237          | 0.748   | 0.423     |
-| Consultation      | Meeting           | 237          | 0.745   | 0.485     |
-| Indoors           | Workplace         | 235          | 0.730   | 0.379     |
-| Transportation    | Home              | 237          | 0.729   | 0.461     |
-| Small Talk        | Transportation    | 236          | 0.724   | 0.455     |
-| Meeting           | Public/Commercial | 230          | 0.710   | 0.443     |
-| Small Talk        | Outdoors          | 232          | 0.703   | 0.408     |
-| Transportation    | Indoors           | 233          | 0.702   | 0.469     |
-| Consultation      | School            | 231          | 0.700   | 0.461     |
-| School            | Workplace         | 228          | 0.693   | 0.477     |
-| Meeting           | School            | 227          | 0.686   | 0.636     |
-| Transportation    | Public/Commercial | 228          | 0.685   | 0.409     |
-| Outdoors          | Home              | 228          | 0.683   | 0.406     |
-| Outdoors          | Public/Commercial | 227          | 0.680   | 0.394     |
-| School            | Public/Commercial | 226          | 0.677   | 0.407     |
-| Small Talk        | Meeting           | 223          | 0.672   | 0.290     |
-| Meeting           | Home              | 223          | 0.672   | 0.355     |
-| School            | Home              | 225          | 0.670   | 0.387     |
-| Small Talk        | School            | 223          | 0.660   | 0.347     |
-| Meeting           | Indoors           | 220          | 0.651   | 0.308     |
-| Transportation    | Workplace         | 220          | 0.651   | 0.370     |
-| Outdoors          | Transportation    | 222          | 0.645   | 0.481     |
-| Consultation      | Transportation    | 220          | 0.643   | 0.395     |
-| Outdoors          | Indoors           | 221          | 0.642   | 0.433     |
-| School            | Indoors           | 219          | 0.635   | 0.353     |
-| Consultation      | Outdoors          | 216          | 0.624   | 0.424     |
-| Outdoors          | Workplace         | 210          | 0.603   | 0.374     |
-| Outdoors          | School            | 209          | 0.587   | 0.473     |
-| School            | Transportation    | 209          | 0.587   | 0.434     |
-| Class/Lesson      | Workplace         | 206          | 0.584   | 0.405     |
-| Meeting           | Transportation    | 205          | 0.579   | 0.385     |
-| Class/Lesson      | Public/Commercial | 206          | 0.579   | 0.420     |
-| Consultation      | Class/Lesson      | 205          | 0.573   | 0.387     |
-| Class/Lesson      | Home              | 203          | 0.564   | 0.363     |
-| Small Talk        | Class/Lesson      | 202          | 0.560   | 0.315     |
-| Meeting           | Class/Lesson      | 200          | 0.556   | 0.451     |
-| Meeting           | Outdoors          | 197          | 0.544   | 0.393     |
-| Class/Lesson      | Indoors           | 198          | 0.538   | 0.383     |
-| Class/Lesson      | School            | 197          | 0.534   | 0.507     |
-| Class/Lesson      | Transportation    | 194          | 0.520   | 0.442     |
-| Class/Lesson      | Outdoors          | 188          | 0.496   | 0.489     |
+| Small Talk        | Public/Commercial | 262          | 0.888   | 0.796     |
+| Small Talk        | Home              | 261          | 0.879   | 0.772     |
+| Small Talk        | Indoors           | 258          | 0.851   | 0.735     |
+| Consultation      | Workplace         | 254          | 0.847   | 0.719     |
+| Meeting           | Workplace         | 251          | 0.837   | 0.755     |
+| Public/Commercial | Home              | 250          | 0.814   | 0.684     |
+| Home              | Indoors           | 250          | 0.804   | 0.651     |
+| Consultation      | Public/Commercial | 248          | 0.803   | 0.675     |
+| Public/Commercial | Workplace         | 244          | 0.790   | 0.637     |
+| Consultation      | Home              | 246          | 0.788   | 0.676     |
+| Public/Commercial | Indoors           | 246          | 0.783   | 0.659     |
+| Small Talk        | Consultation      | 242          | 0.766   | 0.581     |
+| Consultation      | Indoors           | 243          | 0.764   | 0.601     |
+| Small Talk        | Workplace         | 238          | 0.753   | 0.553     |
+| Home              | Workplace         | 237          | 0.748   | 0.576     |
+| Consultation      | Meeting           | 237          | 0.745   | 0.569     |
+| Indoors           | Workplace         | 235          | 0.730   | 0.530     |
+| Transportation    | Home              | 237          | 0.729   | 0.516     |
+| Small Talk        | Transportation    | 236          | 0.724   | 0.482     |
+| Meeting           | Public/Commercial | 230          | 0.710   | 0.537     |
+| Small Talk        | Outdoors          | 232          | 0.703   | 0.438     |
+| Transportation    | Indoors           | 233          | 0.702   | 0.525     |
+| Consultation      | School            | 231          | 0.700   | 0.508     |
+| School            | Workplace         | 228          | 0.693   | 0.520     |
+| Meeting           | School            | 227          | 0.686   | 0.663     |
+| Transportation    | Public/Commercial | 228          | 0.685   | 0.471     |
+| Outdoors          | Home              | 228          | 0.683   | 0.464     |
+| Outdoors          | Public/Commercial | 227          | 0.680   | 0.447     |
+| School            | Public/Commercial | 226          | 0.677   | 0.455     |
+| Small Talk        | Meeting           | 223          | 0.672   | 0.433     |
+| Meeting           | Home              | 223          | 0.672   | 0.474     |
+| School            | Home              | 225          | 0.670   | 0.446     |
+| Small Talk        | School            | 223          | 0.660   | 0.397     |
+| Meeting           | Indoors           | 220          | 0.651   | 0.430     |
+| Transportation    | Workplace         | 220          | 0.651   | 0.444     |
+| Outdoors          | Transportation    | 222          | 0.645   | 0.517     |
+| Consultation      | Transportation    | 220          | 0.643   | 0.466     |
+| Outdoors          | Indoors           | 221          | 0.642   | 0.487     |
+| School            | Indoors           | 219          | 0.635   | 0.421     |
+| Consultation      | Outdoors          | 216          | 0.624   | 0.480     |
+| Outdoors          | Workplace         | 210          | 0.603   | 0.439     |
+| Outdoors          | School            | 209          | 0.587   | 0.506     |
+| School            | Transportation    | 209          | 0.587   | 0.473     |
+| Class/Lesson      | Workplace         | 206          | 0.584   | 0.442     |
+| Meeting           | Transportation    | 205          | 0.579   | 0.444     |
+| Class/Lesson      | Public/Commercial | 206          | 0.579   | 0.440     |
+| Consultation      | Class/Lesson      | 205          | 0.573   | 0.426     |
+| Class/Lesson      | Home              | 203          | 0.564   | 0.403     |
+| Small Talk        | Class/Lesson      | 202          | 0.560   | 0.341     |
+| Meeting           | Class/Lesson      | 200          | 0.556   | 0.483     |
+| Meeting           | Outdoors          | 197          | 0.544   | 0.447     |
+| Class/Lesson      | Indoors           | 198          | 0.538   | 0.422     |
+| Class/Lesson      | School            | 197          | 0.534   | 0.530     |
+| Class/Lesson      | Transportation    | 194          | 0.520   | 0.472     |
+| Class/Lesson      | Outdoors          | 188          | 0.496   | 0.514     |
 
 ## Rank Correlation Matrix (Pearson r)
 
@@ -77,17 +77,17 @@ Full pairwise Pearson correlation of domain rank vectors over the top 3,000 word
 
 | Domain            | SmallTalk | Consult | Meeting | Class | Outdoors | School | Transit | Public | Home  | Indoors | Work  |
 | ----------------- | --------- | ------- | ------- | ----- | -------- | ------ | ------- | ------ | ----- | ------- | ----- |
-| Small Talk        | 1.000     | 0.375   | 0.290   | 0.315 | 0.408    | 0.347  | 0.455   | 0.656  | 0.666 | 0.645   | 0.355 |
-| Consultation      | 0.375     | 1.000   | 0.485   | 0.387 | 0.424    | 0.461  | 0.395   | 0.534  | 0.546 | 0.460   | 0.626 |
-| Meeting           | 0.290     | 0.485   | 1.000   | 0.451 | 0.393    | 0.636  | 0.385   | 0.443  | 0.355 | 0.308   | 0.715 |
-| Class/Lesson      | 0.315     | 0.387   | 0.451   | 1.000 | 0.489    | 0.507  | 0.442   | 0.420  | 0.363 | 0.383   | 0.405 |
-| Outdoors          | 0.408     | 0.424   | 0.393   | 0.489 | 1.000    | 0.473  | 0.481   | 0.394  | 0.406 | 0.433   | 0.374 |
-| School            | 0.347     | 0.461   | 0.636   | 0.507 | 0.473    | 1.000  | 0.434   | 0.407  | 0.387 | 0.353   | 0.477 |
-| Transportation    | 0.455     | 0.395   | 0.385   | 0.442 | 0.481    | 0.434  | 1.000   | 0.409  | 0.461 | 0.469   | 0.370 |
-| Public/Commercial | 0.656     | 0.534   | 0.443   | 0.420 | 0.394    | 0.407  | 0.409   | 1.000  | 0.537 | 0.521   | 0.506 |
-| Home              | 0.666     | 0.546   | 0.355   | 0.363 | 0.406    | 0.387  | 0.461   | 0.537  | 1.000 | 0.522   | 0.423 |
-| Indoors           | 0.645     | 0.460   | 0.308   | 0.383 | 0.433    | 0.353  | 0.469   | 0.521  | 0.522 | 1.000   | 0.379 |
-| Workplace         | 0.355     | 0.626   | 0.715   | 0.405 | 0.374    | 0.477  | 0.370   | 0.506  | 0.423 | 0.379   | 1.000 |
+| Small Talk        | 1.000     | 0.581   | 0.433   | 0.341 | 0.438    | 0.397  | 0.482   | 0.796  | 0.772 | 0.735   | 0.553 |
+| Consultation      | 0.581     | 1.000   | 0.569   | 0.426 | 0.480    | 0.508  | 0.466   | 0.675  | 0.676 | 0.601   | 0.719 |
+| Meeting           | 0.433     | 0.569   | 1.000   | 0.483 | 0.447    | 0.663  | 0.444   | 0.537  | 0.474 | 0.430   | 0.755 |
+| Class/Lesson      | 0.341     | 0.426   | 0.483   | 1.000 | 0.514    | 0.530  | 0.472   | 0.440  | 0.403 | 0.422   | 0.442 |
+| Outdoors          | 0.438     | 0.480   | 0.447   | 0.514 | 1.000    | 0.506  | 0.517   | 0.447  | 0.464 | 0.487   | 0.439 |
+| School            | 0.397     | 0.508   | 0.663   | 0.530 | 0.506    | 1.000  | 0.473   | 0.455  | 0.446 | 0.421   | 0.520 |
+| Transportation    | 0.482     | 0.466   | 0.444   | 0.472 | 0.517    | 0.473  | 1.000   | 0.471  | 0.516 | 0.525   | 0.444 |
+| Public/Commercial | 0.796     | 0.675   | 0.537   | 0.440 | 0.447    | 0.455  | 0.471   | 1.000  | 0.684 | 0.659   | 0.637 |
+| Home              | 0.772     | 0.676   | 0.474   | 0.403 | 0.464    | 0.446  | 0.516   | 0.684  | 1.000 | 0.651   | 0.576 |
+| Indoors           | 0.735     | 0.601   | 0.430   | 0.422 | 0.487    | 0.421  | 0.525   | 0.659  | 0.651 | 1.000   | 0.530 |
+| Workplace         | 0.553     | 0.719   | 0.755   | 0.442 | 0.439    | 0.520  | 0.444   | 0.637  | 0.576 | 0.530   | 1.000 |
 
 ## Similarity Graph (top 12 strongest Jaccard pairs)
 

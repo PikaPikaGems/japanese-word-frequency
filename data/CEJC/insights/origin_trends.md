@@ -19,7 +19,7 @@ Top    500  ██████████████████████�
 Top  1,500  ████████████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒░░  Native JP:56%  Sino-JP:31%  Loanword:8%  Proper:3%  Mixed:2%  Unknown:0%  Symbol:0%
 Top  4,000  ████████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒░░░░▄   Native JP:41%  Sino-JP:35%  Loanword:14%  Proper:8%  Mixed:2%  Unknown:0%  Symbol:0%
 Top 10,000  █████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░▄  Native JP:33%  Sino-JP:33%  Loanword:16%  Proper:15%  Mixed:3%  Unknown:0%  Symbol:0%
-Top 20,000  ████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░▄▄  Native JP:32%  Sino-JP:32%  Loanword:15%  Proper:16%  Mixed:3%  Unknown:0%  Symbol:1%
+Top 20,000  ████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒░░░░░░░░░▄▄   Native JP:33%  Sino-JP:31%  Loanword:15%  Proper:18%  Mixed:4%  Unknown:0%  Symbol:1%
 
 Legend: █ = Native JP  ▓ = Sino-JP  ▒ = Loanword  ░ = Proper  ▄ = Mixed  ▀ = Unknown  █ = Symbol
 ```
@@ -34,7 +34,7 @@ Exact percentages per tier. The most important columns to watch are **Native JP*
 | Top 1,500  | 1,416       | 55.5%     | 31.2%   | 7.8%     | 3.2%   | 2.1%  | 0.1%   | 0.1%    |
 | Top 4,000  | 3,908       | 40.6%     | 34.7%   | 14.0%    | 8.2%   | 2.3%  | 0.2%   | 0.0%    |
 | Top 10,000 | 9,573       | 33.4%     | 33.1%   | 15.5%    | 14.6%  | 2.9%  | 0.5%   | 0.0%    |
-| Top 20,000 | 12,796      | 32.4%     | 32.2%   | 15.3%    | 16.4%  | 3.1%  | 0.6%   | 0.0%    |
+| Top 20,000 | 19,675      | 32.6%     | 30.9%   | 14.7%    | 17.6%  | 3.6%  | 0.7%   | 0.0%    |
 
 ## Pie Charts by Tier
 
@@ -83,23 +83,23 @@ pie title "Origin — Top 10,000"
 
 ```mermaid
 pie title "Origin — Top 20,000"
-    "Native JP" : 4145.00
-    "Sino-JP" : 4121.00
-    "Loanword" : 1962.00
-    "Proper" : 2096.00
-    "Mixed" : 395.00
-    "Symbol" : 76.00
+    "Native JP" : 6417.00
+    "Sino-JP" : 6071.00
+    "Loanword" : 2883.00
+    "Proper" : 3468.00
+    "Mixed" : 701.00
+    "Symbol" : 133.00
     "Unknown" : 1.00
 ```
 
 ## Key Insights
 
-- **Native Japanese dominates the core.** 73.7% of the top-500 words are 和語, falling to 32.4% by the full vocabulary. The highest-frequency words — particles, auxiliaries, common verbs — are almost exclusively native Japanese.
+- **Native Japanese dominates the core.** 73.7% of the top-500 words are 和語, falling to 32.6% by the full vocabulary. The highest-frequency words — particles, auxiliaries, common verbs — are almost exclusively native Japanese.
 
 - **Native Japanese remains the largest single origin type** throughout all tiers, though the gap with Sino-Japanese narrows significantly at deeper tiers.
 
-- **Loanwords grow steadily but plateau.** Foreign loanwords rise from 1.3% at the top-500 to 15.3% by the full vocabulary. Most high-frequency loanwords are everyday katakana words; lower-frequency loanwords include specialist and technical terms.
+- **Loanwords grow steadily but plateau.** Foreign loanwords rise from 1.3% at the top-500 to 14.7% by the full vocabulary. Most high-frequency loanwords are everyday katakana words; lower-frequency loanwords include specialist and technical terms.
 
-- **Proper nouns (16.4% at full vocabulary) are a significant slice.** This reflects that a substantial portion of real-world vocabulary consists of names of people, places, and countries — not just common words.
+- **Proper nouns (17.6% at full vocabulary) are a significant slice.** This reflects that a substantial portion of real-world vocabulary consists of names of people, places, and countries — not just common words.
 
 - **Mixed-origin words (混種語) grow slowly but steadily.** These hybrids (e.g. 打ち合わせ combining 漢 and 和 elements) accumulate as vocabulary expands, reflecting the blended nature of modern Japanese.
