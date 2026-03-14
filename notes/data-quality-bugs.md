@@ -108,10 +108,72 @@ After all fixes, the filter produces a much smaller, meaningful set of words tha
 
 ---
 
-## 6. Remaining Expected -1s (Not Bugs)
+## 6. Three More Sources Excluded: NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS
+
+After investigating why ~98% of words still had at least one -1 even after fixes 1–5, three more sources were found to be structurally unsuitable for coverage checks.
+
+**NIER** — Only **10,077 unique words** in the entire dataset. NieR: Automata is a single RPG. Its script simply doesn't contain most common Japanese words. There is no "top 25k" — the game only has ~10k unique tokens. Its -1s mean "not in this game," not "rare in Japanese."
+
+**ILYASEMENOV** — Has 25,000 entries but is a raw Wikipedia dump that was never properly cleaned. Top entries: は (#1), また (#2), **概要 (#3)** (Wikipedia section header), しかし (#4), なお (#5), **the (#7)**, 経歴 (#9), **amp (#14)**, **gt (#15)**, **lt (#18)**. HTML entities (`&amp;`, `&gt;`, `&lt;`) are treated as words. The vocabulary is entirely biased toward formal biographical Wikipedia articles and has nothing to do with conversational Japanese.
+
+**DD2_MIGAKU_NOVELS** — Only **16,469 unique words**. This is a curated Anki/Migaku deck for novel vocabulary, designed for learners. It is not a comprehensive frequency list.
+
+**Updated exclusion set:**
+```python
+EXCLUDE = {
+    "AOZORA_BUNKO",       # kanji-only — no hiragana words by design
+    "NIER",               # single game, only ~10k words total
+    "ILYASEMENOV",        # Wikipedia dump with HTML entities, wrong domain
+    "DD2_MIGAKU_NOVELS",  # curated learner deck, only ~16k words
+}
+```
+
+After excluding all four, zero-missing words jumped from 330 → ~1,341–1,975 depending on anchor.
+
+---
+
+## 7. The Tokenization Mismatch Problem (Why Even Top-1000 Words Have -1s)
+
+After all fixes and all four exclusions, even the top 1,000 most common words are still missing from some sources. Specifically, looking at the top-1,000 YOUTUBE_FREQ_V3 words against the remaining 31 sources:
+
+| Source | Missing from top-1k |
+|---|---|
+| HERMITDAVE_2016 | **24.8%** |
+| HERMITDAVE_2018 | **24.4%** |
+| JPDB | **24.4%** |
+| H_FREQ | 17.8% |
+| DD2_MORPHMAN_* | ~16% each |
+
+HERMITDAVE (OpenSubtitles) and JPDB are missing roughly 1 in 4 of the most common Japanese words. This is not a rank-cutoff problem — these are top-1,000 words, well within any source's 25k cap.
+
+**Root cause: tokenization mismatch.** Each corpus was processed with a different tokenizer or MeCab dictionary configuration. Different tokenizers produce different word boundaries for the same raw text:
+
+- One source might emit `じゃない` as a single token
+- Another might split it as `じゃ` + `ない`
+- `してください` could be one token or three
+- Compound nouns are split differently across tools
+
+The kanji↔kana fallback (fix #3) resolves form differences for the same word unit, but **cannot bridge word-boundary differences** — `じゃない` and `じゃ` are genuinely different strings with no lookup path between them.
+
+**Implication for the zero-missing filter:**
+Asking "is this word present in every source?" is too strict. With 31 heterogeneous sources using different tokenization, even the single most common word in Japanese is likely to fail a literal string match in at least one source. Even restricting to the top 3k, top 1k, or top 500 words doesn't help — the missing rate for those bands is:
+
+| Top-N (YOUTUBE anchor) | Zero-missing (31 sources) |
+|---|---|
+| Top 500 | 45.0% |
+| Top 1,000 | 38.2% |
+| Top 3,000 | 27.3% |
+| Top 5,000 | 22.1% |
+| Top 10,000 | 14.8% |
+
+**Practical conclusion:** the right filter is not "missing from zero sources" but "missing from at most N sources." A word missing from ≤2–3 of 31 sources is much more meaningful than strict zero-missing.
+
+---
+
+## 8. Remaining Expected -1s (Not Bugs)
 
 Even after all fixes, some -1s are expected and correct:
 
-- **CEJC has 27,988 unique words; each source caps at 25,000.** The bottom ~3,000 CEJC words by frequency are genuinely not covered by most other sources — they are rare enough that they didn't make top-25k.
 - **Source-specific vocabulary:** some words appear only in specific domains (e.g., literary words in AOZORA, web slang in NAROU) and genuinely won't appear in subtitle or spoken corpora.
-- **Kana fallback only covers one direction** (kanji→kana). If a source uses a kanji form that CEJC lists in hiragana, that mismatch is not yet resolved.
+- **Tokenization differences:** as described in §7, word-boundary disagreements across sources produce unavoidable mismatches that no form-lookup can fix.
+- **Kana fallback is one-to-one:** the fallback maps each kanji term to its single most frequent reading. If a word has multiple valid readings and the source uses a different one, the fallback still misses.
