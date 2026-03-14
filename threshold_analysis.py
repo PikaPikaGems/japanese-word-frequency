@@ -26,7 +26,7 @@ EXCLUDE = {
     "JPDB",
 }
 
-THRESHOLD = 2  # words missing from <= THRESHOLD sources are "high frequency"
+THRESHOLD = 3  # words missing from <= THRESHOLD sources are "high frequency"
 
 
 def bar(val: int, total: int) -> str:

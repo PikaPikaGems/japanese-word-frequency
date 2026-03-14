@@ -1,6 +1,6 @@
-# Data Quality Bugs and Strange Phenomena
+# Data Quality Experiments — Part 1
 
-This document records the bugs, anomalies, and design quirks discovered during consolidation of word frequency sources, and how each was addressed.
+This document records the bugs, anomalies, design quirks, and coverage experiments from consolidating word frequency sources. Sections §1–§8 cover pipeline bugs and fixes. §9–§13 cover coverage analysis experiments and findings.
 
 ---
 
@@ -337,7 +337,7 @@ filter_words_at_threshold(N):
 
 | N | Meaning |
 |---|---|
-| 0 | Present in all 29 checked sources — maximum strictness |
+| 0 | Present in all 28 checked sources — maximum strictness |
 | 3 | Tolerates a few domain-specific sources missing a word |
 | 5 | Good general-purpose threshold |
 | 10 | Permissive — keeps most common vocabulary |
@@ -393,10 +393,162 @@ Adding JPDB to EXCLUDE roughly doubles the zero-missing count, consistent with t
 
 ---
 
-## 8. Remaining Expected -1s (Not Bugs)
+## 12. Why Zero-Missing Is Still Low (14–18%) After 7 Exclusions — Not a Bug
 
-Even after all fixes, some -1s are expected and correct:
+After excluding 7 structurally broken sources, zero-missing across all anchors was still only 14.9–17.5%. This prompted a deeper investigation to confirm whether a logic error remained.
 
-- **Source-specific vocabulary:** some words appear only in specific domains (e.g., literary words in AOZORA, web slang in NAROU) and genuinely won't appear in subtitle or spoken corpora.
-- **Tokenization differences:** as described in §7, word-boundary disagreements across sources produce unavoidable mismatches that no form-lookup can fix.
-- **Kana fallback is one-to-one:** the fallback maps each kanji term to its single most frequent reading. If a word has multiple valid readings and the source uses a different one, the fallback still misses.
+### Investigation: Top-500 Failures
+
+For the YOUTUBE anchor, 150 of the top-500 words still failed zero-missing. Tracing which source caused each failure:
+
+```
+H_FREQ               responsible for 89 of 150 failures in top-500
+NAROU                responsible for 80
+VN_FREQ              responsible for 77
+DD2_MORPHMAN_NETFLIX responsible for 58
+DD2_MORPHMAN_SHONEN  responsible for 54
+DD2_MORPHMAN_SOL     responsible for 54
+...
+```
+
+Sample top-500 words failing and why:
+
+```
+が   (YT rank 7)   missing from: H_FREQ
+を   (YT rank 8)   missing from: DD2_YOMICHAN_NOVELS, H_FREQ, INNOCENT_RANKED, NAROU, VN_FREQ
+ん   (YT rank 19)  missing from: DD2_MORPHMAN_NETFLIX, DD2_MORPHMAN_SHONEN, DD2_MORPHMAN_SOL, H_FREQ, NAROU, VN_FREQ
+けど (YT rank 32)  missing from: CEJC_rank, DD2_MORPHMAN_NETFLIX, DD2_MORPHMAN_SHONEN, DD2_MORPHMAN_SOL, H_FREQ, NAROU, VN_FREQ
+```
+
+Basic particles like が and を missing from sources with 25k words — clearly structural problems remain. Three sources were identified:
+
+### H_FREQ: Adult Content Corpus
+
+Actual top entries in DATA.csv:
+
+```
+rank=1  私
+rank=2  おちんちん
+rank=3  言う
+rank=5  射精
+rank=6  気持ちいい
+```
+
+H_FREQ is an adult content frequency list. All basic particles (が, を, は, に, の, で, と) are absent. Its -1s are meaningless for general Japanese vocabulary assessment.
+
+### NAROU and VN_FREQ: UniDic Kanji Lemma Forms (Again)
+
+Top entries in both:
+
+```
+NAROU rank=1  為る    (suru — UniDic lemma)
+NAROU rank=2  居る    (iru  — UniDic lemma)
+NAROU rank=6  事      (koto)
+NAROU rank=8  其れ    (sore — UniDic lemma)
+
+VN_FREQ rank=1  為る
+VN_FREQ rank=3  無い
+VN_FREQ rank=8  其れ
+```
+
+Same UniDic lemma tokenization as CEJC (§3), but without the kana fallback bridging it. Standalone particles (が, を, は, の) have no kanji form, so the kana→kanji fallback cannot resolve them. Both sources have を=-1 (completely absent) and の at rank 11,000+ (vs rank 1–3 in normal sources).
+
+### DD2_MORPHMAN Sources: Apparent Problem, Actually Fine
+
+DD2_MORPHMAN_SHONEN/SOL/NETFLIX appeared suspicious: a raw scan of DATA.csv found が at ranks 10,127–21,634. This looked like it could be a MorphMan study-priority ranking problem similar to HERMITDAVE.
+
+**Investigation revealed this was a false alarm.** The DATA.csv files contain duplicate entries for the same word (one word appearing at multiple ranks due to UniDic POS sub-classifications). A raw `{word: rank}` dict scan (last-entry-wins) returns the wrong rank. `make_anchored.py` correctly deduplicates by keeping the minimum rank per word. In the consolidated output, DD2_MORPHMAN_SHONEN has:
+
+```
+が = rank 8   ✓
+を = rank 7   ✓
+は = rank 3   ✓
+```
+
+These are correct. The failures from DD2_MORPHMAN_SHONEN/SOL/NETFLIX in the top-500 (54–58 each) are due to colloquial forms like ん and けど, which these genre-specific sources legitimately do not contain. **No fix needed.**
+
+### Impact of Excluding H_FREQ, NAROU, VN_FREQ
+
+| Anchor | 7 excl (current) | 10 excl (+H_FREQ, NAROU, VN_FREQ) | Change |
+|---|---|---|---|
+| ANIME_JDRAMA | 4,377 (17.5%) | 4,675 (18.7%) | +1.2% |
+| CEJC | 3,478 (12.4%) | 3,765 (13.5%) | +1.1% |
+| NETFLIX | 4,355 (17.4%) | 4,657 (18.6%) | +1.2% |
+| YOUTUBE_FREQ_V3 | 4,463 (14.9%) | 4,755 (15.8%) | +0.9% |
+
+Only ~1% improvement despite three clearly broken sources. The failures from H_FREQ, NAROU, and VN_FREQ largely overlap — words they fail are already failing from other sources too. This points to the real explanation.
+
+### The Real Reason: Zero-Missing Is Mathematically Bounded Low
+
+Individual coverage rates across the 28 checked YOUTUBE sources range from 39% (DD2_MORPHMAN_SOL) to 68% (CC100). If these were independent:
+
+```
+Expected zero-missing (independent) = product of all coverage rates ≈ 0.000001%
+Actual zero-missing                 = 14.9%
+```
+
+The 14.9% actual figure is far above the independent-source expectation — because sources are correlated (common words appear in many sources simultaneously). But the ceiling is set by the *worst* sources in the checked set:
+
+```
+CC100                  68.1% coverage  ← best
+YOUTUBE_FREQ           62.7%
+...
+DD2_MORPHMAN_NETFLIX   42.7%
+DD2_MORPHMAN_SHONEN    39.7%
+DD2_MORPHMAN_SOL       39.0%  ← worst
+```
+
+With DD2_MORPHMAN_SOL covering only 39% of YouTube words, at most 39% of words can ever achieve zero-missing. Checking what zero-missing looks like if we only check the N best sources:
+
+```
+Top 5 sources only  → 39.2% zero-missing
+Top 10 sources only → 28.2% zero-missing
+All 28 sources      → 14.9% zero-missing
+```
+
+Each additional source reduces the count. This is not a bug — it is the correct answer to "how many words appear in every single domain we have data for." That answer is ~4,400–4,700 words. All other words fall along a spectrum of cross-domain coverage.
+
+### Conclusion
+
+Zero-missing is not a useful primary metric with 28 domain-specific sources. The threshold-based approach (§10) is the correct tool: `missing_count ≤ N` identifies broadly common words without requiring perfect coverage across every narrow-domain source.
+
+H_FREQ, NAROU, and VN_FREQ have genuine structural problems (adult content, UniDic lemma artifacts) and should eventually be added to EXCLUDE. Their ~1% numerical impact is small only because their failures overlap with other sources — the false-negative pollution they introduce to `missing_count` remains real.
+
+---
+
+## 13. Coverage Experiments: Rank-Band Analysis and N≤3 Threshold
+
+### Experiment 1: Does restricting to top-5k or top-10k words improve coverage?
+
+Yes — dramatically. The rank-band zero-missing breakdown (YOUTUBE_FREQ_V3 anchor, 28 checked sources) shows:
+
+| Top-N words | Zero-missing | % |
+|---|---|---|
+| Top 500 | 351 | 70.2% |
+| Top 1,000 | 678 | 67.8% |
+| Top 3,000 | 1,759 | 58.6% |
+| Top 5,000 | 2,523 | 50.5% |
+| Top 10,000 | 3,500 | 35.0% |
+| All 30,000 | 4,463 | 14.9% |
+
+The most common 500–1,000 words achieve 68–70% zero-missing across 28 domain-specific sources. This makes intuitive sense: basic particles, core verbs, and high-frequency nouns appear in essentially every corpus regardless of domain. The drop from 70% at top-500 to 15% at the full 30,000 reflects how quickly vocabulary diverges by domain as words become rarer.
+
+**Implication:** If the goal is a "core vocabulary" list for learners, restricting to top-5k words and requiring zero-missing gives ~2,500 genuinely universal words. At top-1k, nearly 68% pass with zero-missing — a much cleaner set than the full-list 15%.
+
+### Experiment 2: N≤3 threshold (missing from at most 3 sources)
+
+The existing `threshold_analysis.py` was updated from `THRESHOLD = 2` to `THRESHOLD = 3` and re-run. Results (`data/ALL/threshold_analysis_N3.md`):
+
+| Anchor | High-freq (≤2 missing) | % | High-freq (≤3 missing) | % | Δ words |
+|---|---|---|---|---|---|
+| ANIME_JDRAMA | 6,821 | 27.3% | 7,721 | 30.9% | +900 |
+| CEJC | 5,303 | 18.9% | 6,047 | 21.6% | +744 |
+| JPDB | 2,544 | 10.5% | 2,920 | 12.1% | +376 |
+| NETFLIX | 6,786 | 27.1% | 7,712 | 30.8% | +926 |
+| YOUTUBE_FREQ_V3 | 6,914 | 23.0% | 7,834 | 26.1% | +920 |
+
+Going from N≤2 to N≤3 adds ~750–930 words per anchor (except JPDB which is domain-constrained). The top non-excluded culprit across all anchors at N≤3 is **ADNO** (12–15% of high-frequency words absent), followed by **H_FREQ** (5–9%) and **CEJC** (5–7%).
+
+**Recommended threshold:** N≤3 is the practical working threshold. It tolerates the handful of domain-specific sources that legitimately skip certain vocabulary (e.g., H_FREQ's adult content register, NAROU's genre vocabulary) without setting an impossibly strict bar.
+
+Filtered CSVs for each anchor are written to `data/ALL/threshold_3_anchor_{NAME}.csv`.
