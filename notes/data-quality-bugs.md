@@ -219,7 +219,7 @@ Rather than requiring a word to appear in all sources (which ~98% of words fail)
 **Algorithm:**
 
 ```
-EXCLUDE = {AOZORA_BUNKO, NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS}  # structurally bad sources
+EXCLUDE = {AOZORA_BUNKO, NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018}  # structurally bad sources
 
 for each word:
     missing_count = count of -1s in [all source columns] − EXCLUDE
@@ -230,7 +230,7 @@ filter_words_at_threshold(N):
 
 **Choosing N:**
 
-HERMITDAVE_2016 and HERMITDAVE_2018 will both miss the same lemma-form verbs (same underlying source, same tokenization). That's a guaranteed floor of 2 for any dictionary-form verb. Setting N = 0 loses them; N ≥ 2 retains them.
+Both HERMITDAVE sources are now excluded (same as NIER/ILYASEMENOV/DD2_MIGAKU_NOVELS) since their morpheme-split tokenization makes them structurally incompatible with lemma-normalized sources.
 
 Practical thresholds by strictness:
 
