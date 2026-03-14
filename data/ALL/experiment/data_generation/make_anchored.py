@@ -21,7 +21,7 @@ import os
 csv.field_size_limit(10_000_000)
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(BASE, "..", ".."))
+ROOT = os.path.abspath(os.path.join(BASE, "..", "..", "..", ".."))
 CEJC_FILE = os.path.join(ROOT, "data", "CEJC", "CONSOLIDATED_UNIQUE.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
 JPDB_RAW = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
@@ -116,8 +116,8 @@ for anchor_name, top_n in ANCHORS:
         other_vals = [lookup(all_sources[s], word) for s in other_names]
         rows.append([word, anchor_rank, cejc_r] + other_vals)
 
-    consol_path = os.path.join(BASE, f"consolidated_anchor_{anchor_name}.csv")
-    categ_path = os.path.join(BASE, f"categorized_anchor_{anchor_name}.csv")
+    consol_path = os.path.join(BASE, "..", "..", f"{anchor_name}_anchor", "consolidated.csv")
+    categ_path = os.path.join(BASE, "..", "..", f"{anchor_name}_anchor", "categorized.csv")
 
     with open(consol_path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)

@@ -5,8 +5,8 @@ csv.field_size_limit(10_000_000)
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
-INPUT_FILE = os.path.join(BASE, "consolidated_anchor_CEJC.csv")
-OUTPUT_FILE = os.path.join(BASE, "categorized_anchor_CEJC.csv")
+INPUT_FILE = os.path.join(BASE, "..", "..", "CEJC_anchor", "consolidated.csv")
+OUTPUT_FILE = os.path.join(BASE, "..", "..", "CEJC_anchor", "categorized.csv")
 
 # Category thresholds (rank -> category number)
 # 5 = basic   (rank 1–1000)

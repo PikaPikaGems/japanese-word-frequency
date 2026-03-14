@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils import markdown_table
 
 DATA_DIR = Path(__file__).parents[3]
-CONSOLIDATED = DATA_DIR / "consolidated_anchor_CEJC.csv"
+CONSOLIDATED = DATA_DIR / "CEJC_anchor" / "consolidated.csv"
 
 MIN_EXTERNAL_SOURCES = 5   # word must appear in at least this many external sources
 TOP_N = 25

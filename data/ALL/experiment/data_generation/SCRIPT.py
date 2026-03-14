@@ -6,11 +6,11 @@ csv.field_size_limit(10_000_000)
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(BASE, "..", ".."))
+ROOT = os.path.abspath(os.path.join(BASE, "..", "..", "..", ".."))
 CEJC_FILE = os.path.join(ROOT, "data", "CEJC", "CONSOLIDATED_UNIQUE.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
 JPDB_FILE = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
-OUTPUT_FILE = os.path.join(BASE, "consolidated_anchor_CEJC.csv")
+OUTPUT_FILE = os.path.join(BASE, "..", "..", "CEJC_anchor", "consolidated.csv")
 
 # Load JPDB v2: term -> kana reading (keep the most frequent reading per term)
 # Only store where reading differs from term (i.e. kanji forms that have a kana fallback)

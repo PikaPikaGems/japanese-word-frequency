@@ -22,8 +22,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils import markdown_table
 
 DATA_DIR = Path(__file__).parents[3]
-CONSOLIDATED = DATA_DIR / "consolidated_anchor_CEJC.csv"
-CATEGORIZED = DATA_DIR / "categorized_anchor_CEJC.csv"
+CONSOLIDATED = DATA_DIR / "CEJC_anchor" / "consolidated.csv"
+CATEGORIZED = DATA_DIR / "CEJC_anchor" / "categorized.csv"
 
 # categorized.csv encoding: 5=basic, 4=common, 3=fluent, 2=advanced, 1=rare/absent
 BASIC = 5

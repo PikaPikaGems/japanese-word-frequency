@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils import markdown_table, ascii_bar_chart
 
 DATA_DIR = Path(__file__).parents[3]
-CONSOLIDATED = DATA_DIR / "consolidated_anchor_CEJC.csv"
+CONSOLIDATED = DATA_DIR / "CEJC_anchor" / "consolidated.csv"
 
 MIN_SHARED = 500  # minimum shared words to compute correlation
 
