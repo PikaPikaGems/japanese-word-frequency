@@ -1,7 +1,11 @@
+Question, should we implement this?
+
+# TASK
+
 Please update and rerun the script to produce ./data/ALL/CATEGORIZE.md
 since the range of each tier has changed
 
-# BEfore
+## BEfore
 
 Tier Range Description
 🌱 basic Top ~1,000 Foundational and essential vocabulary
@@ -10,7 +14,7 @@ Tier Range Description
 📚 advanced ~10,001–25,000 Formal, academic, technical, or specialized terms
 🦉 rare 25,000+ Archaic, obscure, uncommon, or invalid terms
 
-# After
+## After
 
 Tier Range Description
 🌱 basic Top ~1,500 Foundational and essential vocabulary
