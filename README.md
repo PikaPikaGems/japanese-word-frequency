@@ -1,14 +1,211 @@
-# Japanese Word Frequency Categories Datasets, Scripts, and Insights
+# Japanese Word Frequency Rankings
 
-# Word Frequency Categories
+A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating 22+ sources into unified formats for language learning, linguistics, and NLP research.
 
-- 🌱 basic: Top ~1,000 – Foundational and essential vocabulary.
-- ☘️ common: Top ~1,001–4,000 — Frequent in everyday speech and writing.
-- 🌷 fluent: Top ~4,001–10,000 – Expansive vocabulary for natural expression across contexts.
-- 📚 advanced: Top ~10,001–25,000 — Formal, academic, technical or specialized terms.
-- 🦉 rare: Top 25,000+ — Archaic, obscure, uncommon, or invalid terms.
+## Vocabulary Tier System
 
-# Main Sources
+Words are assigned to one of five frequency tiers based on their ranking across sources:
+
+| Tier            | Range          | Description                                       |
+| --------------- | -------------- | ------------------------------------------------- |
+| 🌱 **basic**    | Top ~1,000     | Foundational and essential vocabulary             |
+| ☘️ **common**   | ~1,001–4,000   | Frequent in everyday speech and writing           |
+| 🌷 **fluent**   | ~4,001–10,000  | Expansive vocabulary for natural expression       |
+| 📚 **advanced** | ~10,001–25,000 | Formal, academic, technical, or specialized terms |
+| 🦉 **rare**     | 25,000+        | Archaic, obscure, uncommon, or invalid terms      |
+
+## Repository Structure
+
+```
+word-frequency-rankings/
+├── data/
+│   ├── ALL/          # Consolidated multi-source rankings (27,988 words x 36 sources)
+│   ├── CEJC/         # Corpus of Everyday Japanese Conversation (~2.4M words, 577 conversations)
+│   ├── JPDBV2/       # JPDB v2.2 entertainment media frequency list (~497k entries)
+│   ├── RSPEER/       # rspeer/wordfreq library output (top 25,000 words)
+│   └── RAW/
+│       └── ___FILTERED/   # 22 standardized source datasets (DATA.csv per source)
+├── notes/            # Reference documentation for all 22+ frequency sources
+└── utils/            # Shared Python utilities (formatting helpers)
+```
+
+## Datasets
+
+### ALL — Consolidated Rankings
+
+`data/ALL/`
+
+The primary output of this repo. Combines CEJC rankings with all 23 filtered sources into a single file.
+
+- **`consolidated.csv`** — 27,988 unique words x 36 rank columns
+- **`categorized.csv`** — Same structure, with ranks mapped to tier labels (basic/common/fluent/advanced/rare)
+- **`SCRIPT.py`** — Generates `consolidated.csv` from CEJC + filtered sources
+- **`CATEGORIZED.py`** — Generates `categorized.csv` from `consolidated.csv`
+
+### CEJC — Everyday Spoken Japanese
+
+`data/CEJC/`
+
+Based on 200 hours of recorded spontaneous speech. Rich demographic breakdown by conversation domain, gender, and age group.
+
+- **`CONSOLIDATED.csv`** — 29,534 entries x 36 rank columns (domain + demographic breakdowns)
+- **`CONSOLIDATED_UNIQUE.csv`** — 27,988 deduplicated entries
+- 8 insight reports in `insights/`
+- 13 analysis scripts in `scripts/`
+
+See [data/CEJC/README.md](data/CEJC/README.md) for dataset details.
+
+### JPDBV2 — Entertainment Media
+
+`data/JPDBV2/`
+
+Frequency data from jpdb.io, sourced from light novels, visual novels, anime, J-drama, and web novels.
+
+- **`task1_top25k.csv`** — Top 25,000 words by reading frequency
+- **`task2_kana_higher.csv`** — ~765 words where kana frequency exceeds kanji frequency (~3% of top 25k)
+- **`process.py`** — Generates both files from the raw source CSV
+
+See [data/JPDBV2/README.md](data/JPDBV2/README.md) for details.
+
+### RSPEER — wordfreq Library
+
+`data/RSPEER/`
+
+Generated from the [rspeer/wordfreq](https://github.com/rspeer/wordfreq) Python library, which aggregates multiple large corpora.
+
+- **`top_25000_japanese.csv`** — 25,000 words with `frequency` and `zipf_frequency` columns
+- 6 plotting scripts for distribution analysis (Zipf, coverage curve, script type, word length, cross-dataset comparison)
+
+See [data/RSPEER/INSIGHTS.md](data/RSPEER/INSIGHTS.md) for analysis results.
+
+### RAW/\_\_\_FILTERED — 22 Source Datasets
+
+`data/RAW/___FILTERED/`
+
+TODO: UPDATE THIS. We've added more
+
+Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENCY_RANKING`, top 25k entries) and a `README.md` describing the source.
+
+| Source          | Type                                         |
+| --------------- | -------------------------------------------- |
+| ADNO            | Wikipedia (cleaned)                          |
+| ANIME_JDRAMA    | Anime & J-drama subtitles                    |
+| AOZORA_BUNKO    | Public domain literature                     |
+| BCCWJ           | Balanced written corpus (NINJAL, 100M words) |
+| CC100           | Web text (Common Crawl)                      |
+| CHRISKEMPSON    | Japanese subtitles                           |
+| DAVE_DOEBRICK   | Mixed subtitle corpus                        |
+| HERMITDAVE_2016 | Subtitle corpus (2016)                       |
+| HERMITDAVE_2018 | Subtitle corpus (2018)                       |
+| H_FREQ          | Community-compiled list                      |
+| ILYASEMENOV     | Wikipedia word frequency                     |
+| INNOCENT_RANKED | Innocent Corpus (novels)                     |
+| JITEN_ANIME     | Anime-focused frequency                      |
+| JPDB            | Entertainment media (jpdb.io)                |
+| KOKUGOJITEN     | Japanese dictionary headwords                |
+| MONODICTS       | Monolingual dictionary terms                 |
+| NAROU           | Web novels (Narou)                           |
+| NETFLIX         | Netflix subtitle frequency                   |
+| NOVELS          | Novel corpus                                 |
+| VN_FREQ         | Visual novel corpus                          |
+| WIKIPEDIA_V2    | Wikipedia (v2)                               |
+| YOUTUBE_FREQ    | YouTube subtitle frequency                   |
+
+See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) for detailed descriptions of all sources.
+
+## Setup
+
+### Requirements
+
+- Python 3.8+
+- For plotting scripts: `matplotlib`
+- For RSPEER generation: `wordfreq`
+
+### Install dependencies
+
+```bash
+pip install matplotlib wordfreq
+```
+
+### Running scripts
+
+All scripts are standalone and can be run from their respective directories:
+
+```bash
+# Generate consolidated multi-source rankings
+cd data/ALL
+python SCRIPT.py
+python CATEGORIZED.py
+
+# Generate CEJC analysis reports
+cd data/CEJC/scripts
+python vocab_tier_breakdown.py
+python domain_profiles.py
+python demographic_analysis.py
+# ... (see data/CEJC/scripts/ for all 13 scripts)
+
+# Generate RSPEER data and plots
+cd data/RSPEER
+python generate_top_japanese.py
+python plot_coverage_curve.py
+python plot_zipf_distribution.py
+# ... (see data/RSPEER/ for all 6 plotting scripts)
+
+# Process JPDB data
+cd data/JPDBV2
+python process.py
+```
+
+## Notable Insights
+
+### Coverage is surprisingly concentrated
+
+80% of Japanese text is covered by just ~1,700 words; 90% by ~5,000; 95% by ~9,700; 98% by ~16,000. Focusing on the top 5,000 words gives strong practical coverage for everyday reading.
+
+([Full coverage analysis](data/RSPEER/INSIGHTS.md))
+
+### Cross-source agreement is only partial
+
+Only ~49% of RSPEER's top 25k overlaps with JPDB, and ~46% with CEJC — reflecting how differently spoken conversation, entertainment media, and general web text rank vocabulary. No single list covers everything.
+
+([Cross-dataset comparison](data/RSPEER/INSIGHTS.md))
+
+### Kanji dominates high-frequency words
+
+Script type breakdown across RSPEER's top 25k: 45.8% kanji, 18.9% katakana, 18.3% mixed kanji+kana, 10.2% hiragana. Katakana (loanwords) cluster more in the middle and lower frequency tiers.
+
+([Script breakdown analysis](data/RSPEER/INSIGHTS.md))
+
+### Word length grows with lower frequency (Zipf's law of abbreviation)
+
+Average word length in the top 1k is ~1.9 characters, growing to ~2.8 characters in the 10k–25k range. The most common words are also the shortest.
+
+([Word length by tier](data/RSPEER/INSIGHTS.md))
+
+### CEJC rankings are heavily tied at the bottom
+
+Only 430 of 29,534 entries have a unique rank. Most entries share ranks due to tied low-frequency counts, creating a 19,985-rank gap. This is a known artifact of standard competition ranking (1224 style).
+
+([Rank distribution analysis](data/CEJC/insights/rank_distribution.md))
+
+### Vocabulary priorities differ by conversation domain
+
+Medical consultations and workplace conversations skew toward formal Sino-Japanese (漢語) vocabulary, while casual home conversation favors native Japanese (和語) and common verbs.
+
+([Domain profiles](data/CEJC/insights/domain_profiles.md) · [Learning priority](data/CEJC/insights/learning_priority.md))
+
+### Word origin composition shifts across frequency tiers
+
+和語 (native Japanese) dominates the basic tier. 漢語 (Sino-Japanese) grows steadily through the advanced range. 外来語 (loanwords) peak in the fluent–advanced range.
+
+([Origin trends](data/CEJC/insights/origin_trends.md))
+
+## Source References
+
+- [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of all 22+ frequency sources
+- [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Concise reference format
+
+### Main upstream sources
 
 - https://github.com/Kuuuube/yomitan-dictionaries
 - https://github.com/MarvNC/yomitan-dictionaries
@@ -20,3 +217,7 @@
 - https://drive.google.com/drive/folders/1g1drkFzokc8KNpsPHoRmDJ4OtMTWFuXi
 - https://drive.google.com/drive/folders/1xURpMJN7HTtSLuVs9ZtIbE7MDRCdoU29
 - https://drive.google.com/file/d/1qHEfYHXjEp83i6PxxMlSxluFyQg2W8Up
+
+## License
+
+MIT License — Copyright 2026 PikaPikaGems. Individual datasets retain their original licenses and attributions as documented in each source's README.
