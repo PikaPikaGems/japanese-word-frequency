@@ -192,9 +192,11 @@ python process.py
 
 ### Cross-source agreement is only partial — and datasets index words differently
 
-The three main sources use different word representations: wordfreq uses surface/written forms; JPDB stores both a `term` (kanji form) and `reading` (kana) and ranks by **reading frequency**, not written frequency (it also tracks `kana_frequency` separately); CEJC uses 語彙素 (canonical lexeme/headword form, e.g. 食べる not 食べた) alongside its kana reading (語彙素読み). Direct word-for-word overlap is therefore an undercount of true conceptual overlap.
+The three main sources use different word representations: wordfreq uses surface/written forms; JPDB stores both a `term` (kanji form) and `reading` (kana) and ranks by **reading frequency**, not written frequency (it also tracks `kana_frequency` separately); CEJC uses 語彙素 (canonical lexeme/headword form, e.g. 食べる not 食べた) alongside its kana reading (語彙素読み).
 
-Even accounting for this, pairwise overlaps are stable and low at every cutoff:
+Two methodologies are compared below.
+
+**Result A — exact string match** (surface form only, no reading lookup):
 
 | Comparison        | Top 5k | Top 10k | Top 25k |
 |-------------------|--------|---------|---------|
@@ -203,7 +205,20 @@ Even accounting for this, pairwise overlaps are stable and low at every cutoff:
 | JPDB ∩ CEJC       | 42.6%  | 39.7%   | 39.4%   |
 | All three         | 32.2%  | 31.8%   | 31.6%   |
 
-Only ~32% of any tier is shared across all three sources — a consistent gap from 5k through 25k, not a low-frequency artifact. No single list covers everything.
+**Result B — reading-aware match** (surface form OR kana reading, readings normalized to hiragana): a word in source A counts as matching source B if its surface form equals either the term/key or the reading in B. This catches cases like RSPEER `くれる` ↔ CEJC `呉れる` or JPDB `今` (reading `いま`) ↔ RSPEER `いま`.
+
+| Comparison        | Top 5k | Top 10k | Top 25k |
+|-------------------|--------|---------|---------|
+| RSPEER ∩ JPDB     | 49.7%  | 49.9%   | 50.4%   |
+| RSPEER ∩ CEJC     | 53.6%  | 51.1%   | 48.8%   |
+| JPDB ∩ CEJC       | 54.6%  | 52.1%   | 54.1%   |
+| All three         | 40.3%  | 39.9%   | 40.7%   |
+
+Result B is the better estimate of true conceptual overlap. The JPDB ∩ CEJC improvement (~+12 pp) is the largest because JPDB indexes by reading frequency (kana canonical key) while CEJC indexes by kanji 語彙素 — the same word routinely appears under different scripts in each source. The three-way overlap rises from ~32% to ~40–41%.
+
+Caveats for Result B: (1) **Homophones** — the same kana reading can belong to unrelated words (e.g. particle `ば` vs noun `場`), so reading-based matching can introduce false positives; this affects mostly short function words that already match exactly anyway. (2) **Inflected forms** — RSPEER `なく` (auxiliary) could spuriously match JPDB `泣く` (verb); without POS tagging these are indistinguishable from the kana string alone. (3) **RSPEER kanji words have no reading** — for RSPEER words containing kanji, matching falls back to surface-form only; full reading-aware matching would require MeCab. Result B is therefore an upper bound; the true overlap lies between A and B.
+
+No single list covers everything — even under Result B, only ~40–41% of any tier is shared across all three sources.
 
 ([Cross-dataset comparison](data/RSPEER/INSIGHTS.md))
 
