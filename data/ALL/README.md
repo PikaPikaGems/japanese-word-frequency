@@ -8,7 +8,7 @@ This folder merges Japanese word frequency rankings from multiple sources into u
 |------|-------------|
 | `SCRIPT.py` | Generates `consolidated.csv` from CEJC and RAW/___FILTERED sources |
 | `CATEGORIZED.py` | Generates `categorized.csv` from `consolidated.csv` |
-| `consolidated.csv` | 27,988 words × 36 rank columns (word order from CEJC CONSOLIDATED_UNIQUE) |
+| `consolidated.csv` | 27,988 words × 49 rank columns (word order from CEJC CONSOLIDATED_UNIQUE) |
 | `categorized.csv` | Same shape — rank values mapped to vocabulary tier categories |
 
 ## consolidated.csv
@@ -17,45 +17,58 @@ This folder merges Japanese word frequency rankings from multiple sources into u
 
 **Columns:**
 
-| Column | Source |
-|--------|--------|
-| `word` | — |
-| `combined_rank` | CEJC overall |
-| `small_talk_rank` | CEJC domain |
-| `consultation_rank` | CEJC domain |
-| `meeting_rank` | CEJC domain |
-| `class_rank` | CEJC domain |
-| `outdoors_rank` | CEJC domain |
-| `school_rank` | CEJC domain |
-| `transportation_rank` | CEJC domain |
-| `public_commercial_rank` | CEJC domain |
-| `home_rank` | CEJC domain |
-| `indoors_rank` | CEJC domain |
-| `workplace_rank` | CEJC domain |
-| `male_rank` | CEJC gender |
-| `female_rank` | CEJC gender |
-| `ADNO` | RAW/___FILTERED/ADNO |
-| `ANIME_JDRAMA` | RAW/___FILTERED/ANIME_JDRAMA |
-| `AOZORA_BUNKO` | RAW/___FILTERED/AOZORA_BUNKO |
-| `BCCWJ` | RAW/___FILTERED/BCCWJ |
-| `CC100` | RAW/___FILTERED/CC100 |
-| `CHRISKEMPSON` | RAW/___FILTERED/CHRISKEMPSON |
-| `DAVE_DOEBRICK` | RAW/___FILTERED/DAVE_DOEBRICK |
-| `HERMITDAVE_2016` | RAW/___FILTERED/HERMITDAVE_2016 |
-| `HERMITDAVE_2018` | RAW/___FILTERED/HERMITDAVE_2018 |
-| `H_FREQ` | RAW/___FILTERED/H_FREQ |
-| `ILYASEMENOV` | RAW/___FILTERED/ILYASEMENOV |
-| `INNOCENT_RANKED` | RAW/___FILTERED/INNOCENT_RANKED |
-| `JITEN_ANIME` | RAW/___FILTERED/JITEN_ANIME |
-| `JPDB` | RAW/___FILTERED/JPDB |
-| `KOKUGOJITEN` | RAW/___FILTERED/KOKUGOJITEN |
-| `MONODICTS` | RAW/___FILTERED/MONODICTS |
-| `NAROU` | RAW/___FILTERED/NAROU |
-| `NETFLIX` | RAW/___FILTERED/NETFLIX |
-| `NOVELS` | RAW/___FILTERED/NOVELS |
-| `VN_FREQ` | RAW/___FILTERED/VN_FREQ |
-| `WIKIPEDIA_V2` | RAW/___FILTERED/WIKIPEDIA_V2 |
-| `YOUTUBE_FREQ` | RAW/___FILTERED/YOUTUBE_FREQ |
+| Column | Source | Description |
+|--------|--------|-------------|
+| `word` | — | — |
+| `combined_rank` | CEJC overall | — |
+| `small_talk_rank` | CEJC domain | — |
+| `consultation_rank` | CEJC domain | — |
+| `meeting_rank` | CEJC domain | — |
+| `class_rank` | CEJC domain | — |
+| `outdoors_rank` | CEJC domain | — |
+| `school_rank` | CEJC domain | — |
+| `transportation_rank` | CEJC domain | — |
+| `public_commercial_rank` | CEJC domain | — |
+| `home_rank` | CEJC domain | — |
+| `indoors_rank` | CEJC domain | — |
+| `workplace_rank` | CEJC domain | — |
+| `male_rank` | CEJC gender | — |
+| `female_rank` | CEJC gender | — |
+| `ADNO` | RAW/___FILTERED/ADNO | Cleaned Japanese Wikipedia frequency list by adno (fork of IlyaSemenov) |
+| `ANIME_JDRAMA` | RAW/___FILTERED/ANIME_JDRAMA | Anime & J-drama subtitle frequency from Shoui's collection |
+| `AOZORA_BUNKO` | RAW/___FILTERED/AOZORA_BUNKO | Kanji/jukugo frequency from Aozora Bunko public-domain literature |
+| `BCCWJ` | RAW/___FILTERED/BCCWJ | Balanced Corpus of Contemporary Written Japanese (Kuuube/yomitan) |
+| `CC100` | RAW/___FILTERED/CC100 | CommonCrawl Japanese web text frequency (CC-100 dataset) |
+| `CHRISKEMPSON` | RAW/___FILTERED/CHRISKEMPSON | Japanese subtitle word frequency by chriskempson |
+| `DAVE_DOEBRICK` | RAW/___FILTERED/DAVE_DOEBRICK | Netflix Japanese subtitle frequency compiled by Dave Doebrick |
+| `DD2_MIGAKU_NETFLIX` | RAW/___FILTERED/DD2_MIGAKU_NETFLIX | Migaku-format Netflix frequency list from Dave Doebrick's compilation |
+| `DD2_MIGAKU_NOVELS` | RAW/___FILTERED/DD2_MIGAKU_NOVELS | Migaku-format novel 5k frequency list from Dave Doebrick's compilation |
+| `DD2_MORPHMAN_NETFLIX` | RAW/___FILTERED/DD2_MORPHMAN_NETFLIX | Morphman-format Netflix frequency report (no names) from Dave Doebrick's compilation |
+| `DD2_MORPHMAN_NOVELS` | RAW/___FILTERED/DD2_MORPHMAN_NOVELS | Morphman-format Japanese novels frequency list from Dave Doebrick's compilation |
+| `DD2_MORPHMAN_SHONEN` | RAW/___FILTERED/DD2_MORPHMAN_SHONEN | Morphman-format shonen manga frequency report from Dave Doebrick's compilation |
+| `DD2_MORPHMAN_SOL` | RAW/___FILTERED/DD2_MORPHMAN_SOL | Morphman-format slice-of-life frequency report from Dave Doebrick's compilation |
+| `DD2_YOMICHAN_NOVELS` | RAW/___FILTERED/DD2_YOMICHAN_NOVELS | Yomichan-format novel 5k stars frequency list from Dave Doebrick's compilation |
+| `DD2_YOMICHAN_SHONEN` | RAW/___FILTERED/DD2_YOMICHAN_SHONEN | Yomichan-format shonen top 100 frequency list from Dave Doebrick's compilation |
+| `DD2_YOMICHAN_SHONEN_STARS` | RAW/___FILTERED/DD2_YOMICHAN_SHONEN_STARS | Yomichan-format shonen stars frequency list from Dave Doebrick's compilation |
+| `DD2_YOMICHAN_SOL` | RAW/___FILTERED/DD2_YOMICHAN_SOL | Yomichan-format slice-of-life top 100 frequency list from Dave Doebrick's compilation |
+| `DD2_YOMICHAN_VN` | RAW/___FILTERED/DD2_YOMICHAN_VN | Yomichan-format visual novel stars frequency list from Dave Doebrick's compilation |
+| `HERMITDAVE_2016` | RAW/___FILTERED/HERMITDAVE_2016 | OpenSubtitles 2016 Japanese word frequency by hermitdave |
+| `HERMITDAVE_2018` | RAW/___FILTERED/HERMITDAVE_2018 | OpenSubtitles 2018 Japanese word frequency by hermitdave |
+| `H_FREQ` | RAW/___FILTERED/H_FREQ | Adult (18+) Japanese content word frequency by Kuuube |
+| `ILYASEMENOV` | RAW/___FILTERED/ILYASEMENOV | Japanese Wikipedia word frequency by IlyaSemenov |
+| `INNOCENT_RANKED` | RAW/___FILTERED/INNOCENT_RANKED | Innocent Corpus Japanese novel frequency (ranked, MarvNC/yomitan) |
+| `JITEN_ANIME` | RAW/___FILTERED/JITEN_ANIME | Anime word frequency from jiten.moe |
+| `JPDB` | RAW/___FILTERED/JPDB | Japanese entertainment media frequency from jpdb.io |
+| `KOKUGOJITEN` | RAW/___FILTERED/KOKUGOJITEN | 国語辞典 Japanese monolingual dictionary frequency by Shoui |
+| `MONODICTS` | RAW/___FILTERED/MONODICTS | Japanese monolingual dictionary frequency (jpDicts 206k) by Shoui |
+| `NAROU` | RAW/___FILTERED/NAROU | 小説家になろう web novel frequency by Shoui/wareya |
+| `NETFLIX` | RAW/___FILTERED/NETFLIX | Netflix Japanese subtitle frequency by Shoui |
+| `NIER` | RAW/___FILTERED/NIER | Nier game series Japanese word frequency by Shoui |
+| `NOVELS` | RAW/___FILTERED/NOVELS | Japanese novels frequency by Kuuube/MarvNC |
+| `VN_FREQ` | RAW/___FILTERED/VN_FREQ | Visual novel Japanese word frequency by Shoui/wareya |
+| `WIKIPEDIA_V2` | RAW/___FILTERED/WIKIPEDIA_V2 | Japanese Wikipedia word frequency v2 by Shoui/MarvNC |
+| `YOUTUBE_FREQ` | RAW/___FILTERED/YOUTUBE_FREQ | YouTube Japanese video frequency by Shoui |
+| `YOUTUBE_FREQ_V3` | RAW/___FILTERED/YOUTUBE_FREQ_V3 | YouTube Japanese video frequency v3 by MarvNC (Zetta, Vexxed, Anonymous) |
 
 `-1` means the word was not found in that source.
 
