@@ -633,3 +633,15 @@ All remaining missing readings are filled with `"-"`. Final counts:
 | ANIME_JDRAMA    | 25,000      | 2,636           | 10.5% |
 
 The 1 entry in CEJC is a blank word token (empty string) that was present in the source data. No file has any non-Japanese-character words among the unfixable set — all 8,300 "-" entries across the 5 anchors are kanji-containing words whose reading is simply not in either reference source.
+
+### Why JPDB is primary and CEJC is fallback
+
+The ordering may seem counterintuitive given that this is primarily a CEJC-anchored pipeline. The reason is **vocabulary size**: JPDB v2 contains ~497k entries, while CEJC covers only ~27,988 unique words. The `get_reading()` function is used across all five anchor variants (CEJC, JPDB, ANIME_JDRAMA, NETFLIX, YOUTUBE_FREQ_V3). For non-CEJC anchors, the word lists contain many words outside CEJC's 27k vocabulary. Using JPDB as primary means the larger source answers first, leaving CEJC to catch only what JPDB misses.
+
+**Does swapping the order change the output?**
+
+For the CEJC-anchored files: no difference. Both sources reach 100% coverage for CEJC words, and for any word present in both sources the readings agree on pronunciation — the only representation difference is hiragana (JPDB) vs katakana (CEJC), which the conversion functions handle losslessly.
+
+For non-CEJC anchors (ANIME_JDRAMA, NETFLIX, YOUTUBE_FREQ_V3): swapping would produce the same final readings but with more first-pass misses, since CEJC's smaller vocabulary would fail to match many anchor words that then fall through to JPDB anyway. The output would be identical; only the lookup path changes.
+
+One theoretical edge case: polysemous kanji with multiple valid readings (e.g., 上 → うえ / かみ / じょう). JPDB picks the reading with the lowest frequency rank in its entertainment-media corpus; CEJC picks the most common reading in spontaneous speech. These could differ for a small number of ambiguous kanji. In practice, the dominant reading of common words agrees across both sources, so this edge case does not materially affect the output.

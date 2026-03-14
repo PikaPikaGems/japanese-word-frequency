@@ -48,13 +48,11 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 | HERMITDAVE_2016/2018 | MeCab morpheme-split tokenization — dictionary-form verbs do not exist as tokens (い at rank #1 is a morpheme, not a word) |
 | JPDB                 | Anime/game register — misses 36–42% of general vocabulary (e.g. 企業, 男性, 監督)                                          |
 
-After all 7 exclusions, 28 sources remain. Excluding JPDB alone doubled the zero-missing count.
-
 **Tokenization mismatch:** Even top-1,000 common words are missing from HERMITDAVE because morpheme-split tokenization atomizes verbs — `思う` → `思` + `っ` + `て` + `い` + `る`. This is structural and cannot be fixed by lookup.
 
-**Recommended coverage algorithm:** Use a threshold-based filter (`missing_count ≤ N` across the 28 checked sources) rather than requiring zero-missing. N=3 is the practical working threshold, yielding ~6,000–7,800 broadly common words per anchor. Zero-missing is ~15% overall but ~68–70% for the top-500 words.
+**Recommended coverage algorithm:** Use a threshold-based filter (`missing_count ≤ N`) rather than requiring zero-missing.
 
-**Kana reading enrichment:** `hiragana` and `katakana` columns were added using JPDB v2 as primary source and CEJC UniDic readings as fallback. CEJC and JPDB-anchored files reach 100% coverage; media-anchored files (ANIME, NETFLIX, YOUTUBE) have 6–11% gaps, mostly conjugated verb forms and proper nouns not listed as dictionary headwords.
+**Kana reading enrichment:** `hiragana` and `katakana` columns for each word are included per row media-anchored files (ANIME, NETFLIX, YOUTUBE) have 6–11% gaps, mostly conjugated verb forms and proper nouns not listed as dictionary headwords.
 
 ## Repository Structure
 
