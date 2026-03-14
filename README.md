@@ -43,7 +43,7 @@ Five anchor variants exist (`CEJC_anchor/`, `JPDB_anchor/`, `ANIME_JDRAMA_anchor
 - **`consolidated.csv`** — words x rank columns for that anchor
 - **`categorized.csv`** — same structure, ranks mapped to tier labels (basic/common/fluent/advanced/rare)
 
-Analysis scripts in `___experiments/`:
+Analysis scripts in `___experiments0/`:
 - **`coverage_analysis/analyze_coverage.py`** — per-source missing rate, zero-missing subsets, rank-band breakdown; outputs `.md` reports and filtered CSVs
 - **`coverage_analysis/filter_words.py`** — quick CEJC-anchor filter: words with any `-1` rank or any rare category
 - **`threshold_analysis/threshold_analysis.py`** — filters words present in all-but-N sources; outputs threshold CSVs and summary report
@@ -152,13 +152,13 @@ All scripts are standalone and can be run from any directory:
 
 ```bash
 # Run coverage analysis across all anchors
-python data/ALL/___experiments/coverage_analysis/analyze_coverage.py
+python data/ALL/___experiments0/coverage_analysis/analyze_coverage.py
 
 # Quick CEJC-anchor word filter (negative ranks / rare categories)
-python data/ALL/___experiments/coverage_analysis/filter_words.py
+python data/ALL/___experiments0/coverage_analysis/filter_words.py
 
 # Threshold analysis across all anchors
-python data/ALL/___experiments/threshold_analysis/threshold_analysis.py
+python data/ALL/___experiments0/threshold_analysis/threshold_analysis.py
 
 # Generate CEJC analysis reports
 cd data/CEJC/scripts
