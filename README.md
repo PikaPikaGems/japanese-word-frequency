@@ -26,82 +26,6 @@ A comprehensive collection of Japanese word frequency datasets, analysis scripts
 - https://drive.google.com/file/d/1qHEfYHXjEp83i6PxxMlSxluFyQg2W8Up
 - https://docs.google.com/document/d/1IUWkvBxhoazBSTyRbdyRVk7hfKE51yorE86DCRNQVuw/edit
 
-## Data Quality Notes
-
-## Experiments 0
-
-[`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources. Key findings:
-
-**Pipeline bugs fixed:**
-
-- Quite a few sources had duplicate word entries; the pipeline now keeps the minimum (most frequent) rank.
-- CEJC uses UniDic kanji lemma forms (其れ for それ, 為る for する). A kana fallback via JPDB v2 readings was added to bridge form mismatches.
-- AOZORA_BUNKO contains zero hiragana words by design (kanji-only source) and must be excluded from coverage checks.
-
-**Structurally incompatible sources:**
-Seven sources are excluded from all coverage quality checks because their -1s reflect structural properties, not word rarity:
-
-| Source               | Reason                                                                                                                     |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| AOZORA_BUNKO         | Kanji-only — all hiragana words absent by design                                                                           |
-| NIER                 | Single RPG — only ~10,000 unique tokens total                                                                              |
-| ILYASEMENOV          | Wikipedia dump with HTML entities (amp, gt, lt) as "words"                                                                 |
-| DD2_MIGAKU_NOVELS    | Curated learner deck — only ~16,500 words, not a frequency corpus                                                          |
-| HERMITDAVE_2016/2018 | MeCab morpheme-split tokenization — dictionary-form verbs do not exist as tokens (い at rank #1 is a morpheme, not a word) |
-| JPDB                 | Anime/game register — misses 36–42% of general vocabulary (e.g. 企業, 男性, 監督)                                          |
-
-**Tokenization mismatch:** Even top-1,000 common words are missing from HERMITDAVE because morpheme-split tokenization atomizes verbs — `思う` → `思` + `っ` + `て` + `い` + `る`. This is structural and cannot be fixed by lookup.
-
-**Recommended coverage algorithm:** Use a threshold-based filter (`missing_count ≤ N`) rather than requiring zero-missing.
-
-**Kana reading enrichment:** `hiragana` and `katakana` columns for each word are included per row media-anchored files (ANIME, NETFLIX, YOUTUBE) have 6–11% gaps, mostly conjugated verb forms and proper nouns not listed as dictionary headwords.
-
-## Experiments 1
-
-[`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 49 external sources and 4 new anchors were added.
-
-**New anchors added (9 total):**
-
-| Anchor       | Type                               | Words                                    |
-| ------------ | ---------------------------------- | ---------------------------------------- |
-| BCCWJ        | Balanced written Japanese (NINJAL) | 16,491 unique (UniDic POS deduplication) |
-| CC100        | CommonCrawl web text               | 24,605                                   |
-| RSPEER       | Multi-source aggregated (wordfreq) | 25,000                                   |
-| WIKIPEDIA_V2 | Wikipedia (clean)                  | 25,000                                   |
-
-**Updated EXCLUDE set (10 sources):** H_FREQ, NAROU, and VN_FREQ added to the original 7 — all use UniDic kanji lemma forms or domain-skewed tokenization that causes basic particles to score as absent.
-
-**How to read these tables:**
-
-- **Top-N %** (zero-missing): of the first N words in the anchor's frequency list, the percentage that appear in _every_ checked source (no `-1` rank). A high Top-500 means the most common words are universally found everywhere. The percentage naturally falls as N grows because rarer words start appearing in fewer domain-specific corpora.
-- **N≤3 words / N≤3 (%)**: words missing from _at most 3_ of the ~38 checked sources. These are the "broadly common" core vocabulary — present in nearly all corpora. The count form (e.g. 6,624) is used for the 25k table where list sizes differ; the % form is used for the 12k equal-footing table.
-
-**At 25k words** (BCCWJ excluded — only yields 16,491 unique words due to UniDic POS duplication):
-
-| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | N≤3 words (% of list)    |
-| --------------- | ------- | ------ | ------ | ------ | ------------------------ |
-| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 6,624 (26.9%)            |
-| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 7,349 (29.4%)            |
-| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 7,500 (25.0%)            |
-| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 6,833 (27.3%)            |
-| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 7,349 (29.4%)            |
-| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 6,987 (27.9%)            |
-| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 2,862 (11.8%) — excluded |
-
-**At 12k words** ([`top12k/`](data/ALL/___experiments1/top12k/HISTORY.md) — all anchors capped at 12,000 so BCCWJ is directly comparable):
-
-| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 (%) |
-| --------------- | ------- | ------ | ------ | ------ | ------- | ------- |
-| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 30.1%   | 47.9%   |
-| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 31.7%   | 48.2%   |
-| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 31.8%   | 48.0%   |
-| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 30.1%   | 43.3%   |
-| BCCWJ           | 75.2%   | 74.1%  | 63.9%  | 52.5%  | 29.6%   | 47.4%   |
-| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 30.6%   | 46.4%   |
-| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 31.6%   | 46.3%   |
-| CEJC            | 71.8%   | 68.5%  | 54.3%  | 43.7%  | 25.5%   | 39.7%   |
-| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 10.2%   | 17.6%   |
-
 ## Repository Structure
 
 ```
@@ -221,6 +145,82 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 Note: `DD2_*` sources are from Dave Doebrick's Frequency List Compilation (MIGAKU, MORPHMAN, and YOMICHAN dictionary formats). Three were removed as duplicates: `DD2_YOMICHAN_NETFLIX` (= `NETFLIX`), `DD2_MIGAKU_SOL` (= `DD2_YOMICHAN_SOL`), `DD2_MIGAKU_SHONEN` (= `DD2_YOMICHAN_SHONEN_STARS`). `MALTESAA_*` sources are from Maltesaa's CSJ and NWJC yomitan frequency dictionaries.
 
 See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) for detailed descriptions of all sources.
+
+## Data Quality Notes
+
+## Experiments 0
+
+[`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources. Key findings:
+
+**Pipeline bugs fixed:**
+
+- Quite a few sources had duplicate word entries; the pipeline now keeps the minimum (most frequent) rank.
+- CEJC uses UniDic kanji lemma forms (其れ for それ, 為る for する). A kana fallback via JPDB v2 readings was added to bridge form mismatches.
+- AOZORA_BUNKO contains zero hiragana words by design (kanji-only source) and must be excluded from coverage checks.
+
+**Structurally incompatible sources:**
+Seven sources are excluded from all coverage quality checks because their -1s reflect structural properties, not word rarity:
+
+| Source               | Reason                                                                                                                     |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| AOZORA_BUNKO         | Kanji-only — all hiragana words absent by design                                                                           |
+| NIER                 | Single RPG — only ~10,000 unique tokens total                                                                              |
+| ILYASEMENOV          | Wikipedia dump with HTML entities (amp, gt, lt) as "words"                                                                 |
+| DD2_MIGAKU_NOVELS    | Curated learner deck — only ~16,500 words, not a frequency corpus                                                          |
+| HERMITDAVE_2016/2018 | MeCab morpheme-split tokenization — dictionary-form verbs do not exist as tokens (い at rank #1 is a morpheme, not a word) |
+| JPDB                 | Anime/game register — misses 36–42% of general vocabulary (e.g. 企業, 男性, 監督)                                          |
+
+**Tokenization mismatch:** Even top-1,000 common words are missing from HERMITDAVE because morpheme-split tokenization atomizes verbs — `思う` → `思` + `っ` + `て` + `い` + `る`. This is structural and cannot be fixed by lookup.
+
+**Recommended coverage algorithm:** Use a threshold-based filter (`missing_count ≤ N`) rather than requiring zero-missing.
+
+**Kana reading enrichment:** `hiragana` and `katakana` columns for each word are included per row media-anchored files (ANIME, NETFLIX, YOUTUBE) have 6–11% gaps, mostly conjugated verb forms and proper nouns not listed as dictionary headwords.
+
+## Experiments 1
+
+[`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 49 external sources and 4 new anchors were added.
+
+**New anchors added (9 total):**
+
+| Anchor       | Type                               | Words                                    |
+| ------------ | ---------------------------------- | ---------------------------------------- |
+| BCCWJ        | Balanced written Japanese (NINJAL) | 16,491 unique (UniDic POS deduplication) |
+| CC100        | CommonCrawl web text               | 24,605                                   |
+| RSPEER       | Multi-source aggregated (wordfreq) | 25,000                                   |
+| WIKIPEDIA_V2 | Wikipedia (clean)                  | 25,000                                   |
+
+**Updated EXCLUDE set (10 sources):** H_FREQ, NAROU, and VN_FREQ added to the original 7 — all use UniDic kanji lemma forms or domain-skewed tokenization that causes basic particles to score as absent.
+
+**How to read these tables:**
+
+- **Top-N %** (zero-missing): of the first N words in the anchor's frequency list, the percentage that appear in _every_ checked source (no `-1` rank). A high Top-500 means the most common words are universally found everywhere. The percentage naturally falls as N grows because rarer words start appearing in fewer domain-specific corpora.
+- **N≤3 words / N≤3 (%)**: words missing from _at most 3_ of the ~38 checked sources. These are the "broadly common" core vocabulary — present in nearly all corpora. The count form (e.g. 6,624) is used for the 25k table where list sizes differ; the % form is used for the 12k equal-footing table.
+
+**At 25k words** (BCCWJ excluded — only yields 16,491 unique words due to UniDic POS duplication):
+
+| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | N≤3 words (% of list)    |
+| --------------- | ------- | ------ | ------ | ------ | ------------------------ |
+| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 6,624 (26.9%)            |
+| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 7,349 (29.4%)            |
+| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 7,500 (25.0%)            |
+| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 6,833 (27.3%)            |
+| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 7,349 (29.4%)            |
+| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 6,987 (27.9%)            |
+| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 2,862 (11.8%) — excluded |
+
+**At 12k words** ([`top12k/`](data/ALL/___experiments1/top12k/HISTORY.md) — all anchors capped at 12,000 so BCCWJ is directly comparable):
+
+| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 (%) |
+| --------------- | ------- | ------ | ------ | ------ | ------- | ------- |
+| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 30.1%   | 47.9%   |
+| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 31.7%   | 48.2%   |
+| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 31.8%   | 48.0%   |
+| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 30.1%   | 43.3%   |
+| BCCWJ           | 75.2%   | 74.1%  | 63.9%  | 52.5%  | 29.6%   | 47.4%   |
+| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 30.6%   | 46.4%   |
+| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 31.6%   | 46.3%   |
+| CEJC            | 71.8%   | 68.5%  | 54.3%  | 43.7%  | 25.5%   | 39.7%   |
+| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 10.2%   | 17.6%   |
 
 ## Setup
 
