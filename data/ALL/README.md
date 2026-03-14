@@ -4,16 +4,21 @@ This folder merges Japanese word frequency rankings from multiple sources into u
 
 ## Files
 
-| File | Description |
+Data lives in anchor-specific subdirectories; generation scripts are in `___experiments0/data_generation/`.
+
+| Path | Description |
 |------|-------------|
-| `SCRIPT.py` | Generates `consolidated.csv` from CEJC and RAW/___FILTERED sources |
-| `CATEGORIZED.py` | Generates `categorized.csv` from `consolidated.csv` |
-| `consolidated.csv` | 27,988 words × 51 columns (word + hiragana + katakana + 48 rank columns) |
-| `categorized.csv` | Same shape — rank values mapped to vocabulary tier categories |
+| `___experiments0/data_generation/SCRIPT.py` | Generates `CEJC_anchor/consolidated.csv` from CEJC and RAW/___FILTERED sources |
+| `___experiments0/data_generation/CATEGORIZED.py` | Generates `CEJC_anchor/categorized.csv` from `consolidated.csv` |
+| `___experiments0/data_generation/make_anchored.py` | Generates consolidated + categorized for JPDB, ANIME_JDRAMA, NETFLIX, YOUTUBE_FREQ_V3 anchors |
+| `CEJC_anchor/consolidated.csv` | 27,988 words × 65 columns (word + hiragana + katakana + 62 rank columns) |
+| `CEJC_anchor/categorized.csv` | Same shape — rank values mapped to vocabulary tier categories |
+| `{ANCHOR}_anchor/consolidated.csv` | Same structure for JPDB, ANIME_JDRAMA, NETFLIX, YOUTUBE_FREQ_V3 anchors |
+| `{ANCHOR}_anchor/categorized.csv` | Same structure, tier-mapped |
 
 ## consolidated.csv
 
-**Row order:** Sorted by CEJC `combined_rank` (as in `data/CEJC/CONSOLIDATED_UNIQUE.csv`).
+**Row order:** Sorted by CEJC `combined_rank` (as in `data/CEJC/CONSOLIDATED_UNIQUE.csv`). Other anchors are sorted by their own source ranking.
 
 **Columns:**
 
@@ -56,17 +61,30 @@ This folder merges Japanese word frequency rankings from multiple sources into u
 | `DD2_YOMICHAN_VN` | RAW/___FILTERED/DD2_YOMICHAN_VN | Yomichan-format visual novel stars frequency list from Dave Doebrick's compilation |
 | `HERMITDAVE_2016` | RAW/___FILTERED/HERMITDAVE_2016 | OpenSubtitles 2016 Japanese word frequency by hermitdave |
 | `HERMITDAVE_2018` | RAW/___FILTERED/HERMITDAVE_2018 | OpenSubtitles 2018 Japanese word frequency by hermitdave |
+| `HINGSTON` | RAW/___FILTERED/HINGSTON | Japanese internet word frequency by hingston (Leeds corpus) |
 | `H_FREQ` | RAW/___FILTERED/H_FREQ | Adult (18+) Japanese content word frequency by Kuuube |
 | `ILYASEMENOV` | RAW/___FILTERED/ILYASEMENOV | Japanese Wikipedia word frequency by IlyaSemenov |
 | `INNOCENT_RANKED` | RAW/___FILTERED/INNOCENT_RANKED | Innocent Corpus Japanese novel frequency (ranked, MarvNC/yomitan) |
 | `JITEN_ANIME` | RAW/___FILTERED/JITEN_ANIME | Anime word frequency from jiten.moe |
+| `JLAB` | RAW/___FILTERED/JLAB | Anime word frequency from Japanese Like a Breeze |
 | `JPDB` | RAW/___FILTERED/JPDB | Japanese entertainment media frequency from jpdb.io |
 | `KOKUGOJITEN` | RAW/___FILTERED/KOKUGOJITEN | 国語辞典 Japanese monolingual dictionary frequency by Shoui |
+| `MALTESAA_CSJ` | RAW/___FILTERED/MALTESAA_CSJ | Corpus of Spontaneous Japanese (CSJ) overall frequency by Maltesaa |
+| `MALTESAA_CSJ_DOKWA_GAKKAI` | RAW/___FILTERED/MALTESAA_CSJ_DOKWA_GAKKAI | CSJ monologue sub-corpus — academic presentations (独話・学会) |
+| `MALTESAA_CSJ_DOKWA_MOGI` | RAW/___FILTERED/MALTESAA_CSJ_DOKWA_MOGI | CSJ monologue sub-corpus — simulated speeches (独話・模擬) |
+| `MALTESAA_CSJ_DOKWA_ROUDOKU` | RAW/___FILTERED/MALTESAA_CSJ_DOKWA_ROUDOKU | CSJ monologue sub-corpus — reading aloud (独話・朗読) |
+| `MALTESAA_CSJ_DOKWA_SAIRO` | RAW/___FILTERED/MALTESAA_CSJ_DOKWA_SAIRO | CSJ monologue sub-corpus — re-reading (独話・再朗読) |
+| `MALTESAA_CSJ_DOKWA_SONOTA` | RAW/___FILTERED/MALTESAA_CSJ_DOKWA_SONOTA | CSJ monologue sub-corpus — other (独話・その他) |
+| `MALTESAA_CSJ_TAIKA_JIYU` | RAW/___FILTERED/MALTESAA_CSJ_TAIKA_JIYU | CSJ dialogue sub-corpus — free conversation (対話・自由) |
+| `MALTESAA_CSJ_TAIKA_KADAI` | RAW/___FILTERED/MALTESAA_CSJ_TAIKA_KADAI | CSJ dialogue sub-corpus — task-based (対話・課題) |
+| `MALTESAA_CSJ_TAIKA_MOGI` | RAW/___FILTERED/MALTESAA_CSJ_TAIKA_MOGI | CSJ dialogue sub-corpus — simulated (対話・模擬) |
+| `MALTESAA_NWJC` | RAW/___FILTERED/MALTESAA_NWJC | NINJAL Web Japanese Corpus (NWJC) word frequency by Maltesaa |
 | `MONODICTS` | RAW/___FILTERED/MONODICTS | Japanese monolingual dictionary frequency (jpDicts 206k) by Shoui |
 | `NAROU` | RAW/___FILTERED/NAROU | 小説家になろう web novel frequency by Shoui/wareya |
 | `NETFLIX` | RAW/___FILTERED/NETFLIX | Netflix Japanese subtitle frequency by Shoui |
 | `NIER` | RAW/___FILTERED/NIER | Nier game series Japanese word frequency by Shoui |
 | `NOVELS` | RAW/___FILTERED/NOVELS | Japanese novels frequency by Kuuube/MarvNC |
+| `RSPEER` | data/RSPEER/top_25000_japanese.csv | Japanese word frequency from the rspeer/wordfreq library (multi-corpus aggregate) |
 | `VN_FREQ` | RAW/___FILTERED/VN_FREQ | Visual novel Japanese word frequency by Shoui/wareya |
 | `WIKIPEDIA_V2` | RAW/___FILTERED/WIKIPEDIA_V2 | Japanese Wikipedia word frequency v2 by Shoui/MarvNC |
 | `YOUTUBE_FREQ` | RAW/___FILTERED/YOUTUBE_FREQ | YouTube Japanese video frequency by Shoui |
@@ -89,10 +107,12 @@ Same columns as `consolidated.csv`, but each rank value is replaced with a vocab
 ## Regenerating
 
 ```bash
-python data/ALL/SCRIPT.py            # produces consolidated.csv
-python data/ALL/CATEGORIZED.py       # produces categorized.csv
-python data/ALL/add_kana_columns.py  # adds hiragana/katakana columns to all anchor CSVs
-python data/ALL/fix_pure_kana_gaps.py  # fills pure-kana words that are their own reading
+# CEJC anchor
+python data/ALL/___experiments0/data_generation/SCRIPT.py       # produces CEJC_anchor/consolidated.csv
+python data/ALL/___experiments0/data_generation/CATEGORIZED.py  # produces CEJC_anchor/categorized.csv
+
+# Other anchors (JPDB, ANIME_JDRAMA, NETFLIX, YOUTUBE_FREQ_V3)
+python data/ALL/___experiments0/data_generation/make_anchored.py
 ```
 
 ## Kana reading coverage

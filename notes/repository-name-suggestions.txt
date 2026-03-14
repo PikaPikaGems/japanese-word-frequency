@@ -1,7 +1,0 @@
-japanese-word-frequency — simple, accurate, searchable
-jp-word-frequency — shorter variant
-japanese-frequency-data — emphasizes the dataset nature
-japanese-frequency-lists — common search term for this type of resource
-My recommendation: japanese-word-frequency
-
-It's the most natural search term someone would use when looking for this kind of resource, it's short, and it accurately describes the content. The "rankings" in the current name is redundant since frequency already implies ranking.

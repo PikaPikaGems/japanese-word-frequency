@@ -1,33 +1,55 @@
-> **Work in progress — use at your own risk.** The code and logic for generating this data have not been fully reviewed. Data quality, coverage, and methodology vary across sources. No guarantees are made about accuracy, completeness, or fitness for any particular purpose.
+> **Use at your own risk.** The code and logic for generating this data have not been fully reviewed. Data quality, coverage, and methodology vary across sources. No guarantees are made about accuracy, completeness, or fitness for any particular purpose.
 
 # Japanese Word Frequency Rankings
 
-A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating 35+ sources into unified formats for language learning, linguistics, and NLP research.
+A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating 47+ sources into unified formats for language learning, linguistics, and NLP research.
+
+## Source References
+
+- [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of all frequency sources
+- [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Concise reference format
+
+### Main upstream sources
+
+- https://github.com/Kuuuube/yomitan-dictionaries
+- https://github.com/MarvNC/yomitan-dictionaries
+- https://github.com/IlyaSemenov/wikipedia-word-frequency
+- https://github.com/adno/wikipedia-word-frequency-clean
+- https://github.com/hermitdave/FrequencyWords/
+- https://github.com/chriskempson/japanese-subtitles-word-kanji-frequency-lists
+- https://github.com/rspeer/wordfreq
+- https://github.com/Maltesaa/CSJ_and_NWJC_yomitan_freq_dict
+- https://github.com/hingston/japanese
+- https://docs.google.com/spreadsheets/d/1xeG-b85EHwo-yUDgwDLuWyYdwtnDgJAzr3VTmteMOaA
+- https://drive.google.com/drive/folders/1g1drkFzokc8KNpsPHoRmDJ4OtMTWFuXi
+- https://drive.google.com/drive/folders/1xURpMJN7HTtSLuVs9ZtIbE7MDRCdoU29
+- https://drive.google.com/file/d/1qHEfYHXjEp83i6PxxMlSxluFyQg2W8Up
+- https://docs.google.com/document/d/1IUWkvBxhoazBSTyRbdyRVk7hfKE51yorE86DCRNQVuw/edit
 
 ## Vocabulary Tier System
 
 Words are assigned to one of five frequency tiers based on their ranking across sources:
 
-| Tier            | Range          | Description                                       |
-| --------------- | -------------- | ------------------------------------------------- |
-| 🌱 **basic**    | Top ~1,000     | Foundational and essential vocabulary             |
-| ☘️ **common**   | ~1,001–4,000   | Frequent in everyday speech and writing           |
-| 🌷 **fluent**   | ~4,001–10,000  | Expansive vocabulary for natural expression       |
-| 📚 **advanced** | ~10,001–25,000 | Formal, academic, technical, or specialized terms |
-| 🦉 **rare**     | 25,000+        | Archaic, obscure, uncommon, or invalid terms      |
+| Tier            | Range          | Description                                 |
+| --------------- | -------------- | ------------------------------------------- |
+| 🌱 **basic**    | Top ~1,000     | Foundational and essential vocabulary       |
+| ☘️ **common**   | ~1,001–4,000   | Frequent in everyday speech and writing     |
+| 🌷 **fluent**   | ~4,001–10,000  | Expansive vocabulary for natural expression |
+| 📚 **advanced** | ~10,001–25,000 | Specialized terms                           |
+| 🦉 **rare**     | 25,000+        | Uncommon, or invalid terms                  |
 
 ## Repository Structure
 
 ```
 word-frequency-rankings/
 ├── data/
-│   ├── ALL/          # Consolidated multi-source rankings (27,988 words x 49 sources)
+│   ├── ALL/          # Consolidated multi-source rankings (27,988 words × 62 rank columns)
 │   ├── CEJC/         # Corpus of Everyday Japanese Conversation (~2.4M words, 577 conversations)
 │   ├── JPDBV2/       # JPDB v2.2 entertainment media frequency list (~497k entries)
 │   ├── RSPEER/       # rspeer/wordfreq library output (top 25,000 words)
 │   └── RAW/
-│       └── ___FILTERED/   # 35 standardized source datasets (DATA.csv per source)
-├── notes/            # Reference documentation for all 22+ frequency sources
+│       └── ___FILTERED/   # 47 standardized source datasets (DATA.csv per source)
+├── notes/            # Reference documentation for all frequency sources
 └── utils/            # Shared Python utilities (formatting helpers)
 ```
 
@@ -37,13 +59,15 @@ word-frequency-rankings/
 
 `data/ALL/`
 
-The primary output of this repo. Combines CEJC rankings with all 35 filtered sources into a single file.
+The primary output of this repo. Combines CEJC rankings with all 47 filtered sources plus RSPEER into a single file.
 
 Five anchor variants exist (`CEJC_anchor/`, `JPDB_anchor/`, `ANIME_JDRAMA_anchor/`, `NETFLIX_anchor/`, `YOUTUBE_FREQ_V3_anchor/`), each containing:
+
 - **`consolidated.csv`** — words x rank columns for that anchor
 - **`categorized.csv`** — same structure, ranks mapped to tier labels (basic/common/fluent/advanced/rare)
 
 Analysis scripts in `___experiments0/`:
+
 - **`coverage_analysis/analyze_coverage.py`** — per-source missing rate, zero-missing subsets, rank-band breakdown; outputs `.md` reports and filtered CSVs
 - **`coverage_analysis/filter_words.py`** — quick CEJC-anchor filter: words with any `-1` rank or any rare category
 - **`threshold_analysis/threshold_analysis.py`** — filters words present in all-but-N sources; outputs threshold CSVs and summary report
@@ -84,51 +108,64 @@ Generated from the [rspeer/wordfreq](https://github.com/rspeer/wordfreq) Python 
 
 See [data/RSPEER/INSIGHTS.md](data/RSPEER/INSIGHTS.md) for analysis results.
 
-### RAW/\_\_\_FILTERED — 35 Source Datasets
+### RAW/\_\_\_FILTERED — 47 Source Datasets + RSPEER
 
 `data/RAW/___FILTERED/`
 
-Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENCY_RANKING`, top 25k entries) and a `README.md` describing the source.
+Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENCY_RANKING`, top 25k entries) and a `README.md` describing the source. `RSPEER` (`data/RSPEER/top_25000_japanese.csv`) is included as an additional source; its rank is derived from row position (row 1 = rank 1, sorted by descending zipf frequency).
 
-| Source                    | Type                                               |
-| ------------------------- | -------------------------------------------------- |
-| ADNO                      | Wikipedia (cleaned)                                |
-| ANIME_JDRAMA              | Anime & J-drama subtitles                          |
-| AOZORA_BUNKO              | Public domain literature                           |
-| BCCWJ                     | Balanced written corpus (NINJAL, 100M words)       |
-| CC100                     | Web text (Common Crawl)                            |
-| CHRISKEMPSON              | Japanese subtitles                                 |
-| DAVE_DOEBRICK             | Netflix subtitles (Dave Doebrick, full report)     |
-| DD2_MIGAKU_NETFLIX        | Netflix subtitles (Migaku dictionary format)       |
-| DD2_MIGAKU_NOVELS         | Novel corpus (Migaku dictionary format)            |
-| DD2_MORPHMAN_NETFLIX      | Netflix subtitles (Morphman report, no names)      |
-| DD2_MORPHMAN_NOVELS       | Novel corpus (Morphman report)                     |
-| DD2_MORPHMAN_SHONEN       | Shonen anime/manga (Morphman report)               |
-| DD2_MORPHMAN_SOL          | Slice of Life anime (Morphman report)              |
-| DD2_YOMICHAN_NOVELS       | Novel corpus (Yomichan Stars format)               |
-| DD2_YOMICHAN_SHONEN       | Shonen anime/manga (Yomichan integer rank format)  |
-| DD2_YOMICHAN_SHONEN_STARS | Shonen anime/manga (Yomichan Stars format)         |
-| DD2_YOMICHAN_SOL          | Slice of Life anime (Yomichan integer rank format) |
-| DD2_YOMICHAN_VN           | Visual novels (Yomichan Stars format)              |
-| HERMITDAVE_2016           | Subtitle corpus (2016)                             |
-| HERMITDAVE_2018           | Subtitle corpus (2018)                             |
-| H_FREQ                    | Community-compiled list                            |
-| ILYASEMENOV               | Wikipedia word frequency                           |
-| INNOCENT_RANKED           | Innocent Corpus (novels)                           |
-| JITEN_ANIME               | Anime-focused frequency                            |
-| JPDB                      | Entertainment media (jpdb.io)                      |
-| KOKUGOJITEN               | Japanese dictionary headwords                      |
-| MONODICTS                 | Monolingual dictionary terms                       |
-| NAROU                     | Web novels (Narou)                                 |
-| NETFLIX                   | Netflix subtitle frequency                         |
-| NIER                      | NieR game script frequency                         |
-| NOVELS                    | Novel corpus                                       |
-| VN_FREQ                   | Visual novel corpus                                |
-| WIKIPEDIA_V2              | Wikipedia (v2)                                     |
-| YOUTUBE_FREQ              | YouTube subtitle frequency                         |
-| YOUTUBE_FREQ_V3           | YouTube subtitle frequency (v3, ~187k entries)     |
+| Source                     | Type                                                |
+| -------------------------- | --------------------------------------------------- |
+| ADNO                       | Wikipedia (cleaned)                                 |
+| ANIME_JDRAMA               | Anime & J-drama subtitles                           |
+| AOZORA_BUNKO               | Public domain literature                            |
+| BCCWJ                      | Balanced written corpus (NINJAL, 100M words)        |
+| CC100                      | Web text (Common Crawl)                             |
+| CHRISKEMPSON               | Japanese subtitles                                  |
+| DAVE_DOEBRICK              | Netflix subtitles (Dave Doebrick, full report)      |
+| DD2_MIGAKU_NETFLIX         | Netflix subtitles (Migaku dictionary format)        |
+| DD2_MIGAKU_NOVELS          | Novel corpus (Migaku dictionary format)             |
+| DD2_MORPHMAN_NETFLIX       | Netflix subtitles (Morphman report, no names)       |
+| DD2_MORPHMAN_NOVELS        | Novel corpus (Morphman report)                      |
+| DD2_MORPHMAN_SHONEN        | Shonen anime/manga (Morphman report)                |
+| DD2_MORPHMAN_SOL           | Slice of Life anime (Morphman report)               |
+| DD2_YOMICHAN_NOVELS        | Novel corpus (Yomichan Stars format)                |
+| DD2_YOMICHAN_SHONEN        | Shonen anime/manga (Yomichan integer rank format)   |
+| DD2_YOMICHAN_SHONEN_STARS  | Shonen anime/manga (Yomichan Stars format)          |
+| DD2_YOMICHAN_SOL           | Slice of Life anime (Yomichan integer rank format)  |
+| DD2_YOMICHAN_VN            | Visual novels (Yomichan Stars format)               |
+| HERMITDAVE_2016            | Subtitle corpus (2016)                              |
+| HERMITDAVE_2018            | Subtitle corpus (2018)                              |
+| HINGSTON                   | Japanese internet word frequency (Leeds corpus)     |
+| H_FREQ                     | Community-compiled list                             |
+| ILYASEMENOV                | Wikipedia word frequency                            |
+| INNOCENT_RANKED            | Innocent Corpus (novels)                            |
+| JITEN_ANIME                | Anime-focused frequency                             |
+| JLAB                       | Anime frequency (Japanese Like a Breeze)            |
+| JPDB                       | Entertainment media (jpdb.io)                       |
+| KOKUGOJITEN                | Japanese dictionary headwords                       |
+| MALTESAA_CSJ               | Corpus of Spontaneous Japanese (CSJ), overall       |
+| MALTESAA_CSJ_DOKWA_GAKKAI  | CSJ monologue — academic presentations (独話・学会) |
+| MALTESAA_CSJ_DOKWA_MOGI    | CSJ monologue — simulated speeches (独話・模擬)     |
+| MALTESAA_CSJ_DOKWA_ROUDOKU | CSJ monologue — reading aloud (独話・朗読)          |
+| MALTESAA_CSJ_DOKWA_SAIRO   | CSJ monologue — re-reading (独話・再朗読)           |
+| MALTESAA_CSJ_DOKWA_SONOTA  | CSJ monologue — other (独話・その他)                |
+| MALTESAA_CSJ_TAIKA_JIYU    | CSJ dialogue — free conversation (対話・自由)       |
+| MALTESAA_CSJ_TAIKA_KADAI   | CSJ dialogue — task-based (対話・課題)              |
+| MALTESAA_CSJ_TAIKA_MOGI    | CSJ dialogue — simulated (対話・模擬)               |
+| MALTESAA_NWJC              | NINJAL Web Japanese Corpus (NWJC)                   |
+| MONODICTS                  | Monolingual dictionary terms                        |
+| NAROU                      | Web novels (Narou)                                  |
+| NETFLIX                    | Netflix subtitle frequency                          |
+| NIER                       | NieR game script frequency                          |
+| NOVELS                     | Novel corpus                                        |
+| RSPEER                     | rspeer/wordfreq multi-corpus aggregate              |
+| VN_FREQ                    | Visual novel corpus                                 |
+| WIKIPEDIA_V2               | Wikipedia (v2)                                      |
+| YOUTUBE_FREQ               | YouTube subtitle frequency                          |
+| YOUTUBE_FREQ_V3            | YouTube subtitle frequency (v3, ~187k entries)      |
 
-Note: `DD2_*` sources are from Dave Doebrick's Frequency List Compilation (MIGAKU, MORPHMAN, and YOMICHAN dictionary formats). Three were removed as duplicates: `DD2_YOMICHAN_NETFLIX` (= `NETFLIX`), `DD2_MIGAKU_SOL` (= `DD2_YOMICHAN_SOL`), `DD2_MIGAKU_SHONEN` (= `DD2_YOMICHAN_SHONEN_STARS`).
+Note: `DD2_*` sources are from Dave Doebrick's Frequency List Compilation (MIGAKU, MORPHMAN, and YOMICHAN dictionary formats). Three were removed as duplicates: `DD2_YOMICHAN_NETFLIX` (= `NETFLIX`), `DD2_MIGAKU_SOL` (= `DD2_YOMICHAN_SOL`), `DD2_MIGAKU_SHONEN` (= `DD2_YOMICHAN_SHONEN_STARS`). `MALTESAA_*` sources are from Maltesaa's CSJ and NWJC yomitan frequency dictionaries.
 
 See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) for detailed descriptions of all sources.
 
@@ -181,28 +218,21 @@ python process.py
 
 ## Notable Insights
 
-### Coverage is surprisingly concentrated
+### Coverage is concentrated (RSPEER)
 
 80% of Japanese text is covered by just ~1,700 words; 90% by ~5,000; 95% by ~9,700; 98% by ~16,000. Focusing on the top 5,000 words gives strong practical coverage for everyday reading.
 
 ([Full coverage analysis](data/RSPEER/INSIGHTS.md))
 
+### CEJC rankings are heavily tied at the bottom
+
+Only 430 of 29,534 entries have a unique rank. Most entries share ranks due to tied low-frequency counts, creating a 19,985-rank gap. This is a known artifact of standard competition ranking (1224 style).
+
+([Rank distribution analysis](data/CEJC/insights/rank_distribution.md))
+
 ### Cross-source agreement is only partial — and datasets index words differently
 
-The three main sources use different word representations: wordfreq uses surface/written forms; JPDB stores both a `term` (kanji form) and `reading` (kana) and ranks by **reading frequency**, not written frequency (it also tracks `kana_frequency` separately); CEJC uses 語彙素 (canonical lexeme/headword form, e.g. 食べる not 食べた) alongside its kana reading (語彙素読み).
-
-Two methodologies are compared below.
-
-**Result A — exact string match** (surface form only, no reading lookup):
-
-| Comparison    | Top 5k | Top 10k | Top 25k |
-| ------------- | ------ | ------- | ------- |
-| RSPEER ∩ JPDB | 48.2%  | 48.4%   | 49.0%   |
-| RSPEER ∩ CEJC | 47.9%  | 46.2%   | 44.1%   |
-| JPDB ∩ CEJC   | 42.6%  | 39.7%   | 39.4%   |
-| All three     | 32.2%  | 31.8%   | 31.6%   |
-
-**Result B — reading-aware match** (surface form OR kana reading, readings normalized to hiragana): a word in source A counts as matching source B if its surface form equals either the term/key or the reading in B. This catches cases like RSPEER `くれる` ↔ CEJC `呉れる` or JPDB `今` (reading `いま`) ↔ RSPEER `いま`.
+**Reading-aware match** (surface form OR kana reading, readings normalized to hiragana): a word in source A counts as matching source B if its surface form equals either the term/key or the reading in B. This catches cases like RSPEER `くれる` ↔ CEJC `呉れる` or JPDB `今` (reading `いま`) ↔ RSPEER `いま`.
 
 | Comparison    | Top 5k | Top 10k | Top 25k |
 | ------------- | ------ | ------- | ------- |
@@ -211,65 +241,17 @@ Two methodologies are compared below.
 | JPDB ∩ CEJC   | 54.6%  | 52.1%   | 54.1%   |
 | All three     | 40.3%  | 39.9%   | 40.7%   |
 
-Result B is the better estimate of true conceptual overlap. The JPDB ∩ CEJC improvement (~+12 pp) is the largest because JPDB indexes by reading frequency (kana canonical key) while CEJC indexes by kanji 語彙素 — the same word routinely appears under different scripts in each source. The three-way overlap rises from ~32% to ~40–41%.
-
-Caveats for Result B: (1) **Homophones** — the same kana reading can belong to unrelated words (e.g. particle `ば` vs noun `場`), so reading-based matching can introduce false positives; this affects mostly short function words that already match exactly anyway. (2) **Inflected forms** — RSPEER `なく` (auxiliary) could spuriously match JPDB `泣く` (verb); without POS tagging these are indistinguishable from the kana string alone. (3) **RSPEER kanji words have no reading** — for RSPEER words containing kanji, matching falls back to surface-form only; full reading-aware matching would require MeCab. Result B is therefore an upper bound; the true overlap lies between A and B.
-
-No single list covers everything — even under Result B, only ~40–41% of any tier is shared across all three sources.
+Caveats: **Homophones** — the same kana reading can belong to unrelated words (e.g. particle `ば` vs noun `場`), so reading-based matching can introduce false positives.
 
 ([Cross-dataset comparison](data/RSPEER/INSIGHTS.md))
 
-### Kanji dominates at every tier; hiragana and katakana diverge with frequency
-
-Script type composition shifts significantly depending on which tier cutoff you examine:
-
-| Script   | Top 1k | Top 5k | Top 10k | Top 25k |
-| -------- | ------ | ------ | ------- | ------- |
-| Kanji    | 45.9%  | 49.5%  | 48.6%   | 45.8%   |
-| Mixed    | 14.8%  | 18.2%  | 18.5%   | 18.3%   |
-| Hiragana | 29.0%  | 14.6%  | 11.8%   | 10.2%   |
-| Katakana | 4.6%   | 13.8%  | 16.7%   | 18.9%   |
-| Other    | 5.7%   | 3.8%   | 4.4%    | 6.8%    |
-
-Hiragana collapses from 29% in the top 1k to 10% by top 25k — grammatical function words (particles, copulas) are uniquely concentrated at the very top. Katakana (loanwords) grows from 4.6% to 18.9% — loanwords accumulate progressively in lower-frequency ranges. Kanji is consistently the largest category at every cutoff.
-
-([Script breakdown analysis](data/RSPEER/INSIGHTS.md))
-
-### Gender differences in CEJC speech: some robust, some confounded
+### Gender differences in CEJC speech: some robust, some confounded (CEJC)
 
 Some findings are well-supported and linguistically established: gendered first-person pronouns (俺/僕 strongly male, 私 strongly female) and gendered sentence-final particles (ぞ/ぜ male, かしら female) show extreme M/F PMW ratios (3–30×). These reflect real speech style differences.
 
 However, the methodology (raw PMW ratio across all speech by gender) does **not** control for conversation domain. Work/meeting vocabulary (会議, 担当, チーム) skewing male, and food/home vocabulary (野菜, 卵, 菓子) skewing female, may reflect which domains male vs. female participants in this corpus happened to participate in — not an intrinsic property of how men and women speak. Core function words show very little gender skew regardless.
 
 ([Demographic analysis](data/CEJC/insights/demographic_analysis.md))
-
-### CEJC rankings are heavily tied at the bottom
-
-Only 430 of 29,534 entries have a unique rank. Most entries share ranks due to tied low-frequency counts, creating a 19,985-rank gap. This is a known artifact of standard competition ranking (1224 style).
-
-([Rank distribution analysis](data/CEJC/insights/rank_distribution.md))
-
-## Source References
-
-- [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of all 22+ frequency sources
-- [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Concise reference format
-
-### Main upstream sources
-
-- https://github.com/Kuuuube/yomitan-dictionaries
-- https://github.com/MarvNC/yomitan-dictionaries
-- https://github.com/IlyaSemenov/wikipedia-word-frequency
-- https://github.com/adno/wikipedia-word-frequency-clean
-- https://github.com/hermitdave/FrequencyWords/
-- https://github.com/chriskempson/japanese-subtitles-word-kanji-frequency-lists
-- https://github.com/rspeer/wordfreq
-- https://github.com/Maltesaa/CSJ_and_NWJC_yomitan_freq_dict
-- https://github.com/hingston/japanese
-- https://docs.google.com/spreadsheets/d/1xeG-b85EHwo-yUDgwDLuWyYdwtnDgJAzr3VTmteMOaA
-- https://drive.google.com/drive/folders/1g1drkFzokc8KNpsPHoRmDJ4OtMTWFuXi
-- https://drive.google.com/drive/folders/1xURpMJN7HTtSLuVs9ZtIbE7MDRCdoU29
-- https://drive.google.com/file/d/1qHEfYHXjEp83i6PxxMlSxluFyQg2W8Up
-- https://docs.google.com/document/d/1IUWkvBxhoazBSTyRbdyRVk7hfKE51yorE86DCRNQVuw/edit
 
 ## License
 
