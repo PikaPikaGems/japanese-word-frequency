@@ -13,6 +13,7 @@ JPDB is widely used in the Japanese learner community as a reference for media-c
 ## Methodology
 
 Same pipeline as CEJC anchor, with bidirectional kanji/kana lookup:
+
 - kanji anchor words → look up kana-keyed sources via JPDB v2 reading map
 - kana anchor words → look up CEJC's kanji lemma entries
 - `-1` means absent from that source
@@ -27,20 +28,13 @@ Same pipeline as CEJC anchor, with bidirectional kanji/kana lookup:
 
 ## Tier categories (`categorized.csv`)
 
-| Value | Tier | Rank range |
-|-------|------|-----------|
-| 5 | basic | 1–1,000 |
-| 4 | common | 1,001–4,000 |
-| 3 | fluent | 4,001–10,000 |
-| 2 | advanced | 10,001–25,000 |
-| 1 | rare | 25,001+ or absent |
-
-## Key insights
-
-- **JPDB itself is excluded from coverage quality checks** for other anchors. Its anime/game corpus systematically misses real-world vocabulary: 男性 (man, YOUTUBE rank 1,100) is rank 180,271 in JPDB; 企業 (company) is entirely absent. This is a register mismatch, not a data quality issue.
-- **Only ~10.5% zero-missing** at N=0 (vs 14–18% for other anchors) — JPDB's domain specificity means fewer words are covered by all sources.
-- N≤3 threshold yields ~2,920 high-confidence words — fewer than other anchors due to JPDB's narrower domain.
-- Best used when the learning goal is specifically anime/game/visual novel vocabulary.
+| Value | Tier     | Rank range        |
+| ----- | -------- | ----------------- |
+| 5     | basic    | 1–1,000           |
+| 4     | common   | 1,001–4,000       |
+| 3     | fluent   | 4,001–10,000      |
+| 2     | advanced | 10,001–25,000     |
+| 1     | rare     | 25,001+ or absent |
 
 ## Regenerating
 

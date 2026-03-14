@@ -25,21 +25,13 @@ Same bidirectional kana/kanji lookup pipeline as other non-CEJC anchors. `-1` me
 
 ## Tier categories (`categorized.csv`)
 
-| Value | Tier | Rank range |
-|-------|------|-----------|
-| 5 | basic | 1–1,000 |
-| 4 | common | 1,001–4,000 |
-| 3 | fluent | 4,001–10,000 |
-| 2 | advanced | 10,001–25,000 |
-| 1 | rare | 25,001+ or absent |
-
-## Key insights
-
-- **14.9% zero-missing** across 28 checked sources — the highest of all non-CEJC anchors in absolute count (4,463 words).
-- N≤3 threshold yields ~7,834 words — one of the largest high-confidence sets across all anchors.
-- Top-500 words achieve **70.2% zero-missing** across all 28 sources — basic particles, core verbs, and high-frequency nouns appear universally.
-- This anchor was used as the primary reference corpus for the coverage quality experiments (see `experiment/coverage_analysis/`).
-- The morpheme-tokenization problem is most visible here: HERMITDAVE sources miss 24.8% of the top-1,000 YouTube words because verbs like 思う, 見る, できる don't exist as tokens in morpheme-split corpora.
+| Value | Tier     | Rank range        |
+| ----- | -------- | ----------------- |
+| 5     | basic    | 1–1,000           |
+| 4     | common   | 1,001–4,000       |
+| 3     | fluent   | 4,001–10,000      |
+| 2     | advanced | 10,001–25,000     |
+| 1     | rare     | 25,001+ or absent |
 
 ## Regenerating
 

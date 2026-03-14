@@ -31,20 +31,13 @@ Using CEJC as the backbone means the word list is ordered by how common words ar
 
 ## Tier categories (`categorized.csv`)
 
-| Value | Tier | Rank range |
-|-------|------|-----------|
-| 5 | basic | 1–1,000 |
-| 4 | common | 1,001–4,000 |
-| 3 | fluent | 4,001–10,000 |
-| 2 | advanced | 10,001–25,000 |
-| 1 | rare | 25,001+ or absent |
-
-## Key insights
-
-- **~12.4% of CEJC words have zero missing ranks** (across 28 reliable sources after excluding 7 structurally broken ones). These are the most universally attested words across all corpora.
-- **7 sources are excluded from quality checks** due to structural incompatibility: AOZORA_BUNKO (kanji-only), NIER (single game, ~10k words), ILYASEMENOV (HTML entities, Wikipedia bias), DD2_MIGAKU_NOVELS (curated learner deck), HERMITDAVE_2016/2018 (morpheme-split tokenization), JPDB (anime/game register misses general vocabulary like 男性, 企業).
-- **N≤3 threshold** (missing from at most 3 of the 28 checked sources) yields ~6,047 high-confidence words — a practical working set for vocabulary study.
-- CEJC's UniDic lemma forms (其れ、為る、此れ) are distinct from the surface hiragana forms (それ、する、これ) used by other sources; both exist as separate entries in CEJC.
+| Value | Tier     | Rank range        |
+| ----- | -------- | ----------------- |
+| 5     | basic    | 1–1,000           |
+| 4     | common   | 1,001–4,000       |
+| 3     | fluent   | 4,001–10,000      |
+| 2     | advanced | 10,001–25,000     |
+| 1     | rare     | 25,001+ or absent |
 
 ## Regenerating
 

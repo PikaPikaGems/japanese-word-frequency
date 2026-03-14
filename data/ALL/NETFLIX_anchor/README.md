@@ -25,20 +25,13 @@ Note: `DD2_MIGAKU_NETFLIX` and `DD2_MORPHMAN_NETFLIX` are distinct sources inclu
 
 ## Tier categories (`categorized.csv`)
 
-| Value | Tier | Rank range |
-|-------|------|-----------|
-| 5 | basic | 1–1,000 |
-| 4 | common | 1,001–4,000 |
-| 3 | fluent | 4,001–10,000 |
-| 2 | advanced | 10,001–25,000 |
-| 1 | rare | 25,001+ or absent |
-
-## Key insights
-
-- **17.4% zero-missing** across 28 checked sources (4,355 words) — tied with ANIME_JDRAMA for highest zero-missing rate among all anchors.
-- N≤3 threshold yields ~7,712 high-confidence words.
-- Very strong overlap with ANIME_JDRAMA anchor — both are subtitle-based with similar genre coverage and nearly identical coverage statistics.
-- Good general-purpose anchor for learners who primarily watch Japanese video content.
+| Value | Tier     | Rank range        |
+| ----- | -------- | ----------------- |
+| 5     | basic    | 1–1,000           |
+| 4     | common   | 1,001–4,000       |
+| 3     | fluent   | 4,001–10,000      |
+| 2     | advanced | 10,001–25,000     |
+| 1     | rare     | 25,001+ or absent |
 
 ## Regenerating
 
