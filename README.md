@@ -4,12 +4,12 @@
 
 A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating 47+ sources into unified formats for language learning, linguistics, and NLP research.
 
-## Source References
+## References
 
 - [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of all frequency sources
 - [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Concise reference format
 
-### Main upstream sources
+### Main Data Source
 
 - https://github.com/Kuuuube/yomitan-dictionaries
 - https://github.com/MarvNC/yomitan-dictionaries
@@ -26,29 +26,47 @@ A comprehensive collection of Japanese word frequency datasets, analysis scripts
 - https://drive.google.com/file/d/1qHEfYHXjEp83i6PxxMlSxluFyQg2W8Up
 - https://docs.google.com/document/d/1IUWkvBxhoazBSTyRbdyRVk7hfKE51yorE86DCRNQVuw/edit
 
-## Vocabulary Tier System
+## Data Quality Notes
 
-Words are assigned to one of five frequency tiers based on their ranking across sources:
+[`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources. Key findings:
 
-| Tier            | Range          | Description                                 |
-| --------------- | -------------- | ------------------------------------------- |
-| 🌱 **basic**    | Top ~1,000     | Foundational and essential vocabulary       |
-| ☘️ **common**   | ~1,001–4,000   | Frequent in everyday speech and writing     |
-| 🌷 **fluent**   | ~4,001–10,000  | Expansive vocabulary for natural expression |
-| 📚 **advanced** | ~10,001–25,000 | Specialized terms                           |
-| 🦉 **rare**     | 25,000+        | Uncommon, or invalid terms                  |
+**Pipeline bugs fixed:**
+
+- Quite a few sources had duplicate word entries; the pipeline now keeps the minimum (most frequent) rank.
+- CEJC uses UniDic kanji lemma forms (其れ for それ, 為る for する). A kana fallback via JPDB v2 readings was added to bridge form mismatches.
+- AOZORA_BUNKO contains zero hiragana words by design (kanji-only source) and must be excluded from coverage checks.
+
+**Structurally incompatible sources:**
+Seven sources are excluded from all coverage quality checks because their -1s reflect structural properties, not word rarity:
+
+| Source               | Reason                                                                                                                     |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| AOZORA_BUNKO         | Kanji-only — all hiragana words absent by design                                                                           |
+| NIER                 | Single RPG — only ~10,000 unique tokens total                                                                              |
+| ILYASEMENOV          | Wikipedia dump with HTML entities (amp, gt, lt) as "words"                                                                 |
+| DD2_MIGAKU_NOVELS    | Curated learner deck — only ~16,500 words, not a frequency corpus                                                          |
+| HERMITDAVE_2016/2018 | MeCab morpheme-split tokenization — dictionary-form verbs do not exist as tokens (い at rank #1 is a morpheme, not a word) |
+| JPDB                 | Anime/game register — misses 36–42% of general vocabulary (e.g. 企業, 男性, 監督)                                          |
+
+After all 7 exclusions, 28 sources remain. Excluding JPDB alone doubled the zero-missing count.
+
+**Tokenization mismatch:** Even top-1,000 common words are missing from HERMITDAVE because morpheme-split tokenization atomizes verbs — `思う` → `思` + `っ` + `て` + `い` + `る`. This is structural and cannot be fixed by lookup.
+
+**Recommended coverage algorithm:** Use a threshold-based filter (`missing_count ≤ N` across the 28 checked sources) rather than requiring zero-missing. N=3 is the practical working threshold, yielding ~6,000–7,800 broadly common words per anchor. Zero-missing is ~15% overall but ~68–70% for the top-500 words.
+
+**Kana reading enrichment:** `hiragana` and `katakana` columns were added using JPDB v2 as primary source and CEJC UniDic readings as fallback. CEJC and JPDB-anchored files reach 100% coverage; media-anchored files (ANIME, NETFLIX, YOUTUBE) have 6–11% gaps, mostly conjugated verb forms and proper nouns not listed as dictionary headwords.
 
 ## Repository Structure
 
 ```
 word-frequency-rankings/
 ├── data/
-│   ├── ALL/          # Consolidated multi-source rankings (27,988 words × 62 rank columns)
+│   ├── ALL/          # Consolidated multi-source rankings (27,988 words × 60+ rank columns)
 │   ├── CEJC/         # Corpus of Everyday Japanese Conversation (~2.4M words, 577 conversations)
 │   ├── JPDBV2/       # JPDB v2.2 entertainment media frequency list (~497k entries)
 │   ├── RSPEER/       # rspeer/wordfreq library output (top 25,000 words)
 │   └── RAW/
-│       └── ___FILTERED/   # 47 standardized source datasets (DATA.csv per source)
+│       └── ___FILTERED/   # 46+ source datasets, each with a standardized DATA.csv
 ├── notes/            # Reference documentation for all frequency sources
 └── utils/            # Shared Python utilities (formatting helpers)
 ```
@@ -64,13 +82,15 @@ The primary output of this repo. Combines CEJC rankings with all 47 filtered sou
 Five anchor variants exist (`CEJC_anchor/`, `JPDB_anchor/`, `ANIME_JDRAMA_anchor/`, `NETFLIX_anchor/`, `YOUTUBE_FREQ_V3_anchor/`), each containing:
 
 - **`consolidated.csv`** — words x rank columns for that anchor
-- **`categorized.csv`** — same structure, ranks mapped to tier labels (basic/common/fluent/advanced/rare)
 
-Analysis scripts in `___experiments0/`:
+Analysis scripts and reports in `___experiments0/`:
 
+- **`data_generation/`** — pipeline scripts for building consolidated.csv from source DATA.csv files (`SCRIPT.py`, `make_anchored.py`)
 - **`coverage_analysis/analyze_coverage.py`** — per-source missing rate, zero-missing subsets, rank-band breakdown; outputs `.md` reports and filtered CSVs
 - **`coverage_analysis/filter_words.py`** — quick CEJC-anchor filter: words with any `-1` rank or any rare category
 - **`threshold_analysis/threshold_analysis.py`** — filters words present in all-but-N sources; outputs threshold CSVs and summary report
+- **`duplicate_detection/`** — script and report for identifying duplicate words within source files
+- **`source_insights/`** — scripts for cross-source analysis (correlations, coverage, media profiles, spoken vs. written breakdown, variance)
 
 ### CEJC — Everyday Spoken Japanese
 
@@ -80,8 +100,8 @@ Based on 200 hours of recorded spontaneous speech. Rich demographic breakdown by
 
 - **`CONSOLIDATED.csv`** — 29,534 entries x 36 rank columns (domain + demographic breakdowns)
 - **`CONSOLIDATED_UNIQUE.csv`** — 27,988 deduplicated entries
-- 8 insight reports in `insights/`
-- 13 analysis scripts in `scripts/`
+- insight reports in `insights/`
+- analysis scripts in `scripts/`
 
 See [data/CEJC/README.md](data/CEJC/README.md) for dataset details.
 
@@ -108,7 +128,7 @@ Generated from the [rspeer/wordfreq](https://github.com/rspeer/wordfreq) Python 
 
 See [data/RSPEER/INSIGHTS.md](data/RSPEER/INSIGHTS.md) for analysis results.
 
-### RAW/\_\_\_FILTERED — 47 Source Datasets + RSPEER
+### RAW/\_\_\_FILTERED — 46+ Source Datasets + RSPEER
 
 `data/RAW/___FILTERED/`
 
@@ -137,7 +157,7 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 | HERMITDAVE_2016            | Subtitle corpus (2016)                              |
 | HERMITDAVE_2018            | Subtitle corpus (2018)                              |
 | HINGSTON                   | Japanese internet word frequency (Leeds corpus)     |
-| H_FREQ                     | Community-compiled list                             |
+| H_FREQ                     | Adult content corpus                                |
 | ILYASEMENOV                | Wikipedia word frequency                            |
 | INNOCENT_RANKED            | Innocent Corpus (novels)                            |
 | JITEN_ANIME                | Anime-focused frequency                             |
@@ -185,7 +205,7 @@ pip install matplotlib wordfreq
 
 ### Running scripts
 
-All scripts are standalone and can be run from any directory:
+Scripts under `data/ALL/___experiments0/` can be run from the repo root. CEJC, RSPEER, and JPDB scripts must be run from their own directories:
 
 ```bash
 # Run coverage analysis across all anchors
@@ -202,7 +222,7 @@ cd data/CEJC/scripts
 python vocab_tier_breakdown.py
 python domain_profiles.py
 python demographic_analysis.py
-# ... (see data/CEJC/scripts/ for all 13 scripts)
+# ... (see data/CEJC/scripts/ for all scripts)
 
 # Generate RSPEER data and plots
 cd data/RSPEER

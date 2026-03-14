@@ -319,7 +319,7 @@ Zero-missing counts by anchor after all 7 exclusions (28 remaining sources check
 
 | Anchor          | Total words | Zero-missing | %     |
 | --------------- | ----------- | ------------ | ----- |
-| CEJC            | 27,988      | 3,478        | 12.4% |
+| CEJC            | 27,988      | 3,353        | 12.4% |
 | YOUTUBE_FREQ_V3 | 30,000      | 4,463        | 14.9% |
 | ANIME_JDRAMA    | 25,000      | 4,377        | 17.5% |
 | NETFLIX         | 25,000      | 4,355        | 17.4% |
