@@ -39,13 +39,14 @@ word-frequency-rankings/
 
 The primary output of this repo. Combines CEJC rankings with all 35 filtered sources into a single file.
 
-- **`consolidated.csv`** — 27,988 unique words x 49 rank columns (14 CEJC + 35 source)
-- **`categorized.csv`** — Same structure, with ranks mapped to tier labels (basic/common/fluent/advanced/rare)
-- **`SCRIPT.py`** — Generates `consolidated.csv` from CEJC + filtered sources
-- **`CATEGORIZED.py`** — Generates `categorized.csv` from `consolidated.csv`
-- **`check_duplicates.py`** — Detects and removes source columns with identical rankings
-- 5 insight reports in `insights/`
-- 5 analysis scripts in `scripts/`
+Five anchor variants exist (`CEJC_anchor/`, `JPDB_anchor/`, `ANIME_JDRAMA_anchor/`, `NETFLIX_anchor/`, `YOUTUBE_FREQ_V3_anchor/`), each containing:
+- **`consolidated.csv`** — words x rank columns for that anchor
+- **`categorized.csv`** — same structure, ranks mapped to tier labels (basic/common/fluent/advanced/rare)
+
+Analysis scripts in `___experiments/`:
+- **`coverage_analysis/analyze_coverage.py`** — per-source missing rate, zero-missing subsets, rank-band breakdown; outputs `.md` reports and filtered CSVs
+- **`coverage_analysis/filter_words.py`** — quick CEJC-anchor filter: words with any `-1` rank or any rare category
+- **`threshold_analysis/threshold_analysis.py`** — filters words present in all-but-N sources; outputs threshold CSVs and summary report
 
 ### CEJC — Everyday Spoken Japanese
 
@@ -147,21 +148,17 @@ pip install matplotlib wordfreq
 
 ### Running scripts
 
-All scripts are standalone and can be run from their respective directories:
+All scripts are standalone and can be run from any directory:
 
 ```bash
-# Generate consolidated multi-source rankings
-cd data/ALL
-python SCRIPT.py
-python CATEGORIZED.py
+# Run coverage analysis across all anchors
+python data/ALL/___experiments/coverage_analysis/analyze_coverage.py
 
-# Generate ALL cross-source analysis reports
-cd data/ALL/scripts
-python source_coverage.py > ../insights/source_coverage.md
-python source_correlations.py > ../insights/source_correlations.md
-python variance_analysis.py > ../insights/variance_analysis.md
-python media_profiles.py > ../insights/media_profiles.md
-python spoken_vs_written.py > ../insights/spoken_vs_written.md
+# Quick CEJC-anchor word filter (negative ranks / rare categories)
+python data/ALL/___experiments/coverage_analysis/filter_words.py
+
+# Threshold analysis across all anchors
+python data/ALL/___experiments/threshold_analysis/threshold_analysis.py
 
 # Generate CEJC analysis reports
 cd data/CEJC/scripts
