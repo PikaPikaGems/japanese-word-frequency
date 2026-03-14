@@ -622,7 +622,7 @@ All missing words contain Japanese characters — non-Japanese tokens are essent
 
 ### Handling unfixable words
 
-All remaining missing readings are filled with `"-"` (run `data/ALL/fill_unfixable_with_dash.py`). Final counts:
+All remaining missing readings are filled with `"-"`. Final counts:
 
 | Anchor          | Total words | Filled with "-" | %     |
 | --------------- | ----------- | --------------- | ----- |

@@ -1,5 +1,5 @@
 """
-Generates consolidated_anchor_*.csv and categorized_anchor_*.csv for non-CEJC anchors.
+Generates *_anchor/consolidated.csv and *_anchor/categorized.csv for non-CEJC anchors.
 Each file uses one source as the word list backbone, looking up every other source per word.
 CEJC is included as a plain source column (combined_rank only).
 
@@ -24,8 +24,8 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(BASE, "..", "..", "..", ".."))
 CEJC_FILE = os.path.join(ROOT, "data", "CEJC", "CONSOLIDATED_UNIQUE.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
-JPDB_RAW  = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
-CEJC_TSV  = os.path.join(ROOT, "data", "CEJC", "2_cejc_frequencylist_suw_token.tsv")
+JPDB_RAW = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
+CEJC_TSV = os.path.join(ROOT, "data", "CEJC", "2_cejc_frequencylist_suw_token.tsv")
 
 # (anchor_source_name, max_words_to_include)
 ANCHORS = [
@@ -35,15 +35,23 @@ ANCHORS = [
     ("NETFLIX", 25000),
 ]
 
+
 # ── Kana conversion ───────────────────────────────────────────────────────────
 def _hira_to_kata(text):
-    return "".join(chr(ord(c) + 0x60) if 0x3041 <= ord(c) <= 0x3096 else c for c in text)
+    return "".join(
+        chr(ord(c) + 0x60) if 0x3041 <= ord(c) <= 0x3096 else c for c in text
+    )
+
 
 def _kata_to_hira(text):
-    return "".join(chr(ord(c) - 0x60) if 0x30A1 <= ord(c) <= 0x30F6 else c for c in text)
+    return "".join(
+        chr(ord(c) - 0x60) if 0x30A1 <= ord(c) <= 0x30F6 else c for c in text
+    )
+
 
 def _is_pure_kana(word):
     return bool(word) and all(0x3040 <= ord(c) <= 0x30FF for c in word)
+
 
 # ── Build bidirectional kana/kanji lookup from JPDB raw data ─────────────────
 # kana_fallback:  kanji → kana  (for kanji anchor words looking up kana-keyed sources)
@@ -74,6 +82,7 @@ with open(CEJC_TSV, newline="", encoding="utf-8") as f:
         word, kata = row.get("語彙素", "").strip(), row.get("語彙素読み", "").strip()
         if word and kata and word not in _cejc_reading:
             _cejc_reading[word] = kata
+
 
 def get_reading(word):
     """Return (hiragana, katakana) for word, or ('-', '-') if unknown."""
@@ -144,7 +153,13 @@ for anchor_name, top_n in ANCHORS:
     anchor_words = sorted(anchor_source.items(), key=lambda x: x[1])[:top_n]
 
     other_names = [s for s in sorted(all_sources) if s != anchor_name]
-    out_cols = ["word", "hiragana", "katakana", f"{anchor_name}_rank", "CEJC_rank"] + other_names
+    out_cols = [
+        "word",
+        "hiragana",
+        "katakana",
+        f"{anchor_name}_rank",
+        "CEJC_rank",
+    ] + other_names
 
     rows = []
     for word, anchor_rank in anchor_words:
@@ -153,8 +168,12 @@ for anchor_name, top_n in ANCHORS:
         other_vals = [lookup(all_sources[s], word) for s in other_names]
         rows.append([word, hira, kata, anchor_rank, cejc_r] + other_vals)
 
-    consol_path = os.path.join(BASE, "..", "..", f"{anchor_name}_anchor", "consolidated.csv")
-    categ_path = os.path.join(BASE, "..", "..", f"{anchor_name}_anchor", "categorized.csv")
+    consol_path = os.path.join(
+        BASE, "..", "..", f"{anchor_name}_anchor", "consolidated.csv"
+    )
+    categ_path = os.path.join(
+        BASE, "..", "..", f"{anchor_name}_anchor", "categorized.csv"
+    )
 
     with open(consol_path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -169,7 +188,9 @@ for anchor_name, top_n in ANCHORS:
             w.writerow([row[0], row[1], row[2]] + [categorize(int(v)) for v in row[3:]])
 
     missing = sum(1 for row in rows if row[1] == "-")
-    pct     = missing / len(rows) * 100 if rows else 0
-    print(f"Anchor {anchor_name}: {len(rows)} words written  |  kana missing: {missing} ({pct:.1f}%)")
+    pct = missing / len(rows) * 100 if rows else 0
+    print(
+        f"Anchor {anchor_name}: {len(rows)} words written  |  kana missing: {missing} ({pct:.1f}%)"
+    )
 
 print("Done.")
