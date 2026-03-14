@@ -301,19 +301,19 @@ Each source added to EXCLUDE improves the zero-missing count because words that 
 | None | 330 | — |
 | + AOZORA_BUNKO | ~330 (minimal change) | — |
 | + NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS | 1,341 | 1,975 |
-| + HERMITDAVE_2016, HERMITDAVE_2018 | **1,828** | **2,708** |
+| + HERMITDAVE_2016, HERMITDAVE_2018 | 1,828 | 2,708 |
+| + JPDB | **3,478** | **4,463** |
 
-Adding the two HERMITDAVE sources improved zero-missing by ~36–37% relative to the 4-source exclusion set.
+Adding JPDB improved zero-missing by ~65–90% relative to the 6-source exclusion set (see §11).
 
-Zero-missing counts by anchor after all 6 exclusions (29 remaining sources checked):
+Zero-missing counts by anchor after all 7 exclusions (28 remaining sources checked):
 
 | Anchor | Total words | Zero-missing | % |
 |---|---|---|---|
-| CEJC | 27,988 | 1,828 | 6.5% |
-| JPDB | 24,231 | 1,642 | 6.8% |
-| YOUTUBE_FREQ_V3 | 30,000 | 2,708 | 9.0% |
-| ANIME_JDRAMA | 25,000 | 2,643 | 10.6% |
-| NETFLIX | 25,000 | 2,611 | 10.4% |
+| CEJC | 27,988 | 3,478 | 12.4% |
+| YOUTUBE_FREQ_V3 | 30,000 | 4,463 | 14.9% |
+| ANIME_JDRAMA | 25,000 | 4,377 | 17.5% |
+| NETFLIX | 25,000 | 4,355 | 17.4% |
 
 ---
 
@@ -324,7 +324,7 @@ Rather than requiring a word to appear in all remaining sources (which ~85–93%
 **Algorithm:**
 
 ```
-EXCLUDE = {AOZORA_BUNKO, NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018}
+EXCLUDE = {AOZORA_BUNKO, NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018, JPDB}
 
 for each word:
     missing_count = count of -1s across all source columns not in EXCLUDE
@@ -333,7 +333,7 @@ filter_words_at_threshold(N):
     return words where missing_count ≤ N
 ```
 
-**Choosing N** (29 sources remain after exclusion):
+**Choosing N** (28 sources remain after exclusion):
 
 | N | Meaning |
 |---|---|
@@ -345,6 +345,51 @@ filter_words_at_threshold(N):
 **No weighting is needed.** A simple count is transparent and reproducible. If you want to be more principled, you could split sources into tiers (broad corpus vs. narrow domain) and require coverage in all broad-corpus sources while tolerating misses in narrow ones — but that adds complexity without clear benefit at this stage.
 
 To produce these filtered lists, run `analyze_coverage.py` (which already computes `missing_count` per word in the distribution table) and filter the resulting `consolidated_anchor_*.csv` at the chosen threshold.
+
+---
+
+## 11. JPDB Excluded: Anime/Game Corpus Misses General Vocabulary
+
+After applying the 6-source exclusion set, JPDB was the single largest non-excluded culprit: 36–42% of "high-frequency" words (those present in ≤2 other sources as missing) were absent from JPDB depending on anchor.
+
+**Initial hypothesis:** JPDB has 25,000 words — very generous. If a word is common enough to appear in 27+ of 29 other sources, it should surely be in JPDB's top 25k.
+
+**Investigation:** A threshold analysis was run to find high-frequency words (missing from ≤2 checked sources) that were absent in JPDB. Sample of words absent in JPDB but present in 27–29 other sources:
+
+- 男性 (man/male) — YOUTUBE rank 1,100
+- 企業 (company/enterprise) — YOUTUBE rank 432
+- 監督 (director/coach) — YOUTUBE rank 1,808
+- 携帯 (mobile phone) — YOUTUBE rank 1,817
+- 妖怪 (yokai/monster) — YOUTUBE rank 8,020
+- 不満 (dissatisfaction) — YOUTUBE rank 3,710
+
+These are all words any fluent Japanese speaker uses, common in real conversation, YouTube, dramas, and general writing.
+
+**Root cause confirmed:** The JPDB Yomitan source (Shoui/MarvNC) ranks these words by their frequency in JPDB's anime/game/manga/visual novel corpus — a completely different register from real-world Japanese. Checked directly against the raw Yomitan dictionary:
+
+```
+男性 (だんせい)   → Yomitan rank 180,271   (well beyond top 25k)
+妖怪 (ようかい)   → Yomitan rank 89,185    (beyond top 25k)
+企業 (きぎょう)   → Yomitan rank 183,459  ❌ (explicitly not in corpus)
+監督 (かんとく)   → Yomitan rank 122,398   (beyond top 25k)
+携帯 (けいたい)   → Yomitan rank 122,775   (beyond top 25k)
+不満 (ふまん)    → Yomitan rank 95,422    (beyond top 25k)
+```
+
+The kana lookup is working correctly — `男性 → だんせい` resolves fine. These kana forms are simply not in JPDB's top 25k because the words themselves are rare in anime/game scripts. Anime characters say 俺 or a character's name, not 男性. 企業 is explicitly flagged absent — corporate vocabulary does not appear in the JPDB corpus.
+
+**Why this is structurally different from NAROU or NOVELS:** Other domain-specific sources (NAROU = light novels, NOVELS = literary fiction) also cover a narrow domain yet miss only ~0.5% of high-frequency words. JPDB misses 36–42% because its source material — anime dialogue, visual novel scripts, game text — is a spoken/fictional register that systematically avoids the formal, real-world vocabulary used everywhere else.
+
+**Impact of excluding JPDB:**
+
+| Anchor | Zero-missing (6 excl) | Zero-missing (7 excl, +JPDB) | Change |
+|---|---|---|---|
+| ANIME_JDRAMA | 2,643 (10.6%) | 4,377 (17.5%) | +65% |
+| CEJC | 1,828 (6.5%) | 3,478 (12.4%) | +90% |
+| NETFLIX | 2,611 (10.4%) | 4,355 (17.4%) | +67% |
+| YOUTUBE_FREQ_V3 | 2,708 (9.0%) | 4,463 (14.9%) | +66% |
+
+Adding JPDB to EXCLUDE roughly doubles the zero-missing count, consistent with the HERMITDAVE impact. 28 sources remain after the full 7-source exclusion set.
 
 ---
 

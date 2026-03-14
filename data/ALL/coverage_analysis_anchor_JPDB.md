@@ -1,7 +1,7 @@
 # Coverage Analysis — Anchor: JPDB
 
 Total words: 24231  |  Source columns: 35
-Excluded from quality checks: AOZORA_BUNKO, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018, ILYASEMENOV, NIER  (29 remaining)
+Excluded from quality checks: AOZORA_BUNKO, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018, ILYASEMENOV, JPDB, NIER  (29 remaining)
 
 ## Per-Source Missing Rate
 
@@ -56,7 +56,7 @@ YOUTUBE_FREQ_V3                        6382   26.3%  [###########---------------
    25000    24231            1642    6.8%
 
 ## Distribution: How Many Sources Each Word Is Missing From
-(29 columns checked, excluded: AOZORA_BUNKO, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018, ILYASEMENOV, NIER)
+(29 columns checked, excluded: AOZORA_BUNKO, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018, ILYASEMENOV, JPDB, NIER)
 
  Missing    Words       %  Bar
 ----------------------------------------------------------------------

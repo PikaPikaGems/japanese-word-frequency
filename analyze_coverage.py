@@ -20,6 +20,7 @@ EXCLUDE = {
     "DD2_MIGAKU_NOVELS",  # curated learner deck, only ~16k words
     "HERMITDAVE_2016",    # MeCab morpheme-split — dictionary-form verbs don't exist as tokens
     "HERMITDAVE_2018",    # same source/tokenization as HERMITDAVE_2016
+    "JPDB",               # anime/game corpus — misses general vocabulary (男性, 企業, 監督 all beyond rank 25k)
 }
 RANK_BANDS = [500, 1000, 3000, 5000, 10000, 25000]  # for rank-band zero-missing breakdown
 
