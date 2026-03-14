@@ -3,8 +3,8 @@ import csv
 DATA_DIR = "data/ALL"
 EXCLUDE = {"AOZORA_BUNKO"}
 
-# consolidated.csv: words with at least one -1 rank (excluding AOZORA_BUNKO)
-with open(f"{DATA_DIR}/consolidated.csv") as f:
+# consolidated_anchor_CEJC.csv: words with at least one -1 rank (excluding AOZORA_BUNKO)
+with open(f"{DATA_DIR}/consolidated_anchor_CEJC.csv") as f:
     reader = csv.reader(f)
     header = next(reader)
     check_indices = [i for i, col in enumerate(header) if i > 0 and col not in EXCLUDE]
@@ -18,7 +18,7 @@ with open(f"{DATA_DIR}/has_negative_rank.csv", "w", newline="") as f:
 print(f"Words with at least one -1 rank (excl. AOZORA_BUNKO): {len(rows)}")
 
 # categorized.csv: words with at least one RARE (1) category (excluding AOZORA_BUNKO)
-with open(f"{DATA_DIR}/categorized.csv") as f:
+with open(f"{DATA_DIR}/categorized_anchor_CEJC.csv") as f:
     reader = csv.reader(f)
     header = next(reader)
     check_indices = [i for i, col in enumerate(header) if i > 0 and col not in EXCLUDE]

@@ -1,98 +1,150 @@
 """
-Analyzes consolidated.csv for data coverage:
-  - Task 1: words with zero -1s across all sources (excl. AOZORA_BUNKO) -> zero_missing.csv
-  - Task 3: per-source % missing, restricted to top-25k CEJC words -> coverage_analysis.md
-  - Task 5: distribution of how many sources each word is missing from -> coverage_analysis.md
+Runs coverage analysis on every consolidated_anchor_*.csv in data/ALL/.
+For each anchor, produces:
+  - coverage_analysis_anchor_{NAME}.md  (per-source missing %, distribution bar chart)
 """
 
 import csv
+import glob
 import os
 
 csv.field_size_limit(10_000_000)
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-INPUT = os.path.join(BASE, "data", "ALL", "consolidated.csv")
-ZERO_MISSING_OUT = os.path.join(BASE, "data", "ALL", "zero_missing.csv")
-REPORT_OUT = os.path.join(BASE, "data", "ALL", "coverage_analysis.md")
-
-CEJC_COLS = {
-    "combined_rank", "small_talk_rank", "consultation_rank", "meeting_rank",
-    "class_rank", "outdoors_rank", "school_rank", "transportation_rank",
-    "public_commercial_rank", "home_rank", "indoors_rank", "workplace_rank",
-    "male_rank", "female_rank",
-}
-EXCLUDE = {"AOZORA_BUNKO"}
-
-with open(INPUT, newline="", encoding="utf-8") as f:
-    reader = csv.DictReader(f)
-    all_cols = reader.fieldnames
-    source_cols = [c for c in all_cols if c != "word" and c not in CEJC_COLS]
-    check_cols = [c for c in source_cols if c not in EXCLUDE]
-    rows = list(reader)
-
-total = len(rows)
-
-# ── Task 1: zero missing ───────────────────────────────────────────────────────
-zero_rows = [r for r in rows if all(r[c] != "-1" for c in check_cols)]
-with open(ZERO_MISSING_OUT, "w", newline="", encoding="utf-8") as f:
-    writer = csv.DictWriter(f, fieldnames=all_cols)
-    writer.writeheader()
-    writer.writerows(zero_rows)
-print(f"Task 1: {len(zero_rows)} words with zero -1s -> zero_missing.csv")
-
-# ── Task 3: per-source missing % (top-25k CEJC only) ─────────────────────────
-top25k = [r for r in rows if r["combined_rank"] != "-1" and int(r["combined_rank"]) <= 25000]
-n25 = len(top25k)
-
-source_missing = {}
-for col in source_cols:
-    missing = sum(1 for r in top25k if r[col] == "-1")
-    source_missing[col] = missing
-
-# ── Task 5: distribution of missing-source count per word ────────────────────
-def count_missing(row):
-    return sum(1 for c in check_cols if row[c] == "-1")
-
-missing_counts = [count_missing(r) for r in rows]
-max_missing = max(missing_counts)
-dist = [0] * (max_missing + 1)
-for c in missing_counts:
-    dist[c] += 1
-
-# ── Write report ──────────────────────────────────────────────────────────────
+DATA_DIR = os.path.join(BASE, "data", "ALL")
 BAR_WIDTH = 40
+EXCLUDE = {
+    "AOZORA_BUNKO",       # kanji-only source — structurally no hiragana words
+    "NIER",               # single game, only ~10k words total
+    "ILYASEMENOV",        # Wikipedia dump with HTML entities, wrong domain
+    "DD2_MIGAKU_NOVELS",  # curated learner deck, only ~16k words
+}
+RANK_BANDS = [500, 1000, 3000, 5000, 10000, 25000]  # for rank-band zero-missing breakdown
 
-def bar(val, total_val):
-    filled = round(BAR_WIDTH * val / total_val) if total_val else 0
+
+def bar(val: int, total: int) -> str:
+    filled = round(BAR_WIDTH * val / total) if total else 0
     return "[" + "#" * filled + "-" * (BAR_WIDTH - filled) + "]"
 
-lines = []
-lines.append("# Coverage Analysis")
-lines.append(f"\nTotal words (CEJC): {total}  |  Top-25k CEJC words: {n25}  |  Source columns: {len(source_cols)} (excl. AOZORA_BUNKO: {len(check_cols)})\n")
 
-# Task 3 table
-lines.append("## Per-Source Missing Rate (top-25k CEJC words)\n")
-lines.append(f"{'Source':<35} {'Missing':>7}  {'%':>6}  Bar")
-lines.append("-" * 80)
-for col, miss in sorted(source_missing.items(), key=lambda x: -x[1]):
-    pct = 100 * miss / n25
-    note = " [EXCLUDED]" if col in EXCLUDE else ""
-    lines.append(f"{col:<35} {miss:>7}  {pct:>5.1f}%  {bar(miss, n25)}{note}")
+for consol_path in sorted(glob.glob(os.path.join(DATA_DIR, "consolidated_anchor_*.csv"))):
+    anchor_name = os.path.basename(consol_path).removeprefix("consolidated_anchor_").removesuffix(".csv")
+    categ_path = os.path.join(DATA_DIR, f"categorized_anchor_{anchor_name}.csv")
+    report_path = os.path.join(DATA_DIR, f"coverage_analysis_anchor_{anchor_name}.md")
+    zero_path = os.path.join(DATA_DIR, f"zero_missing_anchor_{anchor_name}.csv")
+    neg_path = os.path.join(DATA_DIR, f"has_negative_rank_anchor_{anchor_name}.csv")
+    rare_path = os.path.join(DATA_DIR, f"has_rare_category_anchor_{anchor_name}.csv")
 
-# Task 5 distribution
-lines.append("\n## Distribution: How Many Sources Is Each Word Missing From?")
-lines.append(f"(Excludes AOZORA_BUNKO; {len(check_cols)} source columns checked)\n")
-lines.append(f"{'Missing':>8}  {'Words':>7}  {'%':>6}  Bar")
-lines.append("-" * 70)
-for i, count in enumerate(dist):
-    pct = 100 * count / total
-    lines.append(f"{i:>8}  {count:>7}  {pct:>5.1f}%  {bar(count, total)}")
+    if not os.path.exists(categ_path):
+        print(f"Skipping {anchor_name} — no matching categorized file")
+        continue
 
-lines.append(f"\nWords with zero -1s: {dist[0]}  ({100*dist[0]/total:.1f}%)")
+    # ── Load consolidated ────────────────────────────────────────────────────
+    with open(consol_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        header = reader.fieldnames
+        # Source columns: everything except "word" and the anchor rank column
+        anchor_col = f"{anchor_name}_rank"
+        source_cols = [c for c in header if c != "word" and c != anchor_col]
+        check_cols = [c for c in source_cols if c not in EXCLUDE]
+        rows = list(reader)
 
-report = "\n".join(lines)
-with open(REPORT_OUT, "w", encoding="utf-8") as f:
-    f.write(report)
+    total = len(rows)
 
-print(f"Task 3 + 5: report written -> coverage_analysis.md")
-print(report)
+    # ── zero_missing ─────────────────────────────────────────────────────────
+    zero_rows = [r for r in rows if all(r[c] != "-1" for c in check_cols)]
+    with open(zero_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=header)
+        writer.writeheader()
+        writer.writerows(zero_rows)
+
+    # ── has_negative_rank ────────────────────────────────────────────────────
+    neg_rows = [r for r in rows if any(r[c] == "-1" for c in check_cols)]
+    with open(neg_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=header)
+        writer.writeheader()
+        writer.writerows(neg_rows)
+
+    # ── has_rare_category (from categorized file) ────────────────────────────
+    with open(categ_path, newline="", encoding="utf-8") as f:
+        cat_reader = csv.DictReader(f)
+        cat_header = cat_reader.fieldnames
+        cat_check = [c for c in cat_header if c != "word" and c != anchor_col and c not in EXCLUDE]
+        rare_rows = [r for r in cat_reader if any(r[c] == "1" for c in cat_check)]
+    with open(rare_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=cat_header)
+        writer.writeheader()
+        writer.writerows(rare_rows)
+
+    # ── Per-source missing rate ───────────────────────────────────────────────
+    source_missing = {
+        col: sum(1 for r in rows if r[col] == "-1")
+        for col in source_cols
+    }
+
+    # ── Distribution of missing-source count per word ────────────────────────
+    def count_missing(row):
+        return sum(1 for c in check_cols if row[c] == "-1")
+
+    missing_counts = [count_missing(r) for r in rows]
+    max_m = max(missing_counts) if missing_counts else 0
+    dist = [0] * (max_m + 1)
+    for c in missing_counts:
+        dist[c] += 1
+
+    # ── Rank-band zero-missing breakdown ─────────────────────────────────────
+    # rows are sorted by anchor rank already (rank 1 first)
+    band_stats = []
+    for band in RANK_BANDS:
+        band_rows = rows[:band]
+        if not band_rows:
+            continue
+        n = len(band_rows)
+        z = sum(1 for r in band_rows if all(r[c] != "-1" for c in check_cols))
+        band_stats.append((band, n, z))
+
+    # ── Write report ──────────────────────────────────────────────────────────
+    excl_note = ", ".join(sorted(EXCLUDE))
+    lines = [
+        f"# Coverage Analysis — Anchor: {anchor_name}",
+        f"\nTotal words: {total}  |  Source columns: {len(source_cols)}",
+        f"Excluded from quality checks: {excl_note}  ({len(check_cols)} remaining)\n",
+        "## Per-Source Missing Rate\n",
+        f"{'Source':<35} {'Missing':>7}  {'%':>6}  Bar",
+        "-" * 80,
+    ]
+    for col, miss in sorted(source_missing.items(), key=lambda x: -x[1]):
+        pct = 100 * miss / total
+        note = " [EXCLUDED]" if col in EXCLUDE else ""
+        lines.append(f"{col:<35} {miss:>7}  {pct:>5.1f}%  {bar(miss, total)}{note}")
+
+    lines += [
+        f"\n## Zero-Missing by Rank Band",
+        f"(How many of the top-N words by {anchor_name} rank have zero -1s across all {len(check_cols)} checked sources)\n",
+        f"{'Top-N':>8}  {'Total':>7}  {'Zero-missing':>14}  {'%':>6}",
+        "-" * 50,
+    ]
+    for band, n, z in band_stats:
+        pct = 100 * z / n
+        lines.append(f"{band:>8}  {n:>7}  {z:>14}  {pct:>5.1f}%")
+
+    lines += [
+        f"\n## Distribution: How Many Sources Each Word Is Missing From",
+        f"({len(check_cols)} columns checked, excluded: {excl_note})\n",
+        f"{'Missing':>8}  {'Words':>7}  {'%':>6}  Bar",
+        "-" * 70,
+    ]
+    for i, count in enumerate(dist):
+        pct = 100 * count / total
+        lines.append(f"{i:>8}  {count:>7}  {pct:>5.1f}%  {bar(count, total)}")
+
+    lines.append(f"\nWords with zero -1s: {dist[0]}  ({100*dist[0]/total:.1f}%)")
+    lines.append(f"Words with at least one -1: {total - dist[0]}  ({100*(total-dist[0])/total:.1f}%)")
+    lines.append(f"Words with at least one RARE category: {len(rare_rows)}  ({100*len(rare_rows)/total:.1f}%)")
+
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+
+    print(f"[{anchor_name}] {total} words | zero-missing: {dist[0]} | report -> {os.path.basename(report_path)}")
+
+print("\nAll anchors analyzed.")
