@@ -190,21 +190,44 @@ python process.py
 
 ([Full coverage analysis](data/RSPEER/INSIGHTS.md))
 
-### Cross-source agreement is only partial
+### Cross-source agreement is only partial — and datasets index words differently
 
-Only ~49% of RSPEER's top 25k overlaps with JPDB, and ~46% with CEJC — reflecting how differently spoken conversation, entertainment media, and general web text rank vocabulary. No single list covers everything.
+The three main sources use different word representations: wordfreq uses surface/written forms; JPDB stores both a `term` (kanji form) and `reading` (kana) and ranks by **reading frequency**, not written frequency (it also tracks `kana_frequency` separately); CEJC uses 語彙素 (canonical lexeme/headword form, e.g. 食べる not 食べた) alongside its kana reading (語彙素読み). Direct word-for-word overlap is therefore an undercount of true conceptual overlap.
+
+Even accounting for this, pairwise overlaps are stable and low at every cutoff:
+
+| Comparison        | Top 5k | Top 10k | Top 25k |
+|-------------------|--------|---------|---------|
+| RSPEER ∩ JPDB     | 48.2%  | 48.4%   | 49.0%   |
+| RSPEER ∩ CEJC     | 47.9%  | 46.2%   | 44.1%   |
+| JPDB ∩ CEJC       | 42.6%  | 39.7%   | 39.4%   |
+| All three         | 32.2%  | 31.8%   | 31.6%   |
+
+Only ~32% of any tier is shared across all three sources — a consistent gap from 5k through 25k, not a low-frequency artifact. No single list covers everything.
 
 ([Cross-dataset comparison](data/RSPEER/INSIGHTS.md))
 
-### Kanji dominates high-frequency words
+### Kanji dominates at every tier; hiragana and katakana diverge with frequency
 
-Script type breakdown across RSPEER's top 25k: 45.8% kanji, 18.9% katakana, 18.3% mixed kanji+kana, 10.2% hiragana. Katakana (loanwords) cluster more in the middle and lower frequency tiers.
+Script type composition shifts significantly depending on which tier cutoff you examine:
+
+| Script   | Top 1k | Top 5k | Top 10k | Top 25k |
+|----------|--------|--------|---------|---------|
+| Kanji    | 45.9%  | 49.5%  | 48.6%   | 45.8%   |
+| Mixed    | 14.8%  | 18.2%  | 18.5%   | 18.3%   |
+| Hiragana | 29.0%  | 14.6%  | 11.8%   | 10.2%   |
+| Katakana |  4.6%  | 13.8%  | 16.7%   | 18.9%   |
+| Other    |  5.7%  |  3.8%  |  4.4%   |  6.8%   |
+
+Hiragana collapses from 29% in the top 1k to 10% by top 25k — grammatical function words (particles, copulas) are uniquely concentrated at the very top. Katakana (loanwords) grows from 4.6% to 18.9% — loanwords accumulate progressively in lower-frequency ranges. Kanji is consistently the largest category at every cutoff.
 
 ([Script breakdown analysis](data/RSPEER/INSIGHTS.md))
 
-### Gender differences in CEJC speech are real but vocabulary-specific
+### Gender differences in CEJC speech: some robust, some confounded
 
-Male speech strongly favors rough first-person pronouns (俺, 僕), work/group vocabulary (会議, 担当, チーム), and masculine sentence-final particles (ぞ, ぜ). Female speech strongly favors 私 (vs 俺/僕), descriptive adjectives (可愛い, 素敵, 美味しい, 優しい), and food/domestic vocabulary (野菜, 卵, 菓子). Core function words show very little gender skew.
+Some findings are well-supported and linguistically established: gendered first-person pronouns (俺/僕 strongly male, 私 strongly female) and gendered sentence-final particles (ぞ/ぜ male, かしら female) show extreme M/F PMW ratios (3–30×). These reflect real speech style differences.
+
+However, the methodology (raw PMW ratio across all speech by gender) does **not** control for conversation domain. Work/meeting vocabulary (会議, 担当, チーム) skewing male, and food/home vocabulary (野菜, 卵, 菓子) skewing female, may reflect which domains male vs. female participants in this corpus happened to participate in — not an intrinsic property of how men and women speak. Core function words show very little gender skew regardless.
 
 ([Demographic analysis](data/CEJC/insights/demographic_analysis.md))
 

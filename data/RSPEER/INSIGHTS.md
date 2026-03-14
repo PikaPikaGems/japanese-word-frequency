@@ -56,21 +56,21 @@ The top 1k is dominated by 1- and 2-character words (particles, basic verbs, com
 
 ![Script Breakdown](plot_script_breakdown.png)
 
-Overall composition of the 25,000-word list:
+Cumulative script type composition at each frequency cutoff:
 
-| Script   | Share  |
-|----------|--------|
-| Kanji    | 45.8%  |
-| Katakana | 18.9%  |
-| Mixed    | 18.3%  |
-| Hiragana | 10.2%  |
-| Other    | 6.8%   |
+| Script   | Top 1k | Top 5k | Top 10k | Top 25k |
+|----------|--------|--------|---------|---------|
+| Kanji    | 45.9%  | 49.5%  | 48.6%   | 45.8%   |
+| Mixed    | 14.8%  | 18.2%  | 18.5%   | 18.3%   |
+| Hiragana | 29.0%  | 14.6%  | 11.8%   | 10.2%   |
+| Katakana |  4.6%  | 13.8%  | 16.7%   | 18.9%   |
+| Other    |  5.7%  |  3.8%  |  4.4%   |  6.8%   |
 
-Key observations from the stacked bar chart:
-- **Hiragana dominates the top 1k** (~29% share) — particles, copulas, and grammatical function words sit at the very top of the frequency list.
-- **Hiragana share collapses sharply past rank 1k** — dropping to ~10% in the 1k–5k band as lexical vocabulary takes over.
-- **Katakana (loanwords) peaks in the 10k–25k tier** (~29%), confirming the hypothesis that loanwords cluster in lower-frequency ranges.
-- **Kanji is consistently dominant across all tiers** (40–50%), reflecting how central kanji-based vocabulary is at every level.
+Key observations:
+- **Hiragana plunges from 29% (top 1k) to 10% (top 25k)** — particles, copulas, and grammatical function words cluster at the very top of the frequency list and are nearly absent from lower tiers.
+- **Katakana grows from 4.6% (top 1k) to 18.9% (top 25k)** — loanwords are rare at the core but accumulate steadily in lower-frequency ranges.
+- **Kanji is consistently dominant** — it peaks around 49–50% in the top 5k–10k range and stays the largest single script type at every tier.
+- **Mixed (kanji+kana) is stable** — roughly 15–18% across all cutoffs, reflecting compound and suffixed forms that appear at all frequency levels.
 
 ---
 
@@ -97,12 +97,26 @@ For building filtered vocabulary lists:
 
 ![Cross-Dataset Comparison](plot_cross_dataset_comparison.png)
 
-| Comparison      | Overlap |
-|-----------------|---------|
-| wordfreq ∩ JPDB | 12,258 / ~25k words |
-| wordfreq ∩ CEJC | 11,581 / ~25k words |
+### Important: datasets index words differently
 
-Only ~49% of wordfreq words appear in JPDB and ~46% in CEJC. The scatter plots show decent correlation along the diagonal for high-frequency words, but large divergence at lower ranks (red/yellow points far from the diagonal).
+These three sources do not use the same word representation, which directly affects overlap counts:
+
+- **wordfreq (RSPEER)** — surface/written forms as they appear in web text
+- **JPDB** — has both `term` (written/kanji form) and `reading` (kana). Ranked by `reading_frequency` — how often the word is read, not necessarily written as kanji. Also tracks `kana_frequency` separately. ~3% of top 25k words are more commonly seen in kana than kanji form.
+- **CEJC** — uses 語彙素 (canonical lexeme/dictionary headword form, e.g. 食べる rather than 食べた), and stores 語彙素読み (kana reading) alongside it. Comparison is against the canonical form, not surface variants.
+
+Because JPDB ranks by reading frequency, bare kanji (like 先, 一, 白) can rank very low in JPDB even when they are highly frequent in written text — their reading frequency is spread across multiple kana readings. This fundamentally limits direct word-for-word comparison.
+
+### Overlap at different tier cutoffs
+
+| Comparison        | Top 5k | Top 10k | Top 25k |
+|-------------------|--------|---------|---------|
+| RSPEER ∩ JPDB     | 48.2%  | 48.4%   | 49.0%   |
+| RSPEER ∩ CEJC     | 47.9%  | 46.2%   | 44.1%   |
+| JPDB ∩ CEJC       | 42.6%  | 39.7%   | 39.4%   |
+| All three (RSPEER ∩ JPDB ∩ CEJC) | 32.2% | 31.8% | 31.6% |
+
+Overlap percentages are remarkably stable across all tier sizes — roughly half of any source's top N overlaps with another source, and only ~32% is shared across all three. This consistency holds from 5k to 25k, suggesting the structural gap between sources is not just a low-frequency artifact.
 
 Top 10 words with largest wordfreq vs JPDB rank divergence:
 
@@ -119,4 +133,4 @@ Top 10 words with largest wordfreq vs JPDB rank divergence:
 | 落とし | 2,012       | 24,884    | 22,872    |
 | 界    | 1,699        | 24,529    | 22,830    |
 
-These divergences are primarily because JPDB indexes words by **reading** (kana form), so bare kanji like 先, 一, 白 appear with very low reading frequency in JPDB even though they're common in written text. This is a fundamental difference in tokenization philosophy between the two sources.
+These divergences are primarily because JPDB ranks by **reading frequency** (kana form), so bare kanji like 先, 一, 白 appear with very low reading frequency in JPDB even though they're common in written text. This is a fundamental difference in indexing philosophy between the two sources.
