@@ -99,10 +99,8 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 | BCCWJ           | 75.2%   | 74.1%  | 63.9%  | 52.5%  | 29.6%   | 47.4%   |
 | ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 30.6%   | 46.4%   |
 | RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 31.6%   | 46.3%   |
-| CEJC            | 71.8%   | 68.5%  | 54.3%  | 43.7%  | 25.5%\* | 39.7%\* |
+| CEJC            | 71.8%   | 68.5%  | 54.3%  | 43.7%  | 25.5%   | 39.7%   |
 | JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 10.2%   | 17.6%   |
-
-\* CEJC's numbers are deflated because CEJC's consolidated CSV has no single `CEJC_rank` column — it has 14 sub-corpus columns (small*talk_rank, meeting_rank, etc.) that each count as a separate check. Zero-missing requires a word to appear in every CEJC sub-corpus \_and* all external sources, making it a stricter 51-source test vs 38 for all other anchors.
 
 ## Repository Structure
 

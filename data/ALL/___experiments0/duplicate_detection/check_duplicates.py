@@ -15,9 +15,10 @@ CONSOLIDATED = os.path.join(BASE, "consolidated.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
 
 # Columns that are NOT source rank columns (skip these in duplicate check)
-CEJC_PREFIX = {"word", "cejc_combined_rank", "small_talk_rank", "medical_consultation_rank",
-                "workplace_rank", "school_rank", "family_rank", "outing_rank",
-                "male_rank", "female_rank"}
+CEJC_PREFIX = {"word", "cejc_combined_rank", "cejc_small_talk_rank", "cejc_consultation_rank",
+                "cejc_meeting_rank", "cejc_class_rank", "cejc_outdoors_rank", "cejc_school_rank",
+                "cejc_transportation_rank", "cejc_public_commercial_rank", "cejc_home_rank",
+                "cejc_indoors_rank", "cejc_workplace_rank", "cejc_male_rank", "cejc_female_rank"}
 
 
 def load_consolidated():

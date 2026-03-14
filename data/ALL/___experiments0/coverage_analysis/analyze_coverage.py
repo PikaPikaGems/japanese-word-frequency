@@ -9,7 +9,7 @@ import glob
 import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-from anchor_utils import resolve_anchor_col
+from anchor_utils import get_anchor_family_cols
 
 csv.field_size_limit(10_000_000)
 
@@ -53,9 +53,9 @@ for anchor_dir in sorted(glob.glob(os.path.join(DATA_DIR, "*_anchor"))):
     with open(consol_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
-        # Source columns: everything except "word" and the anchor rank column
-        anchor_col = resolve_anchor_col(anchor_name, header)
-        source_cols = [c for c in header if c != "word" and c != anchor_col]
+        # Source columns: everything except "word" and the anchor's own rank columns
+        anchor_family = get_anchor_family_cols(anchor_name, header)
+        source_cols = [c for c in header if c != "word" and c not in anchor_family]
         check_cols = [c for c in source_cols if c not in EXCLUDE]
         rows = list(reader)
 
@@ -79,7 +79,7 @@ for anchor_dir in sorted(glob.glob(os.path.join(DATA_DIR, "*_anchor"))):
     with open(categ_path, newline="", encoding="utf-8") as f:
         cat_reader = csv.DictReader(f)
         cat_header = cat_reader.fieldnames
-        cat_check = [c for c in cat_header if c != "word" and c != anchor_col and c not in EXCLUDE]
+        cat_check = [c for c in cat_header if c != "word" and c not in anchor_family and c not in EXCLUDE]
         rare_rows = [r for r in cat_reader if any(r[c] == "1" for c in cat_check)]
     with open(rare_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=cat_header)

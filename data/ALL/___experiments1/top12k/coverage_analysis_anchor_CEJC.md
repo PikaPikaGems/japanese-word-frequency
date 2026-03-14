@@ -1,7 +1,7 @@
 # Coverage Analysis (Top 12k) — Anchor: CEJC
 
-Total words: 12000  |  Source columns: 61
-Excluded from quality checks: AOZORA_BUNKO, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018, H_FREQ, ILYASEMENOV, JPDB, NAROU, NIER, VN_FREQ  (51 remaining)
+Total words: 12000  |  Source columns: 47
+Excluded from quality checks: AOZORA_BUNKO, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018, H_FREQ, ILYASEMENOV, JPDB, NAROU, NIER, VN_FREQ  (37 remaining)
 
 ## Per-Source Missing Rate
 
@@ -54,23 +54,9 @@ MALTESAA_CSJ_TAIKA_JIYU                2914   24.3%  [##########----------------
 MALTESAA_CSJ_DOKWA_MOGI                2742   22.9%  [#########-------------------------------]
 MALTESAA_NWJC                          2582   21.5%  [#########-------------------------------]
 YOUTUBE_FREQ_V3                        1393   11.6%  [#####-----------------------------------]
-combined_rank                             0    0.0%  [----------------------------------------]
-small_talk_rank                           0    0.0%  [----------------------------------------]
-consultation_rank                         0    0.0%  [----------------------------------------]
-meeting_rank                              0    0.0%  [----------------------------------------]
-class_rank                                0    0.0%  [----------------------------------------]
-outdoors_rank                             0    0.0%  [----------------------------------------]
-school_rank                               0    0.0%  [----------------------------------------]
-transportation_rank                       0    0.0%  [----------------------------------------]
-public_commercial_rank                    0    0.0%  [----------------------------------------]
-home_rank                                 0    0.0%  [----------------------------------------]
-indoors_rank                              0    0.0%  [----------------------------------------]
-workplace_rank                            0    0.0%  [----------------------------------------]
-male_rank                                 0    0.0%  [----------------------------------------]
-female_rank                               0    0.0%  [----------------------------------------]
 
 ## Zero-Missing by Rank Band
-(Words with zero -1s across all 51 checked sources)
+(Words with zero -1s across all 37 checked sources)
 
    Top-N    Total    Zero-missing       %
 --------------------------------------------------
@@ -82,7 +68,7 @@ female_rank                               0    0.0%  [--------------------------
    12000    12000            3056   25.5%
 
 ## Distribution: How Many Sources Each Word Is Missing From
-(51 columns checked)
+(37 columns checked)
 
  Missing    Words       %  Bar
 ----------------------------------------------------------------------
@@ -127,4 +113,4 @@ female_rank                               0    0.0%  [--------------------------
 
 Words with zero -1s: 3056  (25.5%)
 Words with at least one -1: 8944  (74.5%)
-Words with at least one RARE category: 9016  (75.1%)
+Words with at least one RARE category: 8992  (74.9%)

@@ -13,7 +13,7 @@ import glob
 import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-from anchor_utils import resolve_anchor_col
+from anchor_utils import get_anchor_family_cols
 
 csv.field_size_limit(10_000_000)
 
@@ -54,8 +54,8 @@ for anchor_dir in sorted(glob.glob(os.path.join(DATA_DIR, "*_anchor"))):
     with open(consol_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
-        anchor_col = resolve_anchor_col(anchor_name, header)
-        all_source_cols = [c for c in header if c not in ("word", "hiragana", "katakana") and c != anchor_col]
+        anchor_family = get_anchor_family_cols(anchor_name, header)
+        all_source_cols = [c for c in header if c not in ("word", "hiragana", "katakana") and c not in anchor_family]
         check_cols = [c for c in all_source_cols if c not in EXCLUDE]
         rows = list(reader)
 
