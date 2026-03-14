@@ -226,7 +226,7 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 
 ### Requirements
 
-- Python 3.8+
+- Python 3.10+
 - For plotting scripts: `matplotlib`, `numpy`
 - For RSPEER generation: `wordfreq`
 
@@ -240,7 +240,7 @@ pip install matplotlib numpy wordfreq
 
 Scripts under `data/ALL/___experiments0/` and `data/ALL/___experiments1/` can be run from the repo root. CEJC, RSPEER, and JPDB scripts must be run from their own directories.
 
-The full pipeline has the following dependency order: RAW/___FILTERED → CEJC + RSPEER preprocessing → data/ALL consolidation → analysis.
+The full pipeline has the following dependency order: RAW/\_\_\_FILTERED → CEJC + RSPEER preprocessing → data/ALL consolidation → analysis.
 
 #### Step 1 — Generate standardized DATA.csv for each RAW source
 
@@ -275,7 +275,7 @@ python process.py
 
 #### Step 3 — Generate consolidated.csv and categorized.csv (experiments0)
 
-Run from the repo root. Reads CEJC CONSOLIDATED_UNIQUE.csv, all DATA.csv files from RAW/___FILTERED, and RSPEER top_25000_japanese.csv.
+Run from the repo root. Reads CEJC CONSOLIDATED_UNIQUE.csv, all DATA.csv files from RAW/\_\_\_FILTERED, and RSPEER top_25000_japanese.csv.
 
 ```bash
 # Generate CEJC_anchor/consolidated.csv (CEJC as the anchor word list)
@@ -329,10 +329,10 @@ python data/ALL/___experiments1/top12k/threshold_analysis.py
 
 ```bash
 cd data/CEJC/scripts
-python vocab_tier_breakdown.py
-python domain_profiles.py
-python demographic_analysis.py
-# ... (see data/CEJC/scripts/ for all scripts)
+python vocab_tier_breakdown.py ../json
+python domain_profiles.py ../json
+python demographic_analysis.py ../json
+# ... (see data/CEJC/scripts/ for all scripts — all take ../json as the first argument)
 ```
 
 #### RSPEER plots
