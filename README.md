@@ -227,13 +227,13 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 ### Requirements
 
 - Python 3.8+
-- For plotting scripts: `matplotlib`
+- For plotting scripts: `matplotlib`, `numpy`
 - For RSPEER generation: `wordfreq`
 
 ### Install dependencies
 
 ```bash
-pip install matplotlib wordfreq
+pip install matplotlib numpy wordfreq
 ```
 
 ### Running scripts
