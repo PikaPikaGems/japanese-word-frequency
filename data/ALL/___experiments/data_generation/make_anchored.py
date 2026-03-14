@@ -24,7 +24,8 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(BASE, "..", "..", "..", ".."))
 CEJC_FILE = os.path.join(ROOT, "data", "CEJC", "CONSOLIDATED_UNIQUE.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
-JPDB_RAW = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
+JPDB_RAW  = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
+CEJC_TSV  = os.path.join(ROOT, "data", "CEJC", "2_cejc_frequencylist_suw_token.tsv")
 
 # (anchor_source_name, max_words_to_include)
 ANCHORS = [
@@ -34,22 +35,57 @@ ANCHORS = [
     ("NETFLIX", 25000),
 ]
 
+# ── Kana conversion ───────────────────────────────────────────────────────────
+def _hira_to_kata(text):
+    return "".join(chr(ord(c) + 0x60) if 0x3041 <= ord(c) <= 0x3096 else c for c in text)
+
+def _kata_to_hira(text):
+    return "".join(chr(ord(c) - 0x60) if 0x30A1 <= ord(c) <= 0x30F6 else c for c in text)
+
+def _is_pure_kana(word):
+    return bool(word) and all(0x3040 <= ord(c) <= 0x30FF for c in word)
+
 # ── Build bidirectional kana/kanji lookup from JPDB raw data ─────────────────
 # kana_fallback:  kanji → kana  (for kanji anchor words looking up kana-keyed sources)
 # kana_to_kanji:  kana  → [kanji forms]  (for kana anchor words looking up CEJC kanji lemmas)
+# _jpdb_reading:  term  → hiragana reading (all entries, for the hiragana/katakana columns)
 kana_fallback = {}
+_jpdb_reading = {}
 with open(JPDB_RAW, newline="", encoding="utf-8") as f:
     for row in csv.DictReader(f, delimiter="\t"):
         term, reading, freq = row["term"], row["reading"], int(row["frequency"])
+        if term not in _jpdb_reading or freq < _jpdb_reading[term][1]:
+            _jpdb_reading[term] = (reading, freq)
         if term == reading:
             continue
         if term not in kana_fallback or freq < kana_fallback[term][1]:
             kana_fallback[term] = (reading, freq)
 kana_fallback = {t: r for t, (r, _) in kana_fallback.items()}
+_jpdb_reading = {t: r for t, (r, _) in _jpdb_reading.items()}
 
-kana_to_kanji: dict[str, list[str]] = {}
+kana_to_kanji = {}
 for kanji, kana in kana_fallback.items():
     kana_to_kanji.setdefault(kana, []).append(kanji)
+
+# CEJC TSV: 語彙素 -> katakana reading (fallback for words not in JPDB)
+_cejc_reading = {}
+with open(CEJC_TSV, newline="", encoding="utf-8") as f:
+    for row in csv.DictReader(f, delimiter="\t"):
+        word, kata = row.get("語彙素", "").strip(), row.get("語彙素読み", "").strip()
+        if word and kata and word not in _cejc_reading:
+            _cejc_reading[word] = kata
+
+def get_reading(word):
+    """Return (hiragana, katakana) for word, or ('-', '-') if unknown."""
+    if word in _jpdb_reading:
+        hira = _jpdb_reading[word]
+        return hira, _hira_to_kata(hira)
+    if word in _cejc_reading:
+        kata = _cejc_reading[word]
+        return _kata_to_hira(kata), kata
+    if _is_pure_kana(word):
+        return _kata_to_hira(word), _hira_to_kata(word)
+    return "-", "-"
 
 
 def lookup(source: dict, word: str) -> int:
@@ -108,13 +144,14 @@ for anchor_name, top_n in ANCHORS:
     anchor_words = sorted(anchor_source.items(), key=lambda x: x[1])[:top_n]
 
     other_names = [s for s in sorted(all_sources) if s != anchor_name]
-    out_cols = ["word", f"{anchor_name}_rank", "CEJC_rank"] + other_names
+    out_cols = ["word", "hiragana", "katakana", f"{anchor_name}_rank", "CEJC_rank"] + other_names
 
     rows = []
     for word, anchor_rank in anchor_words:
+        hira, kata = get_reading(word)
         cejc_r = lookup(cejc_source, word)
         other_vals = [lookup(all_sources[s], word) for s in other_names]
-        rows.append([word, anchor_rank, cejc_r] + other_vals)
+        rows.append([word, hira, kata, anchor_rank, cejc_r] + other_vals)
 
     consol_path = os.path.join(BASE, "..", "..", f"{anchor_name}_anchor", "consolidated.csv")
     categ_path = os.path.join(BASE, "..", "..", f"{anchor_name}_anchor", "categorized.csv")
@@ -128,8 +165,11 @@ for anchor_name, top_n in ANCHORS:
         w = csv.writer(f)
         w.writerow(out_cols)
         for row in rows:
-            w.writerow([row[0]] + [categorize(int(v)) for v in row[1:]])
+            # word, hiragana, katakana pass through; remaining cols are rank ints
+            w.writerow([row[0], row[1], row[2]] + [categorize(int(v)) for v in row[3:]])
 
-    print(f"Anchor {anchor_name}: {len(rows)} words written")
+    missing = sum(1 for row in rows if row[1] == "-")
+    pct     = missing / len(rows) * 100 if rows else 0
+    print(f"Anchor {anchor_name}: {len(rows)} words written  |  kana missing: {missing} ({pct:.1f}%)")
 
 print("Done.")

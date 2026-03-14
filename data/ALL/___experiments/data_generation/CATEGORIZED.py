@@ -32,19 +32,29 @@ def categorize(rank_str):
     else:
         return 1
 
+PASSTHROUGH = {"hiragana", "katakana"}
+
 with open(INPUT_FILE, newline="", encoding="utf-8") as fin, \
      open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as fout:
 
     reader = csv.DictReader(fin)
-    rank_columns = [c for c in reader.fieldnames if c != "word"]
+    other_columns = [c for c in reader.fieldnames if c not in {"word"} | PASSTHROUGH]
 
-    out_columns = ["word"] + rank_columns
+    out_columns = ["word"] + [c for c in reader.fieldnames if c != "word"]
     writer = csv.writer(fout)
     writer.writerow(out_columns)
 
     for row in reader:
         word = row["word"]
-        cat_vals = [categorize(row[c]) for c in rank_columns]
-        writer.writerow([word] + cat_vals)
+        passthrough_vals = {c: row[c] for c in PASSTHROUGH if c in row}
+        out_row = [word]
+        for c in reader.fieldnames:
+            if c == "word":
+                continue
+            elif c in PASSTHROUGH:
+                out_row.append(row[c])
+            else:
+                out_row.append(categorize(row[c]))
+        writer.writerow(out_row)
 
 print(f"Written categorized.csv with category values (5=basic, 4=common, 3=fluent, 2=advanced, 1=rare/not-in-source)")

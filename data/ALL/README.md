@@ -10,12 +10,6 @@ This folder merges Japanese word frequency rankings from multiple sources into u
 | `CATEGORIZED.py` | Generates `categorized.csv` from `consolidated.csv` |
 | `consolidated.csv` | 27,988 words × 51 columns (word + hiragana + katakana + 48 rank columns) |
 | `categorized.csv` | Same shape — rank values mapped to vocabulary tier categories |
-| `add_kana_columns.py` | Inserts `hiragana` and `katakana` columns into all categorized/consolidated CSVs |
-| `fix_pure_kana_gaps.py` | Back-fills readings for words that are their own reading (pure kana words) |
-| `check_missing_kana.py` | Reports how many words are missing a reading per file |
-| `analyze_missing.py` | Breaks down missing words by type: non-Japanese tokens vs. potential proper nouns |
-| `verify_kana_columns.py` | Sanity check — prints first few rows of each patched file |
-| `verify_kanji_kana.py` | Spot-checks kanji words to confirm readings are populated |
 
 ## consolidated.csv
 
