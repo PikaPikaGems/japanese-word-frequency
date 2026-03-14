@@ -71,33 +71,38 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 
 **Updated EXCLUDE set (10 sources):** H_FREQ, NAROU, and VN_FREQ added to the original 7 — all use UniDic kanji lemma forms or domain-skewed tokenization that causes basic particles to score as absent.
 
+**How to read these tables:**
+
+- **Top-N %** (zero-missing): of the first N words in the anchor's frequency list, the percentage that appear in _every_ checked source (no `-1` rank). A high Top-500 means the most common words are universally found everywhere. The percentage naturally falls as N grows because rarer words start appearing in fewer domain-specific corpora.
+- **N≤3 words / N≤3 (%)**: words missing from _at most 3_ of the ~38 checked sources. These are the "broadly common" core vocabulary — present in nearly all corpora. The count form (e.g. 6,624) is used for the 25k table where list sizes differ; the % form is used for the 12k equal-footing table.
+
 **At 25k words** (BCCWJ excluded — only yields 16,491 unique words due to UniDic POS duplication):
 
-| Anchor           | Top-500 zero-missing | N≤3 high-freq words  |
-| ---------------- | -------------------- | -------------------- |
-| CC100            | 85.6%                | 6,624 (26.9%)        |
-| NETFLIX          | 78.0%                | 7,349 (29.4%)        |
-| YOUTUBE_FREQ_V3  | 77.6%                | 7,500 (25.0%)        |
-| WIKIPEDIA_V2     | 77.2%                | 6,833 (27.3%)        |
-| ANIME_JDRAMA     | 70.6%                | 7,349 (29.4%)        |
-| RSPEER           | 69.6%                | 6,987 (27.9%)        |
-| JPDB             | 41.6%                | 2,862 (11.8%) — excluded |
+| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | N≤3 words (% of list)    |
+| --------------- | ------- | ------ | ------ | ------ | ------------------------ |
+| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 6,624 (26.9%)            |
+| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 7,349 (29.4%)            |
+| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 7,500 (25.0%)            |
+| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 6,833 (27.3%)            |
+| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 7,349 (29.4%)            |
+| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 6,987 (27.9%)            |
+| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 2,862 (11.8%) — excluded |
 
-**At 12k words** ([`top12k/`](data/ALL/___experiments1/top12k/HISTORY.md) — all anchors capped equally so BCCWJ is comparable; CEJC checks 51 sources vs 38 for others\*):
+**At 12k words** ([`top12k/`](data/ALL/___experiments1/top12k/HISTORY.md) — all anchors capped at 12,000 so BCCWJ is directly comparable):
 
-| Anchor           | Top-500 | Top-1k | Top-12k | N≤3    |
-| ---------------- | ------- | ------ | ------- | ------ |
-| CC100            | 85.6%   | 79.4%  | 30.1%   | 47.9%  |
-| NETFLIX          | 78.0%   | 71.1%  | 31.7%   | 48.2%  |
-| YOUTUBE_FREQ_V3  | 77.6%   | 71.8%  | 31.8%   | 48.0%  |
-| WIKIPEDIA_V2     | 77.2%   | 73.4%  | 30.1%   | 43.3%  |
-| BCCWJ            | 75.2%   | 74.1%  | 29.6%   | 47.4%  |
-| ANIME_JDRAMA     | 70.6%   | 66.4%  | 30.6%   | 46.4%  |
-| RSPEER           | 69.6%   | 66.0%  | 31.6%   | 46.3%  |
-| CEJC             | 71.8%   | 68.5%  | 25.5%\* | 39.7%\* |
-| JPDB             | 41.6%   | 30.1%  | 10.2%   | 17.6%  |
+| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 (%) |
+| --------------- | ------- | ------ | ------ | ------ | ------- | ------- |
+| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 30.1%   | 47.9%   |
+| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 31.7%   | 48.2%   |
+| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 31.8%   | 48.0%   |
+| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 30.1%   | 43.3%   |
+| BCCWJ           | 75.2%   | 74.1%  | 63.9%  | 52.5%  | 29.6%   | 47.4%   |
+| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 30.6%   | 46.4%   |
+| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 31.6%   | 46.3%   |
+| CEJC            | 71.8%   | 68.5%  | 54.3%  | 43.7%  | 25.5%\* | 39.7%\* |
+| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 10.2%   | 17.6%   |
 
-\* CEJC's lower numbers reflect 51 checked sources (its 14 sub-corpus columns count as separate checks) vs 38 for all others.
+\* CEJC's numbers are deflated because CEJC's consolidated CSV has no single `CEJC_rank` column — it has 14 sub-corpus columns (small*talk_rank, meeting_rank, etc.) that each count as a separate check. Zero-missing requires a word to appear in every CEJC sub-corpus \_and* all external sources, making it a stricter 51-source test vs 38 for all other anchors.
 
 ## Repository Structure
 
@@ -120,20 +125,7 @@ word-frequency-rankings/
 
 `data/ALL/`
 
-The primary output of this repo. Combines CEJC rankings with all 47 filtered sources plus RSPEER into a single file.
-
-Five anchor variants exist (`CEJC_anchor/`, `JPDB_anchor/`, `ANIME_JDRAMA_anchor/`, `NETFLIX_anchor/`, `YOUTUBE_FREQ_V3_anchor/`), each containing:
-
-- **`consolidated.csv`** — words x rank columns for that anchor
-
-Analysis scripts and reports in `___experiments0/`:
-
-- **`data_generation/`** — pipeline scripts for building consolidated.csv from source DATA.csv files (`SCRIPT.py`, `make_anchored.py`)
-- **`coverage_analysis/analyze_coverage.py`** — per-source missing rate, zero-missing subsets, rank-band breakdown; outputs `.md` reports and filtered CSVs
-- **`coverage_analysis/filter_words.py`** — quick CEJC-anchor filter: words with any `-1` rank or any rare category
-- **`threshold_analysis/threshold_analysis.py`** — filters words present in all-but-N sources; outputs threshold CSVs and summary report
-- **`duplicate_detection/`** — script and report for identifying duplicate words within source files
-- **`source_insights/`** — scripts for cross-source analysis (correlations, coverage, media profiles, spoken vs. written breakdown, variance)
+The primary output of this repo. Combines CEJC rankings with all 47 filtered sources plus RSPEER into a single file. Anchor variants exist. **`consolidated.csv`** — words x rank columns for that anchor. Analysis scripts and reports in `___experiments0/` and `___experiments1/`:
 
 ### CEJC — Everyday Spoken Japanese
 

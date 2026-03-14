@@ -63,8 +63,8 @@ def main():
         span = hi - lo if hi != lo else 1
         col_norm[col] = [(v - lo) / span if v is not None else None for v in vals]
 
-    # Normalize CEJC combined_rank
-    cejc_vals = [safe_int(r["combined_rank"]) for r in rows]
+    # Normalize CEJC cejc_combined_rank
+    cejc_vals = [safe_int(r["cejc_combined_rank"]) for r in rows]
     valid_cejc = [v for v in cejc_vals if v is not None]
     cejc_lo, cejc_hi = min(valid_cejc), max(valid_cejc)
     cejc_span = cejc_hi - cejc_lo
@@ -75,7 +75,7 @@ def main():
 
     for i, row in enumerate(rows):
         word = row["word"]
-        cejc_r = safe_int(row["combined_rank"])
+        cejc_r = safe_int(row["cejc_combined_rank"])
         if cejc_r is None:
             continue
 
@@ -111,7 +111,7 @@ def main():
     )
     lines.append("")
     lines.append(
-        f"**Methodology:** CEJC combined_rank and each external source rank are each normalized to [0, 1]. "
+        f"**Methodology:** CEJC cejc_combined_rank and each external source rank are each normalized to [0, 1]. "
         f"Divergence = (mean external normalized rank) − (CEJC normalized rank). "
         f"Only words present in ≥{MIN_EXTERNAL_SOURCES} external sources are included."
     )

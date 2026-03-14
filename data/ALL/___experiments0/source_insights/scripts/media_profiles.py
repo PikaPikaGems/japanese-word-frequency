@@ -140,7 +140,7 @@ def main():
             om = group_mean(i, other_sources)
             if gm is None or om is None:
                 continue
-            scored.append((om - gm, row["word"], int(row["combined_rank"])))
+            scored.append((om - gm, row["word"], int(row["cejc_combined_rank"])))
 
         scored.sort(reverse=True)
         top = scored[:TOP_N]

@@ -11,6 +11,9 @@ Runs on all *_anchor/ directories — picks up new anchors automatically.
 import csv
 import glob
 import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+from anchor_utils import resolve_anchor_col
 
 csv.field_size_limit(10_000_000)
 
@@ -44,8 +47,6 @@ all_anchor_results = {}
 for anchor_dir in sorted(glob.glob(os.path.join(DATA_DIR, "*_anchor"))):
     anchor_name = os.path.basename(anchor_dir).removesuffix("_anchor")
     consol_path = os.path.join(anchor_dir, "consolidated.csv")
-    anchor_col = f"{anchor_name}_rank"
-
     if not os.path.exists(consol_path):
         print(f"Skipping {anchor_name} — no consolidated.csv found")
         continue
@@ -53,6 +54,7 @@ for anchor_dir in sorted(glob.glob(os.path.join(DATA_DIR, "*_anchor"))):
     with open(consol_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         header = reader.fieldnames
+        anchor_col = resolve_anchor_col(anchor_name, header)
         all_source_cols = [c for c in header if c not in ("word", "hiragana", "katakana") and c != anchor_col]
         check_cols = [c for c in all_source_cols if c not in EXCLUDE]
         rows = list(reader)

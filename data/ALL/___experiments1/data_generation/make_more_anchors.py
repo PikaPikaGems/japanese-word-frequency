@@ -110,12 +110,12 @@ def lookup(source: dict, word: str) -> int:
     return -1
 
 
-# ── Load CEJC as a plain rank source (combined_rank only) ────────────────────
+# ── Load CEJC as a plain rank source (cejc_combined_rank only) ────────────────────
 cejc_source: dict[str, int] = {}
 with open(CEJC_FILE, newline="", encoding="utf-8") as f:
     for row in csv.DictReader(f):
         try:
-            cejc_source[row["word"]] = int(row["combined_rank"])
+            cejc_source[row["word"]] = int(row["cejc_combined_rank"])
         except (ValueError, KeyError):
             cejc_source[row["word"]] = -1
 

@@ -15,7 +15,7 @@ CONSOLIDATED = os.path.join(BASE, "consolidated.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
 
 # Columns that are NOT source rank columns (skip these in duplicate check)
-CEJC_PREFIX = {"word", "combined_rank", "small_talk_rank", "medical_consultation_rank",
+CEJC_PREFIX = {"word", "cejc_combined_rank", "small_talk_rank", "medical_consultation_rank",
                 "workplace_rank", "school_rank", "family_rank", "outing_rank",
                 "male_rank", "female_rank"}
 
@@ -36,7 +36,7 @@ def get_source_columns(fieldnames):
     for col in fieldnames:
         if col == "word":
             continue
-        # CEJC columns end with _rank or are named combined_rank
+        # CEJC columns end with _rank or are named cejc_combined_rank
         if col.endswith("_rank"):
             continue
         source_cols.append(col)

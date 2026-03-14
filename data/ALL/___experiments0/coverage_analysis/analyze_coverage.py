@@ -7,6 +7,9 @@ For each anchor, produces:
 import csv
 import glob
 import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+from anchor_utils import resolve_anchor_col
 
 csv.field_size_limit(10_000_000)
 
@@ -51,7 +54,7 @@ for anchor_dir in sorted(glob.glob(os.path.join(DATA_DIR, "*_anchor"))):
         reader = csv.DictReader(f)
         header = reader.fieldnames
         # Source columns: everything except "word" and the anchor rank column
-        anchor_col = f"{anchor_name}_rank"
+        anchor_col = resolve_anchor_col(anchor_name, header)
         source_cols = [c for c in header if c != "word" and c != anchor_col]
         check_cols = [c for c in source_cols if c not in EXCLUDE]
         rows = list(reader)

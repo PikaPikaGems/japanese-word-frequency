@@ -1,7 +1,7 @@
 """
 Generates *_anchor/consolidated.csv and *_anchor/categorized.csv for non-CEJC anchors.
 Each file uses one source as the word list backbone, looking up every other source per word.
-CEJC is included as a plain source column (combined_rank only).
+CEJC is included as a plain source column (cejc_combined_rank only).
 
 Bidirectional kana/kanji lookup via JPDB v2 so that:
   - kanji anchor words find kana-keyed sources
@@ -112,12 +112,12 @@ def lookup(source: dict, word: str) -> int:
     return -1
 
 
-# ── Load CEJC as a plain rank source (combined_rank only) ────────────────────
+# ── Load CEJC as a plain rank source (cejc_combined_rank only) ────────────────────
 cejc_source: dict[str, int] = {}
 with open(CEJC_FILE, newline="", encoding="utf-8") as f:
     for row in csv.DictReader(f):
         try:
-            cejc_source[row["word"]] = int(row["combined_rank"])
+            cejc_source[row["word"]] = int(row["cejc_combined_rank"])
         except (ValueError, KeyError):
             cejc_source[row["word"]] = -1
 

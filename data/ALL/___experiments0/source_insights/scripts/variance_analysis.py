@@ -85,7 +85,7 @@ def main():
     word_data = []
     for i, row in enumerate(rows):
         word = row["word"]
-        overall_rank = safe_int(row["combined_rank"], missing=-9999)
+        overall_rank = safe_int(row["cejc_combined_rank"], missing=-9999)
 
         norm_vals = []
         for col in source_cols:
