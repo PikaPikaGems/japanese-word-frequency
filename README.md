@@ -1,3 +1,5 @@
+> **Work in progress — use at your own risk.** The code and logic for generating this data have not been fully reviewed. Data quality, coverage, and methodology vary across sources. No guarantees are made about accuracy, completeness, or fitness for any particular purpose.
+
 # Japanese Word Frequency Rankings
 
 A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating 35+ sources into unified formats for language learning, linguistics, and NLP research.
@@ -195,6 +197,12 @@ Script type breakdown across RSPEER's top 25k: 45.8% kanji, 18.9% katakana, 18.3
 Average word length in the top 1k is ~1.9 characters, growing to ~2.8 characters in the 10k–25k range. The most common words are also the shortest.
 
 ([Word length by tier](data/RSPEER/INSIGHTS.md))
+
+### Gender differences in CEJC speech are real but vocabulary-specific
+
+Male speech strongly favors rough first-person pronouns (俺, 僕), work/group vocabulary (会議, 担当, チーム), and masculine sentence-final particles (ぞ, ぜ). Female speech strongly favors 私 (vs 俺/僕), descriptive adjectives (可愛い, 素敵, 美味しい, 優しい), and food/domestic vocabulary (野菜, 卵, 菓子). Core function words show very little gender skew.
+
+([Demographic analysis](data/CEJC/insights/demographic_analysis.md))
 
 ### CEJC rankings are heavily tied at the bottom
 
