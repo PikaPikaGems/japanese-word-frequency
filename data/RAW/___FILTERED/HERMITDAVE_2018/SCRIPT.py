@@ -4,6 +4,7 @@ Combines ja_ignored.txt (high-freq words) and ja_full.txt, sorts by count descen
 Output: top 25,000 words with WORD, FREQUENCY_RANKING columns.
 """
 
+import csv
 import os
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), "../../HERMITDAVE/2018JA")
@@ -44,9 +45,10 @@ def main():
     top = rows[:TOP_N]
 
     with open(OUTPUT_FILE, "w", encoding="utf-8", newline="") as f:
-        f.write("WORD,FREQUENCY_RANKING\n")
+        writer = csv.writer(f)
+        writer.writerow(["WORD", "FREQUENCY_RANKING"])
         for rank, (word, _count) in enumerate(top, start=1):
-            f.write(f"{word},{rank}\n")
+            writer.writerow([word, rank])
 
     print(f"Written {len(top)} rows to {OUTPUT_FILE}")
 

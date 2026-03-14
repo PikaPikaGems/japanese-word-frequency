@@ -9,7 +9,23 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(BASE, "..", ".."))
 CEJC_FILE = os.path.join(ROOT, "data", "CEJC", "CONSOLIDATED_UNIQUE.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
+JPDB_FILE = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
 OUTPUT_FILE = os.path.join(BASE, "consolidated.csv")
+
+# Load JPDB v2: term -> kana reading (keep the most frequent reading per term)
+# Only store where reading differs from term (i.e. kanji forms that have a kana fallback)
+kana_fallback = {}
+with open(JPDB_FILE, newline="", encoding="utf-8") as f:
+    reader = csv.DictReader(f, delimiter="\t")
+    for row in reader:
+        term = row["term"]
+        reading = row["reading"]
+        freq = int(row["frequency"])
+        if term == reading:
+            continue
+        if term not in kana_fallback or freq < kana_fallback[term][1]:
+            kana_fallback[term] = (reading, freq)
+kana_fallback = {term: reading for term, (reading, _) in kana_fallback.items()}
 
 # Load CEJC data — preserves word order
 cejc_rows = []
@@ -35,9 +51,18 @@ for path in source_dirs:
         reader = csv.DictReader(f)
         for row in reader:
             word = row["WORD"]
-            rank = row["FREQUENCY_RANKING"]
-            word_rank[word] = rank
+            rank = int(row["FREQUENCY_RANKING"])
+            if word not in word_rank or rank < word_rank[word]:
+                word_rank[word] = rank
     sources[name] = word_rank
+
+def lookup(source, word):
+    if word in source:
+        return source[word]
+    reading = kana_fallback.get(word)
+    if reading and reading in source:
+        return source[reading]
+    return -1
 
 # Write consolidated.csv
 out_columns = ["word"] + cejc_columns + source_names
@@ -47,7 +72,7 @@ with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
     for row in cejc_rows:
         word = row["word"]
         cejc_vals = [row[c] for c in cejc_columns]
-        source_vals = [sources[s].get(word, -1) for s in source_names]
+        source_vals = [lookup(sources[s], word) for s in source_names]
         writer.writerow([word] + cejc_vals + source_vals)
 
 print(f"Written {len(cejc_rows)} rows to {OUTPUT_FILE}")
