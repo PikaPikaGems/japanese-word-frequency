@@ -21,8 +21,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import markdown_table, ascii_bar_chart
 
-DATA_DIR = Path(__file__).parents[1]
-CONSOLIDATED = DATA_DIR / "consolidated.csv"
+DATA_DIR = Path(__file__).parents[3]
+CONSOLIDATED = DATA_DIR / "consolidated_anchor_CEJC.csv"
 
 MISSING = -1
 
