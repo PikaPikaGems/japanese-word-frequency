@@ -1,7 +1,7 @@
 import csv
 
 DATA_DIR = "data/ALL"
-EXCLUDE = {"AOZORA_BUNKO"}
+EXCLUDE = {"AOZORA_BUNKO", "NIER", "ILYASEMENOV", "DD2_MIGAKU_NOVELS", "HERMITDAVE_2016", "HERMITDAVE_2018"}
 
 # consolidated_anchor_CEJC.csv: words with at least one -1 rank (excluding AOZORA_BUNKO)
 with open(f"{DATA_DIR}/consolidated_anchor_CEJC.csv") as f:
