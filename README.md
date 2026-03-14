@@ -198,21 +198,21 @@ Two methodologies are compared below.
 
 **Result A — exact string match** (surface form only, no reading lookup):
 
-| Comparison        | Top 5k | Top 10k | Top 25k |
-|-------------------|--------|---------|---------|
-| RSPEER ∩ JPDB     | 48.2%  | 48.4%   | 49.0%   |
-| RSPEER ∩ CEJC     | 47.9%  | 46.2%   | 44.1%   |
-| JPDB ∩ CEJC       | 42.6%  | 39.7%   | 39.4%   |
-| All three         | 32.2%  | 31.8%   | 31.6%   |
+| Comparison    | Top 5k | Top 10k | Top 25k |
+| ------------- | ------ | ------- | ------- |
+| RSPEER ∩ JPDB | 48.2%  | 48.4%   | 49.0%   |
+| RSPEER ∩ CEJC | 47.9%  | 46.2%   | 44.1%   |
+| JPDB ∩ CEJC   | 42.6%  | 39.7%   | 39.4%   |
+| All three     | 32.2%  | 31.8%   | 31.6%   |
 
 **Result B — reading-aware match** (surface form OR kana reading, readings normalized to hiragana): a word in source A counts as matching source B if its surface form equals either the term/key or the reading in B. This catches cases like RSPEER `くれる` ↔ CEJC `呉れる` or JPDB `今` (reading `いま`) ↔ RSPEER `いま`.
 
-| Comparison        | Top 5k | Top 10k | Top 25k |
-|-------------------|--------|---------|---------|
-| RSPEER ∩ JPDB     | 49.7%  | 49.9%   | 50.4%   |
-| RSPEER ∩ CEJC     | 53.6%  | 51.1%   | 48.8%   |
-| JPDB ∩ CEJC       | 54.6%  | 52.1%   | 54.1%   |
-| All three         | 40.3%  | 39.9%   | 40.7%   |
+| Comparison    | Top 5k | Top 10k | Top 25k |
+| ------------- | ------ | ------- | ------- |
+| RSPEER ∩ JPDB | 49.7%  | 49.9%   | 50.4%   |
+| RSPEER ∩ CEJC | 53.6%  | 51.1%   | 48.8%   |
+| JPDB ∩ CEJC   | 54.6%  | 52.1%   | 54.1%   |
+| All three     | 40.3%  | 39.9%   | 40.7%   |
 
 Result B is the better estimate of true conceptual overlap. The JPDB ∩ CEJC improvement (~+12 pp) is the largest because JPDB indexes by reading frequency (kana canonical key) while CEJC indexes by kanji 語彙素 — the same word routinely appears under different scripts in each source. The three-way overlap rises from ~32% to ~40–41%.
 
@@ -227,12 +227,12 @@ No single list covers everything — even under Result B, only ~40–41% of any 
 Script type composition shifts significantly depending on which tier cutoff you examine:
 
 | Script   | Top 1k | Top 5k | Top 10k | Top 25k |
-|----------|--------|--------|---------|---------|
+| -------- | ------ | ------ | ------- | ------- |
 | Kanji    | 45.9%  | 49.5%  | 48.6%   | 45.8%   |
 | Mixed    | 14.8%  | 18.2%  | 18.5%   | 18.3%   |
 | Hiragana | 29.0%  | 14.6%  | 11.8%   | 10.2%   |
-| Katakana |  4.6%  | 13.8%  | 16.7%   | 18.9%   |
-| Other    |  5.7%  |  3.8%  |  4.4%   |  6.8%   |
+| Katakana | 4.6%   | 13.8%  | 16.7%   | 18.9%   |
+| Other    | 5.7%   | 3.8%   | 4.4%    | 6.8%    |
 
 Hiragana collapses from 29% in the top 1k to 10% by top 25k — grammatical function words (particles, copulas) are uniquely concentrated at the very top. Katakana (loanwords) grows from 4.6% to 18.9% — loanwords accumulate progressively in lower-frequency ranges. Kanji is consistently the largest category at every cutoff.
 
@@ -266,6 +266,9 @@ Only 430 of 29,534 entries have a unique rank. Most entries share ranks due to t
 - https://github.com/hermitdave/FrequencyWords/
 - https://github.com/chriskempson/japanese-subtitles-word-kanji-frequency-lists
 - https://github.com/rspeer/wordfreq
+- https://github.com/Maltesaa/CSJ_and_NWJC_yomitan_freq_dict
+- https://github.com/hingston/japanese
+- https://docs.google.com/spreadsheets/d/1xeG-b85EHwo-yUDgwDLuWyYdwtnDgJAzr3VTmteMOaA
 - https://drive.google.com/drive/folders/1g1drkFzokc8KNpsPHoRmDJ4OtMTWFuXi
 - https://drive.google.com/drive/folders/1xURpMJN7HTtSLuVs9ZtIbE7MDRCdoU29
 - https://drive.google.com/file/d/1qHEfYHXjEp83i6PxxMlSxluFyQg2W8Up
