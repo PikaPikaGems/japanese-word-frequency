@@ -28,6 +28,8 @@ A comprehensive collection of Japanese word frequency datasets, analysis scripts
 
 ## Data Quality Notes
 
+## Experiments 0
+
 [`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources. Key findings:
 
 **Pipeline bugs fixed:**
@@ -53,6 +55,49 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 **Recommended coverage algorithm:** Use a threshold-based filter (`missing_count ≤ N`) rather than requiring zero-missing.
 
 **Kana reading enrichment:** `hiragana` and `katakana` columns for each word are included per row media-anchored files (ANIME, NETFLIX, YOUTUBE) have 6–11% gaps, mostly conjugated verb forms and proper nouns not listed as dictionary headwords.
+
+## Experiments 1
+
+[`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 49 external sources and 4 new anchors were added.
+
+**New anchors added (9 total):**
+
+| Anchor       | Type                               | Words                                    |
+| ------------ | ---------------------------------- | ---------------------------------------- |
+| BCCWJ        | Balanced written Japanese (NINJAL) | 16,491 unique (UniDic POS deduplication) |
+| CC100        | CommonCrawl web text               | 24,605                                   |
+| RSPEER       | Multi-source aggregated (wordfreq) | 25,000                                   |
+| WIKIPEDIA_V2 | Wikipedia (clean)                  | 25,000                                   |
+
+**Updated EXCLUDE set (10 sources):** H_FREQ, NAROU, and VN_FREQ added to the original 7 — all use UniDic kanji lemma forms or domain-skewed tokenization that causes basic particles to score as absent.
+
+**At 25k words** (BCCWJ excluded — only yields 16,491 unique words due to UniDic POS duplication):
+
+| Anchor           | Top-500 zero-missing | N≤3 high-freq words  |
+| ---------------- | -------------------- | -------------------- |
+| CC100            | 85.6%                | 6,624 (26.9%)        |
+| NETFLIX          | 78.0%                | 7,349 (29.4%)        |
+| YOUTUBE_FREQ_V3  | 77.6%                | 7,500 (25.0%)        |
+| WIKIPEDIA_V2     | 77.2%                | 6,833 (27.3%)        |
+| ANIME_JDRAMA     | 70.6%                | 7,349 (29.4%)        |
+| RSPEER           | 69.6%                | 6,987 (27.9%)        |
+| JPDB             | 41.6%                | 2,862 (11.8%) — excluded |
+
+**At 12k words** ([`top12k/`](data/ALL/___experiments1/top12k/HISTORY.md) — all anchors capped equally so BCCWJ is comparable; CEJC checks 51 sources vs 38 for others\*):
+
+| Anchor           | Top-500 | Top-1k | Top-12k | N≤3    |
+| ---------------- | ------- | ------ | ------- | ------ |
+| CC100            | 85.6%   | 79.4%  | 30.1%   | 47.9%  |
+| NETFLIX          | 78.0%   | 71.1%  | 31.7%   | 48.2%  |
+| YOUTUBE_FREQ_V3  | 77.6%   | 71.8%  | 31.8%   | 48.0%  |
+| WIKIPEDIA_V2     | 77.2%   | 73.4%  | 30.1%   | 43.3%  |
+| BCCWJ            | 75.2%   | 74.1%  | 29.6%   | 47.4%  |
+| ANIME_JDRAMA     | 70.6%   | 66.4%  | 30.6%   | 46.4%  |
+| RSPEER           | 69.6%   | 66.0%  | 31.6%   | 46.3%  |
+| CEJC             | 71.8%   | 68.5%  | 25.5%\* | 39.7%\* |
+| JPDB             | 41.6%   | 30.1%  | 10.2%   | 17.6%  |
+
+\* CEJC's lower numbers reflect 51 checked sources (its 14 sub-corpus columns count as separate checks) vs 38 for all others.
 
 ## Repository Structure
 
