@@ -2,6 +2,8 @@
 Output formatting utilities — all functions return strings.
 """
 
+from __future__ import annotations
+
 import unicodedata
 
 

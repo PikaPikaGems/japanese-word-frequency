@@ -3,7 +3,7 @@
 Generate CONSOLIDATED_UNIQUE.csv from CONSOLIDATED.csv.
 
 Deduplicates words that appear multiple times (due to different POS entries
-in the source TSV), keeping only the row with the best (lowest) combined_rank
+in the source TSV), keeping only the row with the best (lowest) cejc_combined_rank
 for each unique word spelling.
 
 Usage:
@@ -29,12 +29,12 @@ def run():
         fieldnames = reader.fieldnames
         for row in reader:
             word = row["word"]
-            rank = int(row["combined_rank"])
-            if word not in best or rank < int(best[word]["combined_rank"]):
+            rank = int(row["cejc_combined_rank"])
+            if word not in best or rank < int(best[word]["cejc_combined_rank"]):
                 best[word] = row
 
-    # Sort by combined_rank ascending
-    rows = sorted(best.values(), key=lambda r: int(r["combined_rank"]))
+    # Sort by cejc_combined_rank ascending
+    rows = sorted(best.values(), key=lambda r: int(r["cejc_combined_rank"]))
 
     with OUT_PATH.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)

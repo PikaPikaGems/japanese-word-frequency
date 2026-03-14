@@ -61,19 +61,26 @@ This is not a bug in CEJC. It is an intentional design choice that causes a **fo
 Standard competition ranking (1224 style) means each unique spelling gets its own rank. CEJC has both 其れ (rank 36, the UniDic lemma) and それ (rank 8967, the hiragana surface form as a separate entry). They are treated as distinct lexemes.
 
 **Fix:**
-Built a kanji→kana fallback mapping using JPDB v2 (`jpdb_v2.2_freq_list_2024-10-13.csv`), which contains `term` (kanji form) and `reading` (kana form) for ~278,000 entries. During consolidation, if a word is not found in a source directly, look up its kana reading and try that instead:
+Built a bidirectional kana/kanji fallback mapping using JPDB v2 (`jpdb_v2.2_freq_list_2024-10-13.csv`), which contains `term` (kanji form) and `reading` (kana form) for ~278,000 entries. During consolidation, if a word is not found in a source directly, the lookup tries both directions:
 
 ```python
 def lookup(source, word):
     if word in source:
         return source[word]
-    reading = kana_fallback.get(word)
-    if reading and reading in source:
-        return source[reading]
+    # kanji word → try its kana reading in source
+    kana = kana_fallback.get(word)
+    if kana and kana in source:
+        return source[kana]
+    # kana word → try any kanji form that reads as this kana in source
+    for kanji in kana_to_kanji.get(word, []):
+        if kanji in source:
+            return source[kanji]
     return -1
 ```
 
-For the kana fallback map itself, only the most frequent reading per kanji term is kept (lowest frequency rank number), and entries where `term == reading` are skipped (already kana).
+`kana_fallback` maps each kanji term to its most frequent reading (lowest frequency rank number); entries where `term == reading` are skipped (already kana). `kana_to_kanji` is the reverse map (kana → list of kanji forms). This logic lives in `utils/lookup.py` (`JapaneseLookup` class) and is shared across all anchor generation scripts.
+
+The bidirectional lookup resolved **4,703 additional rank lookups** (0.35% of all 1,343,424 cells) in the CEJC anchor compared to a kanji→kana-only fallback. The kana→kanji direction helps when a source stores a word in kanji form but the anchor word is in kana.
 
 **Result:**
 其れ went from 21 missing sources → 4 missing sources after the fix.
@@ -216,7 +223,7 @@ Even after all fixes, some -1s are expected and correct:
 
 - **Source-specific vocabulary:** some words appear only in specific domains (e.g., literary words in AOZORA, web slang in NAROU) and genuinely won't appear in subtitle or spoken corpora.
 - **Morpheme vs. lemma tokenization:** as described in §7, HERMITDAVE and similar sources will always miss dictionary-form verbs because the underlying text was tokenized at morpheme level.
-- **Kana fallback is one-to-one:** the fallback maps each kanji term to its single most frequent reading. If a word has multiple valid readings and the source uses a different one, the fallback still misses.
+- **Kana fallback is one-to-one (kanji→kana direction):** the fallback maps each kanji term to its single most frequent reading. If a word has multiple valid readings and the source uses a different one, the fallback still misses. The reverse kana→kanji direction is also available (see §3 fix) but covers only exact reading matches.
 
 ---
 

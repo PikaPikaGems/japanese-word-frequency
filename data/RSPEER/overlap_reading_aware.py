@@ -69,11 +69,11 @@ jpdb_by_rank.sort(key=lambda x: x[2])
 with open(CEJC_JSON, encoding="utf-8") as f:
     cejc_json = json.load(f)
 
-# Load CEJC combined_rank
+# Load CEJC cejc_combined_rank
 cejc_rank_map = {}
 with open(CEJC_CSV, encoding="utf-8") as f:
     for row in csv.DictReader(f):
-        cejc_rank_map[row["word"]] = int(row["combined_rank"])
+        cejc_rank_map[row["word"]] = int(row["cejc_combined_rank"])
 
 # Build CEJC list: (key, reading_hira, rank) sorted by rank
 cejc_by_rank = []

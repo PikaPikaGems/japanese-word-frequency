@@ -6,6 +6,12 @@ This document records findings from re-running coverage experiments after the da
 
 ## 1. What Changed Since Experiments 0
 
+### 1.0 Lookup Refactoring (No Behavior Change for This Experiment)
+
+`make_more_anchors.py` already used a bidirectional kana/kanji lookup (both `kana_fallback` kanji→kana and `kana_to_kanji` kana→kanji directions). This logic was later extracted into `utils/lookup.py` (`JapaneseLookup` class) and shared across all anchor generation scripts. The refactoring did not change the output of `make_more_anchors.py` or any file documented here.
+
+The only script whose lookup behavior changed was `SCRIPT.py` (Experiments 0, CEJC anchor) — it was unidirectional (kanji→kana only) and was upgraded to bidirectional as part of the refactoring. That resolved 4,703 additional rank cells (0.35%) in `CEJC_anchor/consolidated.csv`. Coverage analysis scripts in this experiment were not re-run after that change; any CEJC-anchor statistics below reflect the pre-upgrade data.
+
 ### 1.1 Dataset Growth
 
 The `data/RAW/___FILTERED/` directory grew from ~35 sources to **49 external sources**. New additions include: BCCWJ, CC100, RSPEER, WIKIPEDIA_V2, several MALTESAA_CSJ subcorpora, and others. CEJC_anchor/consolidated.csv was updated but the 4 non-CEJC anchor files (JPDB, YOUTUBE_FREQ_V3, ANIME_JDRAMA, NETFLIX) had not yet been regenerated with the new sources.
@@ -85,15 +91,13 @@ These gaps are structural (JPDBV2 and CEJC TSV are the only two reading sources 
 
 ---
 
-## 4. CEJC Checks 51 Sources vs 38 for Others
+## 4. CEJC Now Checks 38 Sources (Same as Others)
 
-In the coverage analysis, CEJC anchor checks **51 sources** while all other anchors check 38–39. This is because:
+Previously, CEJC's sub-corpus columns (`combined_rank`, `small_talk_rank`, etc.) lacked the `cejc_` prefix, so `get_anchor_family_cols("CEJC", header)` failed to identify them as anchor-family columns — all 14 were treated as external sources to check, inflating the checked-source count to 51.
 
-CEJC's `consolidated.csv` has no single `CEJC_rank` anchor column — instead it has 14 CEJC sub-corpus columns (`combined_rank`, `small_talk_rank`, `consultation_rank`, `meeting_rank`, `class_rank`, `outdoors_rank`, `school_rank`, `transportation_rank`, `public_commercial_rank`, `home_rank`, `indoors_rank`, `workplace_rank`, `male_rank`, `female_rank`). The analysis script treats all non-word non-anchor columns as sources. Since `CEJC_rank` doesn't exist in the header, none of these 14 columns are excluded as the anchor column — all become source columns.
+After renaming all CEJC sub-corpus columns in `CONSOLIDATED_UNIQUE.csv` and `CONSOLIDATED.csv` to include the `cejc_` prefix (`cejc_combined_rank`, `cejc_small_talk_rank`, etc.), `get_anchor_family_cols` correctly identifies and excludes them. CEJC now checks the same **38 sources** as every other anchor, making its coverage numbers directly comparable.
 
-Result: zero-missing for CEJC counts a word only if it appears across **51 checks** (14 CEJC sub-corpus checks + 49 external - 10 excluded + 2 = 51). A word absent from a specific CEJC sub-corpus (e.g., not recorded in small-talk conversations) will fail the zero-missing check even if it has a valid combined_rank.
-
-This makes CEJC zero-missing percentages **not directly comparable** to the other anchors. The zero-missing count (3,600 = 12.9%) is artificially depressed by the sub-corpus requirement. For direct comparisons, use the threshold-based counts (§6.2) which are more robust to this effect.
+The previous figures (zero-missing 3,600 = 12.9%, top-500 71.8%) were artificially depressed because words absent from any one CEJC sub-corpus (e.g., not recorded in small-talk conversations) also failed the zero-missing check. The corrected figures are in §6.
 
 ---
 
@@ -107,34 +111,36 @@ JPDB's coverage rates (top-500: 41.6%, all: 6.9%) are far lower than every other
 
 ### 6.1 Rank-Band Zero-Missing Analysis
 
-Zero-missing counts across 38 checked sources (10 excluded). CEJC checks 51 sources — see §4 for why its numbers are not directly comparable.
+Zero-missing counts across 38 checked sources (10 excluded). All anchors now check 38 sources — see §4.
 
 | Anchor | Sources checked | Top-500 | Top-1k | Top-3k | Top-5k | Top-10k | All words |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | CC100 | 38 | **85.6%** | 79.4% | 63.4% | 52.7% | 34.6% | 15.9% |
+| CEJC | 38 | 78.2% | 72.1% | 56.0% | 45.0% | 29.8% | 13.4% |
 | NETFLIX | 38 | 78.0% | 71.1% | 57.6% | 48.7% | 35.4% | 17.8% |
-| WIKIPEDIA_V2 | 38 | 77.2% | 73.4% | 56.9% | 47.6% | 33.8% | 17.2% |
 | YOUTUBE_FREQ_V3 | 38 | 77.6% | 71.8% | 60.7% | 52.0% | 35.8% | 15.2% |
-| BCCWJ | 38 | 74.1%* | 74.1% | 63.9% | 52.5% | 34.5% | 22.3%* |
+| WIKIPEDIA_V2 | 38 | 77.2% | 73.4% | 56.9% | 47.6% | 33.8% | 17.2% |
+| BCCWJ | 38 | 75.2% | 74.1% | 63.9% | 52.5% | 34.5% | 22.3%* |
 | ANIME_JDRAMA | 38 | 70.6% | 66.4% | 54.9% | 46.2% | 34.0% | 17.9% |
-| CEJC | 51 | 71.8% | 68.5% | 54.3% | 43.7% | 28.9% | 12.9% |
 | RSPEER | 38 | 69.6% | 66.0% | 57.5% | 49.8% | 35.6% | 17.3% |
-| JPDB | 39 | 41.6% | 30.1% | 18.0% | 14.8% | 11.2% | 6.9% |
+| JPDB | 38 | 41.6% | 30.1% | 18.0% | 14.8% | 11.2% | 6.9% |
 
-\* BCCWJ has only 16,491 words total — its "Top-500" is the 500 most frequent words in its 16,491-word list. The "All words" percentage is computed over 16,491 words, not 25,000.
+\* BCCWJ has only 16,491 words total — its "All words" percentage is computed over 16,491 words, not 25,000.
 
 **Key findings:**
 
 1. **CC100 has the strongest top-500 coverage (85.6%)** — the highest of any anchor. CommonCrawl web text covers virtually all high-frequency vocabulary across every domain. This makes CC100 the best-performing single anchor for zero-missing at the top of the frequency range.
 
-2. **The top-500 → top-1k drop is larger for spoken/subtitle anchors** than for written/web anchors:
+2. **CEJC now ranks second at top-500 (78.2%)**, comparable to NETFLIX (78.0%) and YOUTUBE (77.6%). This reflects that CEJC's spoken-language core vocabulary is broadly covered across all corpora.
+
+3. **The top-500 → top-1k drop is larger for spoken/subtitle anchors** than for written/web anchors:
    - CC100: 85.6% → 79.4% (−6.2pp)
    - YOUTUBE: 77.6% → 71.8% (−5.8pp)
    - NETFLIX: 78.0% → 71.1% (−6.9pp)
    - WIKIPEDIA: 77.2% → 73.4% (−3.8pp)
-   - BCCWJ: 74.1% → 74.1% (0pp — very stable from 500 to 1000)
+   - BCCWJ: 75.2% → 74.1% (−1.1pp — very stable from 500 to 1000)
 
-   BCCWJ shows near-zero drop from rank 500 to 1000, suggesting its top-1000 words are exceptionally "universal" — likely the high-frequency core that appears in every domain.
+   BCCWJ shows minimal drop from rank 500 to 1000, suggesting its top-1000 words are exceptionally "universal" — likely the high-frequency core that appears in every domain.
 
 3. **All anchors converge near 15–18% zero-missing for their full word list** (except JPDB at 7% and BCCWJ at 22% over its smaller 16k set). This confirms the mathematical ceiling effect described in §12 of Experiments 0: with 38 domain-specific sources, each adding coverage requirements, the ceiling is set by the worst-coverage source in the checked set.
 
@@ -154,7 +160,7 @@ Words missing from at most 3 of the 38 checked sources:
 | RSPEER | 25,000 | 6,987 | 27.9% |
 | WIKIPEDIA_V2 | 25,000 | 6,833 | 27.3% |
 | CC100 | 24,605 | 6,624 | 26.9% |
-| CEJC | 27,988 | 6,042 | 21.6% |
+| CEJC | 27,988 | 6,075 | 21.7% |
 | BCCWJ | 16,491 | 6,186 | 37.5%* |
 | JPDB | 24,231 | 2,862 | 11.8% |
 
@@ -166,7 +172,7 @@ Words missing from at most 3 of the 38 checked sources:
 
 2. **The subtitle anchors (ANIME_JDRAMA, NETFLIX) have the best high-frequency density** at ~29%. They cover spoken/conversational Japanese where vocabulary overlaps heavily across all corpora. Written/web anchors (CC100, WIKIPEDIA_V2) produce slightly fewer high-frequency words per 25k — likely because they include more domain-specific written vocabulary that only appears in certain corpora.
 
-3. **CEJC's count (6,042, 21.6%) is lower than expected** given it's the largest anchor (27,988 words). Two reasons: (a) it checks 51 sources instead of 38 (§4 — CEJC sub-corpus columns count as checks); (b) CEJC includes UniDic lemma-form words (其れ, 為る) that are absent from surface-form sources and hard to bridge even with the kana fallback.
+3. **CEJC's count (6,075, 21.7%) is lower than expected** given it's the largest anchor (27,988 words). The main reason is that CEJC includes UniDic lemma-form words (其れ, 為る) that are absent from surface-form sources and hard to bridge even with the bidirectional kana fallback.
 
 4. **RSPEER and WIKIPEDIA_V2 perform well** (6,987 and 6,833 respectively) for web/aggregated sources. Their threshold counts are comparable to the subtitle anchors, confirming they cover general Japanese vocabulary broadly.
 

@@ -38,7 +38,7 @@ word-frequency-rankings/
 │   └── RAW/
 │       └── ___FILTERED/   # 46+ source datasets, each with a standardized DATA.csv
 ├── notes/            # Reference documentation for all frequency sources
-└── utils/            # Shared Python utilities (formatting helpers)
+└── utils/            # Shared Python utilities (formatting, kana conversion, JP word lookup)
 ```
 
 ## Datasets
@@ -155,7 +155,7 @@ See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbo
 **Pipeline bugs fixed:**
 
 - Quite a few sources had duplicate word entries; the pipeline now keeps the minimum (most frequent) rank.
-- CEJC uses UniDic kanji lemma forms (其れ for それ, 為る for する). A kana fallback via JPDB v2 readings was added to bridge form mismatches.
+- CEJC uses UniDic kanji lemma forms (其れ for それ, 為る for する). A bidirectional kana/kanji fallback via JPDB v2 readings was added to bridge form mismatches: kanji anchor words look up their kana reading in other sources, and kana anchor words look up any kanji form that shares the same reading. This resolved 4,703 additional rank lookups (0.35% of cells) in the CEJC anchor vs a unidirectional kanji→kana-only fallback.
 - AOZORA_BUNKO contains zero hiragana words by design (kanji-only source) and must be excluded from coverage checks.
 
 **Structurally incompatible sources:**
@@ -213,13 +213,13 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 | Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 (%) |
 | --------------- | ------- | ------ | ------ | ------ | ------- | ------- |
 | CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 30.1%   | 47.9%   |
+| CEJC            | 78.2%   | 72.1%  | 56.0%  | 45.0%  | 26.3%   | 39.8%   |
 | NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 31.7%   | 48.2%   |
 | YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 31.8%   | 48.0%   |
 | WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 30.1%   | 43.3%   |
 | BCCWJ           | 75.2%   | 74.1%  | 63.9%  | 52.5%  | 29.6%   | 47.4%   |
 | ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 30.6%   | 46.4%   |
 | RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 31.6%   | 46.3%   |
-| CEJC            | 71.8%   | 68.5%  | 54.3%  | 43.7%  | 25.5%   | 39.7%   |
 | JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 10.2%   | 17.6%   |
 
 ## Setup

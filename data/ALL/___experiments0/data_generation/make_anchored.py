@@ -17,11 +17,16 @@ Anchors generated:
 import csv
 import glob
 import os
+import sys
 
 csv.field_size_limit(10_000_000)
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(BASE, "..", "..", "..", ".."))
+sys.path.insert(0, ROOT)
+
+from utils import JapaneseLookup  # noqa: E402
+
 CEJC_FILE = os.path.join(ROOT, "data", "CEJC", "CONSOLIDATED_UNIQUE.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
 JPDB_RAW = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
@@ -37,79 +42,7 @@ ANCHORS = [
 ]
 
 
-# ── Kana conversion ───────────────────────────────────────────────────────────
-def _hira_to_kata(text):
-    return "".join(
-        chr(ord(c) + 0x60) if 0x3041 <= ord(c) <= 0x3096 else c for c in text
-    )
-
-
-def _kata_to_hira(text):
-    return "".join(
-        chr(ord(c) - 0x60) if 0x30A1 <= ord(c) <= 0x30F6 else c for c in text
-    )
-
-
-def _is_pure_kana(word):
-    return bool(word) and all(0x3040 <= ord(c) <= 0x30FF for c in word)
-
-
-# ── Build bidirectional kana/kanji lookup from JPDB raw data ─────────────────
-# kana_fallback:  kanji → kana  (for kanji anchor words looking up kana-keyed sources)
-# kana_to_kanji:  kana  → [kanji forms]  (for kana anchor words looking up CEJC kanji lemmas)
-# _jpdb_reading:  term  → hiragana reading (all entries, for the hiragana/katakana columns)
-kana_fallback = {}
-_jpdb_reading = {}
-with open(JPDB_RAW, newline="", encoding="utf-8") as f:
-    for row in csv.DictReader(f, delimiter="\t"):
-        term, reading, freq = row["term"], row["reading"], int(row["frequency"])
-        if term not in _jpdb_reading or freq < _jpdb_reading[term][1]:
-            _jpdb_reading[term] = (reading, freq)
-        if term == reading:
-            continue
-        if term not in kana_fallback or freq < kana_fallback[term][1]:
-            kana_fallback[term] = (reading, freq)
-kana_fallback = {t: r for t, (r, _) in kana_fallback.items()}
-_jpdb_reading = {t: r for t, (r, _) in _jpdb_reading.items()}
-
-kana_to_kanji = {}
-for kanji, kana in kana_fallback.items():
-    kana_to_kanji.setdefault(kana, []).append(kanji)
-
-# CEJC TSV: 語彙素 -> katakana reading (fallback for words not in JPDB)
-_cejc_reading = {}
-with open(CEJC_TSV, newline="", encoding="utf-8") as f:
-    for row in csv.DictReader(f, delimiter="\t"):
-        word, kata = row.get("語彙素", "").strip(), row.get("語彙素読み", "").strip()
-        if word and kata and word not in _cejc_reading:
-            _cejc_reading[word] = kata
-
-
-def get_reading(word):
-    """Return (hiragana, katakana) for word, or ('-', '-') if unknown."""
-    if word in _jpdb_reading:
-        hira = _jpdb_reading[word]
-        return hira, _hira_to_kata(hira)
-    if word in _cejc_reading:
-        kata = _cejc_reading[word]
-        return _kata_to_hira(kata), kata
-    if _is_pure_kana(word):
-        return _kata_to_hira(word), _hira_to_kata(word)
-    return "-", "-"
-
-
-def lookup(source: dict, word: str) -> int:
-    if word in source:
-        return source[word]
-    # kanji word → try its kana reading in source
-    kana = kana_fallback.get(word)
-    if kana and kana in source:
-        return source[kana]
-    # kana word → try any kanji form that reads as this kana in source
-    for kanji in kana_to_kanji.get(word, []):
-        if kanji in source:
-            return source[kanji]
-    return -1
+jlookup = JapaneseLookup(JPDB_RAW, CEJC_TSV)
 
 
 # ── Load CEJC as a plain rank source (cejc_combined_rank only) ────────────────────
@@ -173,9 +106,9 @@ for anchor_name, top_n in ANCHORS:
 
     rows = []
     for word, anchor_rank in anchor_words:
-        hira, kata = get_reading(word)
-        cejc_r = lookup(cejc_source, word)
-        other_vals = [lookup(all_sources[s], word) for s in other_names]
+        hira, kata = jlookup.get_reading(word)
+        cejc_r = jlookup.lookup(cejc_source, word)
+        other_vals = [jlookup.lookup(all_sources[s], word) for s in other_names]
         rows.append([word, hira, kata, anchor_rank, cejc_r] + other_vals)
 
     consol_path = os.path.join(

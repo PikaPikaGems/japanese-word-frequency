@@ -24,7 +24,7 @@ with open(JPDB_DATA, encoding="utf-8") as f:
 cejc_ranks = {}
 with open(CEJC_DATA, encoding="utf-8") as f:
     for row in csv.DictReader(f):
-        cejc_ranks[row["word"]] = int(row["combined_rank"])
+        cejc_ranks[row["word"]] = int(row["cejc_combined_rank"])
 
 # Find overlaps
 common_rspeer_jpdb = set(rspeer_ranks) & set(jpdb_ranks)

@@ -41,3 +41,8 @@ def katakana_to_hiragana(text: str) -> str:
         else:
             result.append(ch)
     return "".join(result)
+
+
+def is_pure_kana(word: str) -> bool:
+    """Return True if *word* consists entirely of hiragana and/or katakana characters."""
+    return bool(word) and all(0x3040 <= ord(c) <= 0x30FF for c in word)

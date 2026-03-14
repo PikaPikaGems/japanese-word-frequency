@@ -1,12 +1,17 @@
 import csv
 import glob
 import os
+import sys
 
 csv.field_size_limit(10_000_000)
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(BASE, "..", "..", "..", ".."))
+sys.path.insert(0, ROOT)
+
+from utils import JapaneseLookup  # noqa: E402
+
 CEJC_FILE = os.path.join(ROOT, "data", "CEJC", "CONSOLIDATED_UNIQUE.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
 JPDB_FILE = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
@@ -14,60 +19,7 @@ CEJC_TSV  = os.path.join(ROOT, "data", "CEJC", "2_cejc_frequencylist_suw_token.t
 RSPEER_FILE = os.path.join(ROOT, "data", "RSPEER", "top_25000_japanese.csv")
 OUTPUT_FILE = os.path.join(BASE, "..", "..", "CEJC_anchor", "consolidated.csv")
 
-# ── Kana conversion ───────────────────────────────────────────────────────────
-def _hira_to_kata(text):
-    return "".join(chr(ord(c) + 0x60) if 0x3041 <= ord(c) <= 0x3096 else c for c in text)
-
-def _kata_to_hira(text):
-    return "".join(chr(ord(c) - 0x60) if 0x30A1 <= ord(c) <= 0x30F6 else c for c in text)
-
-def _is_pure_kana(word):
-    return bool(word) and all(0x3040 <= ord(c) <= 0x30FF for c in word)
-
-# ── Build reading lookup: word -> hiragana (JPDBV2 primary, CEJC TSV fallback) ─
-# JPDBV2: term -> hiragana reading (most frequent reading per term)
-_jpdb_reading = {}
-with open(JPDB_FILE, newline="", encoding="utf-8") as f:
-    for row in csv.DictReader(f, delimiter="\t"):
-        term, reading, freq = row["term"], row["reading"], int(row["frequency"])
-        if term not in _jpdb_reading or freq < _jpdb_reading[term][1]:
-            _jpdb_reading[term] = (reading, freq)
-_jpdb_reading = {t: r for t, (r, _) in _jpdb_reading.items()}
-
-# CEJC TSV: 語彙素 -> katakana reading
-_cejc_reading = {}
-with open(CEJC_TSV, newline="", encoding="utf-8") as f:
-    for row in csv.DictReader(f, delimiter="\t"):
-        word, kata = row.get("語彙素", "").strip(), row.get("語彙素読み", "").strip()
-        if word and kata and word not in _cejc_reading:
-            _cejc_reading[word] = kata
-
-def get_reading(word):
-    """Return (hiragana, katakana) for word, or ('-', '-') if unknown."""
-    if word in _jpdb_reading:
-        hira = _jpdb_reading[word]
-        return hira, _hira_to_kata(hira)
-    if word in _cejc_reading:
-        kata = _cejc_reading[word]
-        return _kata_to_hira(kata), kata
-    if _is_pure_kana(word):
-        return _kata_to_hira(word), _hira_to_kata(word)
-    return "-", "-"
-
-# Load JPDB v2: term -> kana reading (keep the most frequent reading per term)
-# Only store where reading differs from term (i.e. kanji forms that have a kana fallback)
-kana_fallback = {}
-with open(JPDB_FILE, newline="", encoding="utf-8") as f:
-    reader = csv.DictReader(f, delimiter="\t")
-    for row in reader:
-        term = row["term"]
-        reading = row["reading"]
-        freq = int(row["frequency"])
-        if term == reading:
-            continue
-        if term not in kana_fallback or freq < kana_fallback[term][1]:
-            kana_fallback[term] = (reading, freq)
-kana_fallback = {term: reading for term, (reading, _) in kana_fallback.items()}
+jlookup = JapaneseLookup(JPDB_FILE, CEJC_TSV)
 
 # Load CEJC data — preserves word order
 cejc_rows = []
@@ -108,14 +60,6 @@ with open(RSPEER_FILE, newline="", encoding="utf-8") as f:
 source_names.append("RSPEER")
 sources["RSPEER"] = rspeer_ranks
 
-def lookup(source, word):
-    if word in source:
-        return source[word]
-    reading = kana_fallback.get(word)
-    if reading and reading in source:
-        return source[reading]
-    return -1
-
 # Write consolidated.csv
 out_columns = ["word", "hiragana", "katakana"] + cejc_columns + source_names
 with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
@@ -123,9 +67,9 @@ with open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as f:
     writer.writerow(out_columns)
     for row in cejc_rows:
         word = row["word"]
-        hira, kata = get_reading(word)
+        hira, kata = jlookup.get_reading(word)
         cejc_vals = [row[c] for c in cejc_columns]
-        source_vals = [lookup(sources[s], word) for s in source_names]
+        source_vals = [jlookup.lookup(sources[s], word) for s in source_names]
         writer.writerow([word, hira, kata] + cejc_vals + source_vals)
 
 print(f"Written {len(cejc_rows)} rows to {OUTPUT_FILE}")
