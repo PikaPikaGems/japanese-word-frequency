@@ -212,38 +212,139 @@ Even after all fixes, some -1s are expected and correct:
 
 ---
 
-## 9. Recommended Algorithm: Threshold-Based Coverage Filter
+## 9. The Excluded Sources: Why Each One Is Structurally Incompatible
 
-Rather than requiring a word to appear in all sources (which ~98% of words fail), filter by how many sources it is missing from.
+These six sources are excluded from all coverage quality checks. Each is excluded for a distinct, evidence-backed reason — not poor data quality in the general sense, but a fundamental mismatch with the rest of the corpus that makes their -1s meaningless as a signal of word rarity.
+
+---
+
+### AOZORA_BUNKO
+
+**Reason:** Kanji-only source — structurally contains zero hiragana-only words.
+
+**Evidence:** Inspection of the raw Yomitan JSON confirms the source contains only kanji-form tokens derived from the Aozora Bunko literary corpus. Function words (は、が、の、に、を、て…) that are written exclusively in hiragana are entirely absent. This is not a processing error; the source JSON was built from kanji token frequencies and hiragana-only tokens were never included.
+
+A -1 from AOZORA_BUNKO means "this word is not written in kanji," not "this word is rare." Every hiragana word — including the most common words in Japanese — gets -1. Including it in quality checks would falsely flag all function words as absent.
+
+---
+
+### NIER
+
+**Reason:** Single video game with only ~10,000 unique tokens — far below the 25,000 source cap.
+
+**Evidence:** `wc -l data/RAW/___FILTERED/NIER/DATA.csv` → **10,078 lines** (10,077 words + header). NieR: Automata is one RPG. Its entire script simply does not contain most Japanese words. A -1 here means "not used in this game's dialogue," which is meaningless for general frequency ranking.
+
+---
+
+### ILYASEMENOV
+
+**Reason:** Raw Wikipedia dump — contains HTML entities as "words" and is domain-locked to formal biographical writing.
+
+**Evidence:** Actual top entries in `DATA.csv`:
+
+```
+#1  は        (fine)
+#2  また      (also — formal writing marker)
+#3  概要      (overview — Wikipedia section header)
+#7  the       (English word)
+#9  経歴      (career history — Wikipedia infobox term)
+#14 amp       (HTML entity &amp;)
+#15 gt        (HTML entity &gt;)
+#18 lt        (HTML entity &lt;)
+```
+
+HTML artifacts (`amp`, `gt`, `lt`) are counted as vocabulary. The top non-particle words are Wikipedia-specific (`概要`, `経歴`, `来歴`, `人物`) — these are recurring section headers in Japanese Wikipedia biographical articles, not general vocabulary. Conversational words, particles in context, and spoken-Japanese vocabulary are essentially absent.
+
+---
+
+### DD2_MIGAKU_NOVELS
+
+**Reason:** Curated learner deck — only ~16,000 words, not a comprehensive frequency list.
+
+**Evidence:** `wc -l data/RAW/___FILTERED/DD2_MIGAKU_NOVELS/DATA.csv` → **16,470 lines** (16,469 words + header). This is a Migaku/Anki vocabulary deck designed to help Japanese learners study novel vocabulary. It was never intended to be an exhaustive frequency corpus. Its coverage ceiling of ~16k words means the bottom ~12k of any 25k anchor list will always be -1.
+
+---
+
+### HERMITDAVE_2016 and HERMITDAVE_2018
+
+**Reason:** MeCab morpheme-split tokenization — dictionary-form verbs and adjectives do not exist as tokens in these sources.
+
+**Evidence:** The actual top entries reveal the tokenization level:
+
+```
+HERMITDAVE rank #1:  い    ← morpheme, not word
+HERMITDAVE rank #21: う    ← morpheme (volitional suffix)
+HERMITDAVE rank #36: ろ    ← morpheme (imperative suffix)
+HERMITDAVE rank #77: でき  ← stem of できる, not the verb itself
+```
+
+`い` at rank #1 is not the word "i" — it is the auxiliary morpheme appearing in every progressive form (`している`, `いる`, `ている`). MeCab with IPAdic in morpheme mode splits `思っている` → `思` + `っ` + `て` + `い` + `る`, so each morpheme accumulates frequency separately.
+
+Consequence: the dictionary forms `思う`, `見る`, `できる`, `いる`, `食べる` simply do not exist as tokens. Their frequency is atomized. Cross-checked: none of these words appear anywhere in HERMITDAVE's word list, not even as conjugated forms (`思います`, `食べた`, etc. also absent). This was verified by string-searching all 25,000 HERMITDAVE entries.
+
+In contrast, YOUTUBE_FREQ_V3 (and most other sources) use a lemmatizing tokenizer that collapses all inflections of 思う into a single entry, which reaches rank #30.
+
+**Missing rate for top-1,000 YOUTUBE words before exclusion:**
+- HERMITDAVE_2016: **24.8%**
+- HERMITDAVE_2018: **24.4%**
+
+These are not domain gaps — they are tokenization artifacts. No lookup or fallback can bridge morpheme-split tokens to lemma-form entries.
+
+---
+
+### Impact of the Full Exclusion Set
+
+Each source added to EXCLUDE improves the zero-missing count because words that were falsely failing (due to structural incompatibility, not genuine absence) are no longer penalized. The progression:
+
+| Exclusion set | Zero-missing (CEJC anchor) | Zero-missing (YOUTUBE anchor) |
+|---|---|---|
+| None | 330 | — |
+| + AOZORA_BUNKO | ~330 (minimal change) | — |
+| + NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS | 1,341 | 1,975 |
+| + HERMITDAVE_2016, HERMITDAVE_2018 | **1,828** | **2,708** |
+
+Adding the two HERMITDAVE sources improved zero-missing by ~36–37% relative to the 4-source exclusion set.
+
+Zero-missing counts by anchor after all 6 exclusions (29 remaining sources checked):
+
+| Anchor | Total words | Zero-missing | % |
+|---|---|---|---|
+| CEJC | 27,988 | 1,828 | 6.5% |
+| JPDB | 24,231 | 1,642 | 6.8% |
+| YOUTUBE_FREQ_V3 | 30,000 | 2,708 | 9.0% |
+| ANIME_JDRAMA | 25,000 | 2,643 | 10.6% |
+| NETFLIX | 25,000 | 2,611 | 10.4% |
+
+---
+
+## 10. Recommended Algorithm: Threshold-Based Coverage Filter
+
+Rather than requiring a word to appear in all remaining sources (which ~85–93% of words still fail), filter by how many sources it is missing from.
 
 **Algorithm:**
 
 ```
-EXCLUDE = {AOZORA_BUNKO, NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018}  # structurally bad sources
+EXCLUDE = {AOZORA_BUNKO, NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS, HERMITDAVE_2016, HERMITDAVE_2018}
 
 for each word:
-    missing_count = count of -1s in [all source columns] − EXCLUDE
+    missing_count = count of -1s across all source columns not in EXCLUDE
 
 filter_words_at_threshold(N):
     return words where missing_count ≤ N
 ```
 
-**Choosing N:**
+**Choosing N** (29 sources remain after exclusion):
 
-Both HERMITDAVE sources are now excluded (same as NIER/ILYASEMENOV/DD2_MIGAKU_NOVELS) since their morpheme-split tokenization makes them structurally incompatible with lemma-normalized sources.
+| N | Meaning |
+|---|---|
+| 0 | Present in all 29 checked sources — maximum strictness |
+| 3 | Tolerates a few domain-specific sources missing a word |
+| 5 | Good general-purpose threshold |
+| 10 | Permissive — keeps most common vocabulary |
 
-Practical thresholds by strictness:
+**No weighting is needed.** A simple count is transparent and reproducible. If you want to be more principled, you could split sources into tiers (broad corpus vs. narrow domain) and require coverage in all broad-corpus sources while tolerating misses in narrow ones — but that adds complexity without clear benefit at this stage.
 
-| N | Meaning | Use when… |
-|---|---|---|
-| 0 | Present in ALL 31 checked sources | Maximum strictness; excludes all morpheme-split sources |
-| 2 | Tolerate up to 2 missing sources | Tolerate the HERMITDAVE pair |
-| 5 | Tolerate up to 5 missing sources | Good general-purpose threshold |
-| 10 | Tolerate up to 10 of 31 sources | Permissive; keeps most common vocabulary |
-
-**No weighting is needed** unless you want to penalize certain sources more (e.g., missing from ANIME_JDRAMA is more concerning than missing from a DD2_MORPHMAN variant). A simple count is transparent and reproducible.
-
-To produce these filtered lists, run `analyze_coverage.py` (which already computes `missing_count` per word in the distribution table) and filter the resulting `consolidated_anchor_*.csv` at whatever threshold makes sense for the use case.
+To produce these filtered lists, run `analyze_coverage.py` (which already computes `missing_count` per word in the distribution table) and filter the resulting `consolidated_anchor_*.csv` at the chosen threshold.
 
 ---
 
