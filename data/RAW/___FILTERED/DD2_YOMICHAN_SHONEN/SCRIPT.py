@@ -1,0 +1,38 @@
+"""
+Generates DATA.csv from Dave Doebrick's Yomichan Shonen Top 100 frequency list.
+Source: 'Shonen Top 100/term_meta_bank_1.json' — [[word, "freq", rank_int], ...]
+Output: top 25,000 words with WORD, FREQUENCY_RANKING columns.
+"""
+
+import json
+import os
+
+INPUT_FILE = os.path.join(os.path.dirname(__file__), "../../DAVE_DOEBRICK_PART2/YOMICHAN/Shonen Top 100/term_meta_bank_1.json")
+OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "DATA.csv")
+TOP_N = 25000
+
+
+def main():
+    with open(INPUT_FILE, encoding="utf-8") as f:
+        entries = json.load(f)
+
+    rows = []
+    for entry in entries:
+        word = entry[0]
+        rank = entry[2]
+        if isinstance(rank, int):
+            rows.append((word, rank))
+
+    rows.sort(key=lambda x: x[1])
+    top = rows[:TOP_N]
+
+    with open(OUTPUT_FILE, "w", encoding="utf-8", newline="") as f:
+        f.write("WORD,FREQUENCY_RANKING\n")
+        for new_rank, (word, _orig_rank) in enumerate(top, start=1):
+            f.write(f"{word},{new_rank}\n")
+
+    print(f"Written {len(top)} rows to {OUTPUT_FILE}")
+
+
+if __name__ == "__main__":
+    main()

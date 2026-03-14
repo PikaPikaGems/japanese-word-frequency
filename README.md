@@ -1,6 +1,6 @@
 # Japanese Word Frequency Rankings
 
-A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating 22+ sources into unified formats for language learning, linguistics, and NLP research.
+A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating 35+ sources into unified formats for language learning, linguistics, and NLP research.
 
 ## Vocabulary Tier System
 
@@ -19,12 +19,12 @@ Words are assigned to one of five frequency tiers based on their ranking across 
 ```
 word-frequency-rankings/
 ├── data/
-│   ├── ALL/          # Consolidated multi-source rankings (27,988 words x 36 sources)
+│   ├── ALL/          # Consolidated multi-source rankings (27,988 words x 49 sources)
 │   ├── CEJC/         # Corpus of Everyday Japanese Conversation (~2.4M words, 577 conversations)
 │   ├── JPDBV2/       # JPDB v2.2 entertainment media frequency list (~497k entries)
 │   ├── RSPEER/       # rspeer/wordfreq library output (top 25,000 words)
 │   └── RAW/
-│       └── ___FILTERED/   # 22 standardized source datasets (DATA.csv per source)
+│       └── ___FILTERED/   # 35 standardized source datasets (DATA.csv per source)
 ├── notes/            # Reference documentation for all 22+ frequency sources
 └── utils/            # Shared Python utilities (formatting helpers)
 ```
@@ -35,12 +35,13 @@ word-frequency-rankings/
 
 `data/ALL/`
 
-The primary output of this repo. Combines CEJC rankings with all 23 filtered sources into a single file.
+The primary output of this repo. Combines CEJC rankings with all 35 filtered sources into a single file.
 
-- **`consolidated.csv`** — 27,988 unique words x 36 rank columns
+- **`consolidated.csv`** — 27,988 unique words x 49 rank columns (14 CEJC + 35 source)
 - **`categorized.csv`** — Same structure, with ranks mapped to tier labels (basic/common/fluent/advanced/rare)
 - **`SCRIPT.py`** — Generates `consolidated.csv` from CEJC + filtered sources
 - **`CATEGORIZED.py`** — Generates `categorized.csv` from `consolidated.csv`
+- **`check_duplicates.py`** — Detects and removes source columns with identical rankings
 
 ### CEJC — Everyday Spoken Japanese
 
@@ -78,38 +79,51 @@ Generated from the [rspeer/wordfreq](https://github.com/rspeer/wordfreq) Python 
 
 See [data/RSPEER/INSIGHTS.md](data/RSPEER/INSIGHTS.md) for analysis results.
 
-### RAW/\_\_\_FILTERED — 22 Source Datasets
+### RAW/\_\_\_FILTERED — 35 Source Datasets
 
 `data/RAW/___FILTERED/`
 
-TODO: UPDATE THIS. We've added more
-
 Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENCY_RANKING`, top 25k entries) and a `README.md` describing the source.
 
-| Source          | Type                                         |
-| --------------- | -------------------------------------------- |
-| ADNO            | Wikipedia (cleaned)                          |
-| ANIME_JDRAMA    | Anime & J-drama subtitles                    |
-| AOZORA_BUNKO    | Public domain literature                     |
-| BCCWJ           | Balanced written corpus (NINJAL, 100M words) |
-| CC100           | Web text (Common Crawl)                      |
-| CHRISKEMPSON    | Japanese subtitles                           |
-| DAVE_DOEBRICK   | Mixed subtitle corpus                        |
-| HERMITDAVE_2016 | Subtitle corpus (2016)                       |
-| HERMITDAVE_2018 | Subtitle corpus (2018)                       |
-| H_FREQ          | Community-compiled list                      |
-| ILYASEMENOV     | Wikipedia word frequency                     |
-| INNOCENT_RANKED | Innocent Corpus (novels)                     |
-| JITEN_ANIME     | Anime-focused frequency                      |
-| JPDB            | Entertainment media (jpdb.io)                |
-| KOKUGOJITEN     | Japanese dictionary headwords                |
-| MONODICTS       | Monolingual dictionary terms                 |
-| NAROU           | Web novels (Narou)                           |
-| NETFLIX         | Netflix subtitle frequency                   |
-| NOVELS          | Novel corpus                                 |
-| VN_FREQ         | Visual novel corpus                          |
-| WIKIPEDIA_V2    | Wikipedia (v2)                               |
-| YOUTUBE_FREQ    | YouTube subtitle frequency                   |
+| Source                  | Type                                               |
+| ----------------------- | -------------------------------------------------- |
+| ADNO                    | Wikipedia (cleaned)                                |
+| ANIME_JDRAMA            | Anime & J-drama subtitles                          |
+| AOZORA_BUNKO            | Public domain literature                           |
+| BCCWJ                   | Balanced written corpus (NINJAL, 100M words)       |
+| CC100                   | Web text (Common Crawl)                            |
+| CHRISKEMPSON            | Japanese subtitles                                 |
+| DAVE_DOEBRICK           | Netflix subtitles (Dave Doebrick, full report)     |
+| DD2_MIGAKU_NETFLIX      | Netflix subtitles (Migaku dictionary format)       |
+| DD2_MIGAKU_NOVELS       | Novel corpus (Migaku dictionary format)            |
+| DD2_MORPHMAN_NETFLIX    | Netflix subtitles (Morphman report, no names)      |
+| DD2_MORPHMAN_NOVELS     | Novel corpus (Morphman report)                     |
+| DD2_MORPHMAN_SHONEN     | Shonen anime/manga (Morphman report)               |
+| DD2_MORPHMAN_SOL        | Slice of Life anime (Morphman report)              |
+| DD2_YOMICHAN_NOVELS     | Novel corpus (Yomichan Stars format)               |
+| DD2_YOMICHAN_SHONEN     | Shonen anime/manga (Yomichan integer rank format)  |
+| DD2_YOMICHAN_SHONEN_STARS | Shonen anime/manga (Yomichan Stars format)       |
+| DD2_YOMICHAN_SOL        | Slice of Life anime (Yomichan integer rank format) |
+| DD2_YOMICHAN_VN         | Visual novels (Yomichan Stars format)              |
+| HERMITDAVE_2016         | Subtitle corpus (2016)                             |
+| HERMITDAVE_2018         | Subtitle corpus (2018)                             |
+| H_FREQ                  | Community-compiled list                            |
+| ILYASEMENOV             | Wikipedia word frequency                           |
+| INNOCENT_RANKED         | Innocent Corpus (novels)                           |
+| JITEN_ANIME             | Anime-focused frequency                            |
+| JPDB                    | Entertainment media (jpdb.io)                      |
+| KOKUGOJITEN             | Japanese dictionary headwords                      |
+| MONODICTS               | Monolingual dictionary terms                       |
+| NAROU                   | Web novels (Narou)                                 |
+| NETFLIX                 | Netflix subtitle frequency                         |
+| NIER                    | NieR game script frequency                         |
+| NOVELS                  | Novel corpus                                       |
+| VN_FREQ                 | Visual novel corpus                                |
+| WIKIPEDIA_V2            | Wikipedia (v2)                                     |
+| YOUTUBE_FREQ            | YouTube subtitle frequency                         |
+| YOUTUBE_FREQ_V3         | YouTube subtitle frequency (v3, ~187k entries)     |
+
+Note: `DD2_*` sources are from Dave Doebrick's Frequency List Compilation (MIGAKU, MORPHMAN, and YOMICHAN dictionary formats). Three were removed as duplicates: `DD2_YOMICHAN_NETFLIX` (= `NETFLIX`), `DD2_MIGAKU_SOL` (= `DD2_YOMICHAN_SOL`), `DD2_MIGAKU_SHONEN` (= `DD2_YOMICHAN_SHONEN_STARS`).
 
 See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) for detailed descriptions of all sources.
 
@@ -217,6 +231,7 @@ Medical consultations and workplace conversations skew toward formal Sino-Japane
 - https://drive.google.com/drive/folders/1g1drkFzokc8KNpsPHoRmDJ4OtMTWFuXi
 - https://drive.google.com/drive/folders/1xURpMJN7HTtSLuVs9ZtIbE7MDRCdoU29
 - https://drive.google.com/file/d/1qHEfYHXjEp83i6PxxMlSxluFyQg2W8Up
+- https://docs.google.com/document/d/1IUWkvBxhoazBSTyRbdyRVk7hfKE51yorE86DCRNQVuw/edit
 
 ## License
 
