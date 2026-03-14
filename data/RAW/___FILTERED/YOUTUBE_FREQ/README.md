@@ -1,15 +1,16 @@
-# YOUTUBE_FREQ — YouTube Japanese Video Frequency (YoutubeFreqV3)
+# YOUTUBE_FREQ — YouTube Japanese Video Frequency (Shoui)
 
 ## Source
-- **Yomitan dict (MarvNC collection):** https://github.com/MarvNC/yomitan-dictionaries#youtube-frequency-dictionaries
+- **Shoui's collection:** https://anacreondjt.gitlab.io/docs/freq/
+- **MarvNC collection:** https://github.com/MarvNC/yomitan-dictionaries#youtube-frequency-dictionaries
 - **Creators:** @Zetta, @Vexxed, @Anonymous (community members)
 
 ## Description
-Domain-specific word frequency list created from ~40,000 manually transcribed YouTube videos covering 16 different domains of spoken Japanese. Version 3 (YoutubeFreqV3) contains ~187k unique words.
+Word frequency list created from manually transcribed Japanese YouTube videos. Part of the Shoui frequency dictionaries collection. Contains ~56k unique word entries.
 
-Note from reference notes: "Due to the limited size of the original dataset, frequencies should not be directly compared with larger corpora. Still useful for gauging relative word commonality in conversational/spoken YouTube Japanese."
+Note: "Due to the limited size of the original dataset, frequencies should not be directly compared with larger corpora. Still useful for gauging relative word commonality in conversational/spoken YouTube Japanese."
 
-The frequency represents rank ordering from most to least common in the YouTube subtitle corpus.
+See also: `YOUTUBE_FREQ_V3` — a newer, larger version (187k entries) from the MarvNC collection.
 
 ## Format (Yomitan JSON)
 Single `term_meta_bank_1.json` — each entry: `[word, "freq", rank_as_string]` (rank stored as string, e.g. `"1"`).

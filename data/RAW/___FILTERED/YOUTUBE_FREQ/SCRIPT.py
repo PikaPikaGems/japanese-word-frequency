@@ -1,5 +1,5 @@
 """
-Generates DATA.csv from the YoutubeFreqV3 Yomitan frequency dictionary (MarvNC collection).
+Generates DATA.csv from the YoutubeFreq Yomitan frequency dictionary (Shoui collection).
 Source: term_meta_bank_1.json — [word, "freq", rank_as_string]
 Output: top 25,000 words with WORD, FREQUENCY_RANKING columns.
 """
@@ -9,7 +9,7 @@ import os
 
 INPUT_FILE = os.path.join(
     os.path.dirname(__file__),
-    "../../MARVNC/[JA Freq] YoutubeFreqV3/term_meta_bank_1.json",
+    "../../SHOUI/[Freq] YoutubeFreq/term_meta_bank_1.json",
 )
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "DATA.csv")
 TOP_N = 25000
