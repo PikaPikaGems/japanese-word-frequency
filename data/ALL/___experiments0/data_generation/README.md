@@ -10,13 +10,13 @@ Scripts that build the primary consolidated and categorized CSV files from raw s
 
 1. Loads JPDB v2 to build a `kanji → kana` fallback table (for cross-script lookups).
 2. Reads `data/CEJC/CONSOLIDATED_UNIQUE.csv` to establish word order and CEJC domain/gender rank columns.
-3. Loads every `data/RAW/___FILTERED/*/DATA.csv` source (35 sources total).
+3. Loads every `data/RAW/___FILTERED/*/DATA.csv` source (47 sources total) plus `data/RSPEER/top_25000_japanese.csv` (rank derived from row position).
 4. For each CEJC word, looks up its rank in every source — using the kana fallback if the kanji form is absent.
 5. Writes one row per CEJC word: all CEJC columns + one rank column per source.
 
-**Output:** `../../consolidated_anchor_CEJC.csv`
+**Output:** `../../CEJC_anchor/consolidated.csv`
 - ~27,988 rows (one per CEJC word)
-- Columns: `word`, 13 CEJC domain/gender rank columns, then 35 source rank columns
+- Columns: `word`, 14 CEJC domain/gender rank columns, then 48 source rank columns (47 ___FILTERED + RSPEER)
 - Missing rank = `-1`
 
 ---
@@ -35,8 +35,8 @@ Tier mapping applied to every rank column:
 | 2    | advanced | 10,001 – 25,000  |
 | 1    | rare     | 25,001+ or absent|
 
-**Output:** `../../categorized_anchor_CEJC.csv`
-- Same structure as `consolidated_anchor_CEJC.csv` but all rank values replaced with tier numbers (1–5)
+**Output:** `../../CEJC_anchor/categorized.csv`
+- Same structure as `CEJC_anchor/consolidated.csv` but all rank values replaced with tier numbers (1–5)
 - Useful for categorical comparison and learning prioritization
 
 ---
@@ -58,9 +58,9 @@ Anchors and word limits:
 | ANIME_JDRAMA    | 25,000      |
 | NETFLIX         | 25,000      |
 
-**Outputs** (written to `../../`):
-- `consolidated_anchor_[ANCHOR].csv` — raw ranks; columns: `word`, `[ANCHOR]_rank`, `CEJC_rank`, then all other sources
-- `categorized_anchor_[ANCHOR].csv` — same structure with rank values replaced by tier numbers (1–5)
+**Outputs** (written to `../../{ANCHOR}_anchor/`):
+- `consolidated.csv` — raw ranks; columns: `word`, `[ANCHOR]_rank`, `CEJC_rank`, then all other sources (including RSPEER)
+- `categorized.csv` — same structure with rank values replaced by tier numbers (1–5)
 
 ## How to interpret the outputs
 

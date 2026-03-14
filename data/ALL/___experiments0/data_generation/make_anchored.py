@@ -26,6 +26,7 @@ CEJC_FILE = os.path.join(ROOT, "data", "CEJC", "CONSOLIDATED_UNIQUE.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
 JPDB_RAW = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
 CEJC_TSV = os.path.join(ROOT, "data", "CEJC", "2_cejc_frequencylist_suw_token.tsv")
+RSPEER_FILE = os.path.join(ROOT, "data", "RSPEER", "top_25000_japanese.csv")
 
 # (anchor_source_name, max_words_to_include)
 ANCHORS = [
@@ -131,6 +132,15 @@ for path in sorted(glob.glob(os.path.join(FILTERED_DIR, "*", "DATA.csv"))):
             if w not in word_rank or r < word_rank[w]:
                 word_rank[w] = r
     all_sources[name] = word_rank
+
+# ── Load RSPEER (row position = rank; higher zipf_frequency = more frequent = earlier row) ──
+rspeer_ranks: dict[str, int] = {}
+with open(RSPEER_FILE, newline="", encoding="utf-8") as f:
+    for rank, row in enumerate(csv.DictReader(f), start=1):
+        w = row["word"]
+        if w not in rspeer_ranks:
+            rspeer_ranks[w] = rank
+all_sources["RSPEER"] = rspeer_ranks
 
 
 # ── Categorization (mirrors CATEGORIZED.py) ───────────────────────────────────

@@ -11,6 +11,7 @@ CEJC_FILE = os.path.join(ROOT, "data", "CEJC", "CONSOLIDATED_UNIQUE.csv")
 FILTERED_DIR = os.path.join(ROOT, "data", "RAW", "___FILTERED")
 JPDB_FILE = os.path.join(ROOT, "data", "JPDBV2", "jpdb_v2.2_freq_list_2024-10-13.csv")
 CEJC_TSV  = os.path.join(ROOT, "data", "CEJC", "2_cejc_frequencylist_suw_token.tsv")
+RSPEER_FILE = os.path.join(ROOT, "data", "RSPEER", "top_25000_japanese.csv")
 OUTPUT_FILE = os.path.join(BASE, "..", "..", "CEJC_anchor", "consolidated.csv")
 
 # ── Kana conversion ───────────────────────────────────────────────────────────
@@ -96,6 +97,16 @@ for path in source_dirs:
             if word not in word_rank or rank < word_rank[word]:
                 word_rank[word] = rank
     sources[name] = word_rank
+
+# Load RSPEER (row position = rank; higher zipf_frequency = more frequent = earlier row)
+rspeer_ranks = {}
+with open(RSPEER_FILE, newline="", encoding="utf-8") as f:
+    for rank, row in enumerate(csv.DictReader(f), start=1):
+        word = row["word"]
+        if word not in rspeer_ranks:
+            rspeer_ranks[word] = rank
+source_names.append("RSPEER")
+sources["RSPEER"] = rspeer_ranks
 
 def lookup(source, word):
     if word in source:
