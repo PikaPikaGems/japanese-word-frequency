@@ -36,7 +36,7 @@ Results (Result B — reading-aware match):
   RSPEER ∩ JPDB  49.7%   49.9%    50.4%
   RSPEER ∩ CEJC  53.6%   51.1%    48.8%
   JPDB ∩ CEJC    54.6%   52.1%    54.1%
-  All three       42.7%   43.2%    44.9%
+  All three       40.3%   39.9%    40.7%
 """
 
 import csv, json
