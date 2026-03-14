@@ -1,6 +1,6 @@
 # About
 
-## Yhe Corpus of Spontaneous Japanese - CSJ
+## The Corpus of Spontaneous Japanese - CSJ
 
 Goes up to 31,605 frequency
 
