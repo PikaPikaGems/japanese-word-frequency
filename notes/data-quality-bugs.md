@@ -144,21 +144,49 @@ After all fixes and all four exclusions, even the top 1,000 most common words ar
 | H_FREQ | 17.8% |
 | DD2_MORPHMAN_* | ~16% each |
 
-HERMITDAVE (OpenSubtitles) and JPDB are missing roughly 1 in 4 of the most common Japanese words. This is not a rank-cutoff problem — these are top-1,000 words, well within any source's 25k cap.
+HERMITDAVE (OpenSubtitles) and JPDB are missing roughly 1 in 4 of the most common Japanese words. This is not a rank-cutoff problem — these are top-1,000 words, well within any source's 25k cap. The missing words were verified: `思う` (#30), `見る` (#56), `できる` (#50), `言う` (#40), `食べる` (#154), `わかる` (#132) — all extremely common verbs — are absent.
 
-**Root cause: tokenization mismatch.** Each corpus was processed with a different tokenizer or MeCab dictionary configuration. Different tokenizers produce different word boundaries for the same raw text:
+**Root cause: morpheme tokenization vs. lemma tokenization.**
 
-- One source might emit `じゃない` as a single token
-- Another might split it as `じゃ` + `ない`
-- `してください` could be one token or three
-- Compound nouns are split differently across tools
+The key evidence is HERMITDAVE's actual top entries:
 
-The kanji↔kana fallback (fix #3) resolves form differences for the same word unit, but **cannot bridge word-boundary differences** — `じゃない` and `じゃ` are genuinely different strings with no lookup path between them.
+```
+HERMITDAVE rank #1:  い    ← individual hiragana character
+HERMITDAVE rank #21: う    ← individual hiragana character
+HERMITDAVE rank #36: ろ    ← individual hiragana character
+```
 
-**Implication for the zero-missing filter:**
-Asking "is this word present in every source?" is too strict. With 31 heterogeneous sources using different tokenization, even the single most common word in Japanese is likely to fail a literal string match in at least one source. Even restricting to the top 3k, top 1k, or top 500 words doesn't help — the missing rate for those bands is:
+Compare to YOUTUBE:
 
-| Top-N (YOUTUBE anchor) | Zero-missing (31 sources) |
+```
+YOUTUBE rank #11: する   ← full verb (dictionary/lemma form)
+YOUTUBE rank #16: いう   ← full verb
+YOUTUBE rank #56: 見る   ← full verb
+```
+
+HERMITDAVE ran MeCab (or similar) in **morpheme mode** with IPAdic. In this mode, the analyzer splits verbs into their constituent morphemes:
+
+- `思っている` → `思` + `っ` + `て` + `い` + `る`
+- `できます` → `でき` + `ます`
+- `見ました` → `見` + `まし` + `た`
+
+The token `い` at rank #1 in HERMITDAVE is the auxiliary `い` that appears in every progressive/existential form (`している`, `いる`, `ている`, etc.). It is not the interjection — it is a morpheme.
+
+As a result, the dictionary form `思う` simply **does not exist as a token** in HERMITDAVE. Its frequency is split across `思`, `っ`, `て`, `い`, `る` separately, each too low to rank in the top-25k on its own.
+
+YOUTUBE_FREQ_V3 (and most modern learner-oriented sources) use a **lemmatizing tokenizer** that normalizes inflected forms to the dictionary entry: all forms of 思う collapse into a single `思う` entry with their combined frequency.
+
+This was confirmed by checking whether conjugated forms exist in HERMITDAVE as a fallback:
+- `いる` (YOUTUBE #20): NOT in HERMITDAVE → split as `い` + `る`
+- `思う` (YOUTUBE #30): NOT in HERMITDAVE, conjugations also absent → split at morpheme level
+- `でき` (morpheme stem): rank 77 in HERMITDAVE ← the stem of `できる`
+- `いた` (past of いる): rank 1,036 in HERMITDAVE ← one conjugated form, but frequency is spread thin
+
+**Why restricting to top 3k or top 1k doesn't help:**
+
+The problem is not about which words are "common enough" — even the top-500 most frequent Japanese words by YOUTUBE ranking have this issue. The problem is structural: a lemma-form word will never match a morpheme-split corpus regardless of its rank.
+
+| Top-N (YOUTUBE anchor) | Zero-missing across 31 sources |
 |---|---|
 | Top 500 | 45.0% |
 | Top 1,000 | 38.2% |
@@ -166,7 +194,56 @@ Asking "is this word present in every source?" is too strict. With 31 heterogene
 | Top 5,000 | 22.1% |
 | Top 10,000 | 14.8% |
 
-**Practical conclusion:** the right filter is not "missing from zero sources" but "missing from at most N sources." A word missing from ≤2–3 of 31 sources is much more meaningful than strict zero-missing.
+Even for the top-500 most common words, only 45% have zero -1s because multiple sources (HERMITDAVE_2016, HERMITDAVE_2018, and several DD2_MORPHMAN variants) will always miss lemma-form verbs.
+
+**Practical conclusion: use a missing-source threshold, not zero-missing.**
+
+Since 2–3 sources (specifically the HERMITDAVE pair and some DD2_MORPHMAN variants) will structurally miss lemma-form verbs, the right filter is "missing from at most N sources" rather than "missing from zero." See §9 for the recommended algorithm.
+
+---
+
+## 8. Remaining Expected -1s (Not Bugs)
+
+Even after all fixes, some -1s are expected and correct:
+
+- **Source-specific vocabulary:** some words appear only in specific domains (e.g., literary words in AOZORA, web slang in NAROU) and genuinely won't appear in subtitle or spoken corpora.
+- **Morpheme vs. lemma tokenization:** as described in §7, HERMITDAVE and similar sources will always miss dictionary-form verbs because the underlying text was tokenized at morpheme level.
+- **Kana fallback is one-to-one:** the fallback maps each kanji term to its single most frequent reading. If a word has multiple valid readings and the source uses a different one, the fallback still misses.
+
+---
+
+## 9. Recommended Algorithm: Threshold-Based Coverage Filter
+
+Rather than requiring a word to appear in all sources (which ~98% of words fail), filter by how many sources it is missing from.
+
+**Algorithm:**
+
+```
+EXCLUDE = {AOZORA_BUNKO, NIER, ILYASEMENOV, DD2_MIGAKU_NOVELS}  # structurally bad sources
+
+for each word:
+    missing_count = count of -1s in [all source columns] − EXCLUDE
+
+filter_words_at_threshold(N):
+    return words where missing_count ≤ N
+```
+
+**Choosing N:**
+
+HERMITDAVE_2016 and HERMITDAVE_2018 will both miss the same lemma-form verbs (same underlying source, same tokenization). That's a guaranteed floor of 2 for any dictionary-form verb. Setting N = 0 loses them; N ≥ 2 retains them.
+
+Practical thresholds by strictness:
+
+| N | Meaning | Use when… |
+|---|---|---|
+| 0 | Present in ALL 31 checked sources | Maximum strictness; excludes all morpheme-split sources |
+| 2 | Tolerate up to 2 missing sources | Tolerate the HERMITDAVE pair |
+| 5 | Tolerate up to 5 missing sources | Good general-purpose threshold |
+| 10 | Tolerate up to 10 of 31 sources | Permissive; keeps most common vocabulary |
+
+**No weighting is needed** unless you want to penalize certain sources more (e.g., missing from ANIME_JDRAMA is more concerning than missing from a DD2_MORPHMAN variant). A simple count is transparent and reproducible.
+
+To produce these filtered lists, run `analyze_coverage.py` (which already computes `missing_count` per word in the distribution table) and filter the resulting `consolidated_anchor_*.csv` at whatever threshold makes sense for the use case.
 
 ---
 
