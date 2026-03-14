@@ -552,3 +552,75 @@ Going from N≤2 to N≤3 adds ~750–930 words per anchor (except JPDB which is
 **Recommended threshold:** N≤3 is the practical working threshold. It tolerates the handful of domain-specific sources that legitimately skip certain vocabulary (e.g., H_FREQ's adult content register, NAROU's genre vocabulary) without setting an impossibly strict bar.
 
 Filtered CSVs for each anchor are written to `data/ALL/threshold_3_anchor_{NAME}.csv`.
+
+---
+
+## 14. Kana Reading Enrichment: Coverage and Gaps
+
+`hiragana` and `katakana` columns were added to every `categorized.csv` and `consolidated.csv` under `data/ALL/*/`. This section documents the sources used, the coverage achieved, and the nature of the remaining gaps.
+
+### Sources
+
+Two sources were combined into a single lookup of ~280,000 entries:
+
+| Source | Format | Reading script | Priority |
+|--------|--------|---------------|----------|
+| `data/JPDBV2/jpdb_v2.2_freq_list_2024-10-13.csv` | TSV, `term` + `reading` columns | hiragana | primary |
+| `data/CEJC/2_cejc_frequencylist_suw_token.tsv` | TSV, `語彙素` + `語彙素読み` columns | katakana | fallback |
+
+JPDBV2 provides hiragana readings; CEJC provides katakana readings (UniDic `語彙素読み`). For each word, a hiragana and katakana form are derived from whichever source has a match, using the conversion functions in `utils/kana.py` (pure Unicode offset arithmetic, no external library).
+
+### Pure-kana back-fill
+
+After the lookup pass, a second pass filled readings for words consisting entirely of hiragana and/or katakana characters (e.g. `う`, `あぁ`, `ンダホ`). For such words the reading is the word itself:
+
+```
+hiragana = katakana_to_hiragana(word)
+katakana  = hiragana_to_katakana(word)
+```
+
+Words filled by this pass per file:
+
+| Anchor | Pure-kana gaps filled |
+|--------|-----------------------|
+| JPDB | 41 |
+| NETFLIX | 317 |
+| ANIME_JDRAMA | 353 |
+| YOUTUBE_FREQ_V3 | 1,427 |
+| CEJC | 0 (already complete) |
+
+### Coverage after both passes
+
+| Anchor | Total words | Missing reading | % missing |
+|--------|-------------|----------------|-----------|
+| CEJC | 27,987 | 0 | 0.0% |
+| JPDB | 24,231 | 0 | 0.0% |
+| NETFLIX | 25,000 | 1,728 | 6.9% |
+| YOUTUBE_FREQ_V3 | 30,000 | 1,935 | 6.5% |
+| ANIME_JDRAMA | 25,000 | 2,636 | 10.5% |
+
+CEJC and JPDB-anchored files reach 100% coverage. The media-anchored files (ANIME, NETFLIX, YOUTUBE) have 6–11% gaps.
+
+### Nature of the remaining gaps
+
+All missing words contain Japanese characters — non-Japanese tokens are essentially absent (only `々`, the kanji repetition mark, is unclassifiable; 1 token across all files). The gap breaks down into two categories:
+
+**Conjugated / potential verb forms (~majority):** Words like `会える`, `行ける`, `使える`, `話せる`, `待てる`, `いただける` — potential/potential-passive verb forms — are common in spoken and subtitle corpora but not listed as headwords in either JPDBV2 or CEJC's lemma-based vocabulary lists. Both sources index dictionary/lemma forms only.
+
+**Proper nouns and names:** Anime character names (`悟`, `のび太`), Japanese surnames (`宮近`, `深澤`, `中村`, `井上`, `阿部`), and some proper place/product names account for most of the remainder, particularly in the YOUTUBE file which contains a lot of creator/talent names.
+
+**Implication:** The gaps are structural — they reflect the difference between a lemma-based dictionary and a surface-form subtitle/web corpus. A MeCab-based reading lookup could resolve the conjugated verb forms; a proper noun dictionary would be needed for the names. Both are out of scope for the current pipeline.
+
+### Handling unfixable words
+
+All remaining missing readings are filled with `"-"` (run `data/ALL/fill_unfixable_with_dash.py`). Final counts:
+
+| Anchor | Total words | Filled with "-" | % |
+|--------|-------------|----------------|---|
+| CEJC | 27,988 | 1 | 0.0% |
+| JPDB | 24,231 | 0 | 0.0% |
+| NETFLIX | 25,000 | 1,728 | 6.9% |
+| YOUTUBE_FREQ_V3 | 30,000 | 1,935 | 6.5% |
+| ANIME_JDRAMA | 25,000 | 2,636 | 10.5% |
+
+The 1 entry in CEJC is a blank word token (empty string) that was present in the source data. No file has any non-Japanese-character words among the unfixable set — all 8,300 "-" entries across the 5 anchors are kanji-containing words whose reading is simply not in either reference source.

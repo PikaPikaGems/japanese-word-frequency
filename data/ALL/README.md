@@ -8,8 +8,14 @@ This folder merges Japanese word frequency rankings from multiple sources into u
 |------|-------------|
 | `SCRIPT.py` | Generates `consolidated.csv` from CEJC and RAW/___FILTERED sources |
 | `CATEGORIZED.py` | Generates `categorized.csv` from `consolidated.csv` |
-| `consolidated.csv` | 27,988 words × 49 rank columns (word order from CEJC CONSOLIDATED_UNIQUE) |
+| `consolidated.csv` | 27,988 words × 51 columns (word + hiragana + katakana + 48 rank columns) |
 | `categorized.csv` | Same shape — rank values mapped to vocabulary tier categories |
+| `add_kana_columns.py` | Inserts `hiragana` and `katakana` columns into all categorized/consolidated CSVs |
+| `fix_pure_kana_gaps.py` | Back-fills readings for words that are their own reading (pure kana words) |
+| `check_missing_kana.py` | Reports how many words are missing a reading per file |
+| `analyze_missing.py` | Breaks down missing words by type: non-Japanese tokens vs. potential proper nouns |
+| `verify_kana_columns.py` | Sanity check — prints first few rows of each patched file |
+| `verify_kanji_kana.py` | Spot-checks kanji words to confirm readings are populated |
 
 ## consolidated.csv
 
@@ -20,6 +26,8 @@ This folder merges Japanese word frequency rankings from multiple sources into u
 | Column | Source | Description |
 |--------|--------|-------------|
 | `word` | — | — |
+| `hiragana` | JPDBV2 / CEJC | Reading in hiragana. Sourced from JPDBV2 first; CEJC used as fallback. Pure-kana words use themselves as the reading. Empty if reading is unknown. |
+| `katakana` | JPDBV2 / CEJC | Same reading converted to katakana. |
 | `combined_rank` | CEJC overall | — |
 | `small_talk_rank` | CEJC domain | — |
 | `consultation_rank` | CEJC domain | — |
@@ -87,6 +95,29 @@ Same columns as `consolidated.csv`, but each rank value is replaced with a vocab
 ## Regenerating
 
 ```bash
-python data/ALL/SCRIPT.py       # produces consolidated.csv
-python data/ALL/CATEGORIZED.py  # produces categorized.csv
+python data/ALL/SCRIPT.py            # produces consolidated.csv
+python data/ALL/CATEGORIZED.py       # produces categorized.csv
+python data/ALL/add_kana_columns.py  # adds hiragana/katakana columns to all anchor CSVs
+python data/ALL/fix_pure_kana_gaps.py  # fills pure-kana words that are their own reading
 ```
+
+## Kana reading coverage
+
+Reading lookup is built from two sources (280k entries combined):
+
+| Source | Reading format | Priority |
+|--------|---------------|----------|
+| `data/JPDBV2/jpdb_v2.2_freq_list_2024-10-13.csv` | hiragana | primary |
+| `data/CEJC/2_cejc_frequencylist_suw_token.tsv` | katakana | fallback |
+
+Coverage after lookup + pure-kana fill (categorized and consolidated are identical):
+
+| Anchor | Words | Missing reading | % missing |
+|--------|-------|----------------|-----------|
+| CEJC | 27,987 | 0 | 0.0% |
+| JPDB | 24,231 | 0 | 0.0% |
+| ANIME_JDRAMA | 25,000 | 2,636 | 10.5% |
+| NETFLIX | 25,000 | 1,728 | 6.9% |
+| YOUTUBE_FREQ_V3 | 30,000 | 1,935 | 6.5% |
+
+Remaining gaps are almost entirely conjugated verb forms (`会える`, `行ける`, `使える`) and proper nouns/names (`悟`, `宮近`, `中村`). Non-Japanese tokens are negligible (1 across all files: `々`, the kanji repetition mark).
