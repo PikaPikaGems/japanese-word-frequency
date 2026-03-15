@@ -54,10 +54,14 @@ with open(CEJC_FILE, newline="", encoding="utf-8") as f:
         except (ValueError, KeyError):
             cejc_source[row["word"]] = -1
 
+EXCLUDED_SOURCES = {"KOKUGOJITEN", "MONODICTS", "DD2_MIGAKU_NOVELS"}
+
 # ── Load all ___FILTERED sources ─────────────────────────────────────────────
 all_sources: dict[str, dict[str, int]] = {}
 for path in sorted(glob.glob(os.path.join(FILTERED_DIR, "*", "DATA.csv"))):
     name = os.path.basename(os.path.dirname(path))
+    if name in EXCLUDED_SOURCES:
+        continue
     word_rank: dict[str, int] = {}
     with open(path, newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
