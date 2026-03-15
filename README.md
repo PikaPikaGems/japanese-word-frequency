@@ -150,7 +150,7 @@ See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbo
 
 ## Experiments 0
 
-[`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources. Key findings:
+[`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources.
 
 **Pipeline bugs fixed:**
 
@@ -326,6 +326,9 @@ python data/ALL/___experiments1/top12k/threshold_analysis.py
 
 # N≤3 missing sources by rank band summary table (prints markdown)
 python data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py
+
+# Pairwise reading-aware overlap between all anchor datasets (top 5k/10k/15k/25k)
+python data/ALL/___experiments1/anchor_pairwise_overlap.py
 ```
 
 #### CEJC analysis reports
@@ -382,7 +385,75 @@ Some findings are well-supported and linguistically established: gendered first-
 
 However, the methodology (raw PMW ratio across all speech by gender) does **not** control for conversation domain. Work/meeting vocabulary (会議, 担当, チーム) skewing male, and food/home vocabulary (野菜, 卵, 菓子) skewing female, may reflect which domains male vs. female participants in this corpus happened to participate in — not an intrinsic property of how men and women speak. Core function words show very little gender skew regardless.
 
-([Demographic analysis](data/CEJC/insights/demographic_analysis.md))
+### Pairwise overlap across all anchors (experiments1)
+
+[`data/ALL/___experiments1/anchor_pairwise_overlap.py`](data/ALL/___experiments1/anchor_pairwise_overlap.py) — reading-aware pairwise intersection between all 9 anchor datasets. Row = source A (denominator); cell = % of A's top-N that appear in B's top-N. Top-15k is the most reliable tier for BCCWJ (only 16,491 words; its top-25k row is inflated).
+
+**Top-5k:**
+
+|                     | CC100 | CEJC  | YOUTUBE_FREQ_V3 | WIKIPEDIA_V2 | NETFLIX | BCCWJ | ANIME_JDRAMA | RSPEER | JPDB  |
+| ------------------- | ----- | ----- | --------------- | ------------ | ------- | ----- | ------------ | ------ | ----- |
+| **CC100**           | —     | 63.1% | 75.0%           | 58.3%        | 57.5%   | 73.2% | 54.5%        | 65.2%  | 32.5% |
+| **CEJC**            | 61.4% | —     | 61.3%           | 47.9%        | 52.9%   | 60.2% | 51.0%        | 53.9%  | 34.6% |
+| **YOUTUBE_FREQ_V3** | 77.0% | 65.0% | —               | 57.8%        | 62.5%   | 71.3% | 60.6%        | 67.3%  | 37.3% |
+| **WIKIPEDIA_V2**    | 62.8% | 53.1% | 60.3%           | —            | 54.6%   | 61.6% | 52.8%        | 65.4%  | 26.7% |
+| **NETFLIX**         | 61.7% | 58.8% | 64.8%           | 54.6%        | —       | 63.8% | 79.9%        | 64.4%  | 41.8% |
+| **BCCWJ**           | 71.9% | 60.7% | 67.9%           | 56.7%        | 58.5%   | —     | 55.7%        | 60.6%  | 29.7% |
+| **ANIME_JDRAMA**    | 58.4% | 56.8% | 62.5%           | 51.8%        | 79.9%   | 61.2% | —            | 60.7%  | 42.0% |
+| **RSPEER**          | 67.9% | 58.1% | 68.4%           | 63.6%        | 63.3%   | 64.4% | 60.0%        | —      | 33.3% |
+| **JPDB**            | 26.9% | 30.2% | 29.6%           | 19.5%        | 32.3%   | 25.3% | 32.1%        | 26.1%  | —     |
+
+**Top-10k:**
+
+|                     | CC100 | CEJC  | YOUTUBE_FREQ_V3 | WIKIPEDIA_V2 | NETFLIX | BCCWJ | ANIME_JDRAMA | RSPEER | JPDB  |
+| ------------------- | ----- | ----- | --------------- | ------------ | ------- | ----- | ------------ | ------ | ----- |
+| **CC100**           | —     | 61.4% | 74.8%           | 60.2%        | 59.6%   | 73.8% | 55.1%        | 65.7%  | 35.5% |
+| **CEJC**            | 58.9% | —     | 57.2%           | 47.8%        | 49.4%   | 56.9% | 48.0%        | 51.8%  | 35.4% |
+| **YOUTUBE_FREQ_V3** | 76.4% | 61.7% | —               | 60.9%        | 63.2%   | 70.0% | 60.1%        | 67.7%  | 40.4% |
+| **WIKIPEDIA_V2**    | 65.1% | 54.3% | 64.1%           | —            | 61.1%   | 63.9% | 59.0%        | 70.0%  | 32.9% |
+| **NETFLIX**         | 63.0% | 55.3% | 64.9%           | 60.1%        | —       | 63.1% | 79.4%        | 66.1%  | 44.4% |
+| **BCCWJ**           | 72.2% | 58.0% | 66.7%           | 58.2%        | 58.1%   | —     | 54.7%        | 60.5%  | 32.2% |
+| **ANIME_JDRAMA**    | 58.6% | 53.8% | 61.9%           | 57.8%        | 79.6%   | 60.0% | —            | 62.2%  | 44.2% |
+| **RSPEER**          | 67.8% | 56.8% | 68.7%           | 67.5%        | 65.5%   | 64.1% | 61.7%        | —      | 37.1% |
+| **JPDB**            | 29.3% | 30.8% | 32.0%           | 24.1%        | 34.0%   | 27.2% | 33.2%        | 28.9%  | —     |
+
+**Top-15k:**
+
+|                     | CC100 | CEJC  | YOUTUBE_FREQ_V3 | WIKIPEDIA_V2 | NETFLIX | BCCWJ | ANIME_JDRAMA | RSPEER | JPDB  |
+| ------------------- | ----- | ----- | --------------- | ------------ | ------- | ----- | ------------ | ------ | ----- |
+| **CC100**           | —     | 61.0% | 75.0%           | 60.3%        | 61.5%   | 72.9% | 56.7%        | 65.4%  | 36.9% |
+| **CEJC**            | 57.7% | —     | 55.5%           | 47.6%        | 48.8%   | 55.8% | 46.9%        | 50.6%  | 35.7% |
+| **YOUTUBE_FREQ_V3** | 76.4% | 60.7% | —               | 61.5%        | 64.3%   | 68.3% | 60.9%        | 67.4%  | 41.6% |
+| **WIKIPEDIA_V2**    | 65.0% | 54.7% | 64.5%           | —            | 64.0%   | 63.6% | 61.4%        | 71.1%  | 35.3% |
+| **NETFLIX**         | 64.1% | 54.6% | 65.3%           | 62.4%        | —       | 63.0% | 78.8%        | 66.8%  | 45.5% |
+| **BCCWJ**           | 70.5% | 57.2% | 64.5%           | 57.4%        | 58.0%   | —     | 54.3%        | 59.1%  | 32.5% |
+| **ANIME_JDRAMA**    | 59.6% | 52.9% | 62.1%           | 59.7%        | 79.2%   | 59.5% | —            | 62.2%  | 44.4% |
+| **RSPEER**          | 67.3% | 56.1% | 68.3%           | 68.7%        | 66.6%   | 63.2% | 62.1%        | —      | 38.8% |
+| **JPDB**            | 30.5% | 31.3% | 32.7%           | 26.3%        | 35.1%   | 27.8% | 33.4%        | 29.9%  | —     |
+
+**Top-25k** (BCCWJ capped at 16,491 — row inflated):
+
+|                     | CC100 | CEJC  | YOUTUBE_FREQ_V3 | WIKIPEDIA_V2 | NETFLIX | BCCWJ | ANIME_JDRAMA | RSPEER | JPDB  |
+| ------------------- | ----- | ----- | --------------- | ------------ | ------- | ----- | ------------ | ------ | ----- |
+| **CC100**           | —     | 61.6% | 75.8%           | 61.7%        | 64.6%   | 57.2% | 60.6%        | 65.9%  | 39.8% |
+| **CEJC**            | 57.6% | —     | 54.5%           | 48.2%        | 49.1%   | 45.2% | 48.0%        | 50.3%  | 36.0% |
+| **YOUTUBE_FREQ_V3** | 75.9% | 59.1% | —               | 61.9%        | 65.7%   | 55.5% | 63.1%        | 67.2%  | 43.2% |
+| **WIKIPEDIA_V2**    | 65.0% | 54.7% | 64.8%           | —            | 65.9%   | 52.6% | 64.3%        | 72.4%  | 37.7% |
+| **NETFLIX**         | 65.5% | 53.9% | 66.0%           | 63.9%        | —       | 52.2% | 79.6%        | 66.7%  | 45.9% |
+| **BCCWJ**           | 76.7% | 65.3% | 73.4%           | 66.1%        | 68.1%   | —     | 65.3%        | 67.6%  | 38.8% |
+| **ANIME_JDRAMA**    | 61.4% | 52.5% | 63.1%           | 62.0%        | 79.5%   | 50.1% | —            | 63.1%  | 44.6% |
+| **RSPEER**          | 66.1% | 54.5% | 67.2%           | 69.7%        | 66.5%   | 51.3% | 63.2%        | —      | 39.5% |
+| **JPDB**            | 33.5% | 32.6% | 35.0%           | 29.6%        | 36.8%   | 22.9% | 35.0%        | 31.8%  | —     |
+
+**Key observations:**
+
+- **NETFLIX ↔ ANIME_JDRAMA** is the highest-overlap pair (~79–80% both directions at all tiers) — both are subtitle corpora covering similar spoken registers
+- **JPDB rows score 25–45%** across all partners at all tiers, far below every other anchor, confirming its narrow entertainment register misses a large share of general vocabulary
+- **YOUTUBE_FREQ_V3 and CC100** show strong mutual coverage (~75–77% / ~66–76%), both capturing broad everyday language across many domains
+- **WIKIPEDIA_V2 ↔ RSPEER** is notably high (~70–72% at top-10k and above), consistent with both drawing from written, encyclopedic text
+- **CEJC rows are consistently the lowest** among general-purpose anchors (~55–65%), reflecting spoken-only UniDic lemma forms (e.g. 其れ, 為る) that diverge from the surface forms used by written and subtitle sources
+- **The matrix is asymmetric**: BCCWJ → CC100 is 72% but CC100 → BCCWJ is 74% at top-10k; ANIME_JDRAMA → NETFLIX is ~79% but NETFLIX → ANIME_JDRAMA is also ~79% — the subtitle pair happens to be nearly symmetric, while written ↔ spoken pairs diverge more
+  ([Demographic analysis](data/CEJC/insights/demographic_analysis.md))
 
 ## License
 
