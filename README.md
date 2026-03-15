@@ -148,6 +148,16 @@ See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbo
 
 ## Data Quality Notes
 
+### Inspecting the JPDB dataset
+
+- **Surface forms, not lemmas.** JPDB records exactly what was written in the source texts. Inflected and compound forms appear as separate top-ranked entries: `だった` (rank 24), `には` (rank 26), `だろう` (rank 37), `けど` (rank 38), `だから` (rank 43), `ではない` (rank 89), `ことになる` (rank 167). Every other source (CEJC, RSPEER, BCCWJ, etc.) lemmatizes these to their base forms (`だ`, `けれど`, etc.), so the same underlying word occupies a completely different slot in JPDB's list.
+
+- **Entertainment media-specific vocabulary.** Fantasy and RPG terms (`ギルド`, `ダンジョン`, `スケルトン`, `リザードマン`) and light novel tropes (`ハーレム`, `クラスメイト`) appear in JPDB's top 5k but are absent from general-language corpora.
+
+- **Onomatopoeia and expressive words.** Words like `ぺこり`, `にこり`, `ゆらり`, `ぐるりと`, `ちょこん` are extremely common in fiction narration (describing character movements and expressions) but are rare in general or spoken Japanese.
+
+- **Multi-morpheme phrases as single entries.** Expressions like `ことによって`, `よりによって`, `それゆえに` are stored as single vocabulary items rather than being decomposed into constituent morphemes.
+
 ## Experiments 0
 
 [`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources.
@@ -161,14 +171,14 @@ See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbo
 **Structurally incompatible sources:**
 Seven sources are excluded from all coverage quality checks because their -1s reflect structural properties, not word rarity:
 
-| Source               | Reason                                                                                                                     |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| AOZORA_BUNKO         | Kanji-only — all hiragana words absent by design                                                                           |
-| NIER                 | Single RPG — only ~10,000 unique tokens total                                                                              |
-| ILYASEMENOV          | Wikipedia dump with HTML entities (amp, gt, lt) as "words"                                                                 |
-| DD2_MIGAKU_NOVELS    | Curated learner deck — only ~16,500 words, not a frequency corpus                                                          |
-| HERMITDAVE_2016/2018 | MeCab morpheme-split tokenization — dictionary-form verbs do not exist as tokens (い at rank #1 is a morpheme, not a word) |
-| JPDB                 | Anime/game register — misses 36–42% of general vocabulary (e.g. 企業, 男性, 監督)                                          |
+| Source               | Reason                                                                                                                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AOZORA_BUNKO         | Kanji-only — all hiragana words absent by design                                                                                                                        |
+| NIER                 | Single RPG — only ~10,000 unique tokens total                                                                                                                           |
+| ILYASEMENOV          | Wikipedia dump with HTML entities (amp, gt, lt) as "words"                                                                                                              |
+| DD2_MIGAKU_NOVELS    | Curated learner deck — only ~16,500 words, not a frequency corpus                                                                                                       |
+| HERMITDAVE_2016/2018 | MeCab morpheme-split tokenization — dictionary-form verbs do not exist as tokens (い at rank #1 is a morpheme, not a word)                                              |
+| JPDB                 | Anime/game register — Surface forms, not lemmas. JPDB records exactly what was written in the source texts. misses 36–42% of general vocabulary (e.g. 企業, 男性, 監督) |
 
 **Tokenization mismatch:** Even top-1,000 common words are missing from HERMITDAVE because morpheme-split tokenization atomizes verbs — `思う` → `思` + `っ` + `て` + `い` + `る`. This is structural and cannot be fixed by lookup.
 
@@ -366,6 +376,8 @@ Only 430 of 29,534 entries have a unique rank. Most entries share ranks due to t
 
 ### Cross-source agreement is only partial — and datasets index words differently
 
+> See [Data Quality Notes](#data-quality-notes) for why JPDB scores far lower than every other source. Subtitle sources (ANIME, NETFLIX, YOUTUBE) also contain inflected verb forms and proper nouns not found as dictionary headwords (evidenced by their 6–11% kana gaps), but JPDB exhibits this most severely — inflected forms dominate its top ranks.
+
 **Reading-aware match** (surface form OR kana reading, readings normalized to hiragana): a word in source A counts as matching source B if its surface form equals either the term/key or the reading in B. This catches cases like RSPEER `くれる` ↔ CEJC `呉れる` or JPDB `今` (reading `いま`) ↔ RSPEER `いま`.
 
 | Comparison    | Top 5k | Top 10k | Top 25k |
@@ -386,6 +398,8 @@ Some findings are well-supported and linguistically established: gendered first-
 However, the methodology (raw PMW ratio across all speech by gender) does **not** control for conversation domain. Work/meeting vocabulary (会議, 担当, チーム) skewing male, and food/home vocabulary (野菜, 卵, 菓子) skewing female, may reflect which domains male vs. female participants in this corpus happened to participate in — not an intrinsic property of how men and women speak. Core function words show very little gender skew regardless.
 
 ### Pairwise overlap across all anchors (experiments1)
+
+> JPDB's uniformly low scores (~25–45%) are explained in [Data Quality Notes](#data-quality-notes). Subtitle sources also contain inflected forms and proper nouns, but JPDB is the most extreme case — inflected forms like `だった` and `だろう` rank in its top 50.
 
 [`data/ALL/___experiments1/anchor_pairwise_overlap.py`](data/ALL/___experiments1/anchor_pairwise_overlap.py) — reading-aware pairwise intersection between all 9 anchor datasets. Row = source A (denominator); cell = % of A's top-N that appear in B's top-N. Top-15k is the most reliable tier for BCCWJ (only 16,491 words; its top-25k row is inflated).
 

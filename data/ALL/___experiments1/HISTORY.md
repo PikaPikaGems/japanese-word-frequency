@@ -105,6 +105,30 @@ The previous figures (zero-missing 3,600 = 12.9%, top-500 71.8%) were artificial
 
 JPDB's coverage rates (top-500: 41.6%, all: 6.9%) are far lower than every other anchor. This confirms the Experiments 0 §11 finding — JPDB's anime/game corpus systematically omits real-world vocabulary — and it persists even after adding 3 more exclusions. The threshold-based count for JPDB (2,862 high-frequency words at N≤3, 11.8%) is half that of any other anchor. JPDB should continue to be excluded from coverage quality checks and treated as a domain-specific reference, not a general-frequency anchor.
 
+### 5.1 Root Cause: Surface Forms, Not Lemmas
+
+Pairwise overlap analysis (`anchor_pairwise_overlap.py`) shows JPDB scoring ~25–45% against every other anchor across all rank tiers — roughly half the overlap seen between any other pair. Investigation of the ~37% of JPDB top-5k words absent from CEJC at any rank (reading-aware) reveals three structural causes:
+
+**1. Inflected and compound forms indexed as vocabulary.** JPDB records surface forms as written in source texts without lemmatization. Top-ranked entries include:
+
+| JPDB rank | Word | What other sources index instead |
+| --- | --- | --- |
+| 24 | だった | だ (past-tense copula → base form) |
+| 26 | には | に / は (particle combination) |
+| 37 | だろう | だ (volitional form) |
+| 38 | けど | けれど (base form) |
+| 43 | だから | — (compound conjunction) |
+| 89 | ではない | — (compound negation) |
+| 167 | ことになる | — (compound expression) |
+
+Every other source lemmatizes these. The same underlying words occupy completely different rank positions (or don't appear as standalone entries at all), so surface-form or reading-aware matching fails for them.
+
+**2. Entertainment media-specific vocabulary.** Fantasy/RPG terms (`ギルド` guild, `ダンジョン` dungeon, `スケルトン` skeleton, `リザードマン` lizardman) and light novel tropes (`ハーレム`, `クラスメイト`) appear in JPDB's top 5k but are absent from general-language corpora.
+
+**3. Onomatopoeia and expressive words.** `ぺこり`, `にこり`, `ゆらり`, `ぐるりと`, `ちょこん` — motion and expression words extremely common in fiction narration but rare in general or spoken Japanese.
+
+**Implication:** JPDB's pairwise overlap numbers are not a data quality issue — they accurately reflect that JPDB is a fundamentally different type of resource. It is useful as a domain signal for fiction/entertainment vocabulary but cannot be compared directly to lemma-based frequency lists on a word-for-word basis.
+
 ---
 
 ## 6. Coverage Experiment Results
