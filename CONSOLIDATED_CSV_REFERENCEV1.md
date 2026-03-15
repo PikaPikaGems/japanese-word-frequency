@@ -35,10 +35,10 @@ Every column after that is a **frequency rank** from a specific Japanese corpus 
 CEJC
 
 ```
-    1  word,hiragana,katakana,cejc_combined_rank,cejc_small_talk_rank,cejc_consultation_rank,cejc_meeting_rank,cejc_class_rank,cejc_outdoors_rank,cejc_school_rank,cejc_transportation_rank,cejc_public_commercial_rank,cejc_home_rank,cejc_indoors_rank,cejc_workplace_rank,cejc_male_rank,cejc_female_rank,ADNO,ANIME_JDRAMA,AOZORA_BUNKO,BCCWJ,CC100,CHRISKEMPSON,DAVE_DOEBRICK,DD2_MIGAKU_NETFLIX,DD2_MIGAKU_NOVELS,DD2_MORPHMAN_NETFLIX,DD2_MORPHMAN_NOVELS,DD2_MORPHMAN_SHONEN,DD2_MORPHMAN_SOL,DD2_YOMICHAN_NOVELS,DD2_YOMICHAN_SHONEN,DD2_YOMICHAN_SHONEN_STARS,DD2_YOMICHAN_SOL,DD2_YOMICHAN_VN,HERMITDAVE_2016,HERMITDAVE_2018,HINGSTON,H_FREQ,ILYASEMENOV,INNOCENT_RANKED,JITEN_ANIME,JLAB,JPDB,KOKUGOJITEN,MALTESAA_CSJ,MALTESAA_CSJ_DOKWA_GAKKAI,MALTESAA_CSJ_DOKWA_MOGI,MALTESAA_CSJ_DOKWA_ROUDOKU,MALTESAA_CSJ_DOKWA_SAIRO,MALTESAA_CSJ_DOKWA_SONOTA,MALTESAA_CSJ_TAIKA_JIYU,MALTESAA_CSJ_TAIKA_KADAI,MALTESAA_CSJ_TAIKA_MOGI,MALTESAA_NWJC,MONODICTS,NAROU,NETFLIX,NIER,NOVELS,VN_FREQ,WIKIPEDIA_V2,YOUTUBE_FREQ,YOUTUBE_FREQ_V3,RSPEER
-     2  うん,うん,ウン,1,2,2,1,2,2,2,2,2,2,1,1,2,1,12004,59,326,2172,4034,50,100,102,-1,109,588,71,51,369,71,65,46,86,284,239,3066,3755,13881,519,76,62,85,554,104,2172,186,201,939,450,1,8,2,2061,2026,1798,103,722,393,2517,11480,158,145,584
-     3  だ,だ,ダ,2,1,1,2,1,1,1,1,1,1,2,2,1,2,54,2,113,9,6,13,2,1,3,1,9,1,1,3647,1,1,1,2,10,10,29,12909,3457,4,10,4,9,13,3,5,2,1,5,3,2,2,1,7,12,6225,2,6,4,9043,12,7,3,14
-     4  ね,ね,ネ,3,3,3,5,5,3,3,3,3,4,3,3,3,3,1543,19,394,73,42,10,20,19,36,21,50,27,20,1437,27,24,19,31,31,38,82,5508,13696,3042,15,13,18,126,24,38,21,41,24,14,5,3,5,46,224,2583,20,25,52,2133,1572,14,17,26
+    1  word,hiragana,katakana,cejc_combined_rank,cejc_small_talk_rank,cejc_consultation_rank,cejc_meeting_rank,cejc_class_rank,cejc_outdoors_rank,cejc_school_rank,cejc_transportation_rank,cejc_public_commercial_rank,cejc_home_rank,cejc_indoors_rank,cejc_workplace_rank,cejc_male_rank,cejc_female_rank,ADNO,ANIME_JDRAMA,AOZORA_BUNKO,BCCWJ,CC100,CHRISKEMPSON,DAVE_DOEBRICK,DD2_MIGAKU_NETFLIX,DD2_MORPHMAN_NETFLIX,DD2_MORPHMAN_NOVELS,DD2_MORPHMAN_SHONEN,DD2_MORPHMAN_SOL,DD2_YOMICHAN_NOVELS,DD2_YOMICHAN_SHONEN,DD2_YOMICHAN_SHONEN_STARS,DD2_YOMICHAN_SOL,DD2_YOMICHAN_VN,HERMITDAVE_2016,HERMITDAVE_2018,HINGSTON,H_FREQ,ILYASEMENOV,INNOCENT_RANKED,JITEN_ANIME,JLAB,JPDB,MALTESAA_CSJ,MALTESAA_CSJ_DOKWA_GAKKAI,MALTESAA_CSJ_DOKWA_MOGI,MALTESAA_CSJ_DOKWA_ROUDOKU,MALTESAA_CSJ_DOKWA_SAIRO,MALTESAA_CSJ_DOKWA_SONOTA,MALTESAA_CSJ_TAIKA_JIYU,MALTESAA_CSJ_TAIKA_KADAI,MALTESAA_CSJ_TAIKA_MOGI,MALTESAA_NWJC,NAROU,NETFLIX,NIER,NOVELS,VN_FREQ,WIKIPEDIA_V2,YOUTUBE_FREQ,YOUTUBE_FREQ_V3,RSPEER
+     2  うん,うん,ウン,1,2,2,1,2,2,2,2,2,2,1,1,2,1,12004,59,326,2172,4034,50,100,102,109,588,71,51,369,71,65,46,86,284,239,3066,3755,13881,519,76,62,85,104,2172,186,201,939,450,1,8,2,2061,1798,103,722,393,2517,11480,158,145,584
+     3  だ,だ,ダ,2,1,1,2,1,1,1,1,1,1,2,2,1,2,54,2,113,9,6,13,2,1,1,9,1,1,3647,1,1,1,2,10,10,29,12909,3457,4,10,4,9,3,5,2,1,5,3,2,2,1,7,6225,2,6,4,9043,12,7,3,14
+     4  ね,ね,ネ,3,3,3,5,5,3,3,3,3,4,3,3,3,3,1543,19,394,73,42,10,20,19,21,50,27,20,1437,27,24,19,31,31,38,82,5508,13696,3042,15,13,18,24,38,21,41,24,14,5,3,5,46,2583,20,25,52,2133,1572,14,17,26
 ```
 
 ---
@@ -160,7 +160,6 @@ Dave Doebrick compiled frequency lists in multiple tool formats. These were pack
 | Column                      | Format            | Source content                               | Notes                                                                                                                                  |
 | --------------------------- | ----------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `DD2_MIGAKU_NETFLIX`        | Migaku            | Netflix subtitles                            | ~102k entries                                                                                                                          |
-| `DD2_MIGAKU_NOVELS`         | Migaku            | Japanese novels (5k focus)                   | ⚠️ Only ~16,500 entries — a curated learner vocabulary deck, not a full corpus. Missing here does not mean the word is rare in novels. |
 | `DD2_MORPHMAN_NETFLIX`      | Morphman (UniDic) | Netflix subtitles, **proper names excluded** | ~105k entries. Proper name filtering makes this slightly different from DAVE_DOEBRICK; prefer this when you want to avoid name noise.  |
 | `DD2_MORPHMAN_NOVELS`       | Morphman          | Japanese novels (Kindle)                     | ~126k entries                                                                                                                          |
 | `DD2_MORPHMAN_SHONEN`       | Morphman          | Shonen manga/anime                           | ~60k entries                                                                                                                           |
@@ -172,19 +171,6 @@ Dave Doebrick compiled frequency lists in multiple tool formats. These were pack
 | `DD2_YOMICHAN_VN`           | Yomichan          | Visual novels                                | ~85k entries                                                                                                                           |
 
 For genre-specific assessment: `DD2_MORPHMAN_SHONEN` + `DD2_YOMICHAN_SHONEN` for Shonen; `DD2_MORPHMAN_SOL` + `DD2_YOMICHAN_SOL` for Slice-of-Life anime; `DD2_YOMICHAN_VN` + `VN_FREQ` for visual novels.
-
----
-
-### Dictionary-based columns
-
-These are not corpus frequency lists. The "rank" here reflects how words are ordered in Japanese dictionary entries, not how often they appear in real text. A high rank here means the word has a strong presence in standard Japanese dictionaries.
-
-| Column        | What the number means                                | Source summary                                                                                                                                                                                                                                                                                                          |
-| ------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `KOKUGOJITEN` | Rank in a Japanese monolingual dictionary (国語辞典) | ~156k entries from one standard kokugojiten. A high rank here means the word is a core dictionary headword. Useful for checking whether a word is "officially recognized vocabulary" vs. a neologism or proper noun.                                                                                                    |
-| `MONODICTS`   | Rank across 12 major Japanese dictionaries combined  | Aggregated from 大辞林, 広辞苑, デジタル大辞泉, 岩波国語辞典, 精選版 日本国語大辞典, 旺文社国語辞典, and 6 others (~206k entries). If a word appears here, it is recognized by mainstream Japanese lexicography. Broader coverage than KOKUGOJITEN. Words appearing in more of the 12 dictionaries tend to rank higher. |
-
-A word missing from KOKUGOJITEN and MONODICTS but present in corpus-based lists is likely a proper noun, neologism, internet slang, or an inflected/compound form that dictionaries don't list as a headword.
 
 ---
 
@@ -294,13 +280,9 @@ Sources are grouped by how much you should trust their ranks as signals of real-
 
 ### Not frequency corpora — different interpretation required
 
-**`KOKUGOJITEN` and `MONODICTS`** rank words by dictionary ordering, not corpus frequency. A high rank means the word is well-represented in mainstream Japanese lexicography. Use these to verify whether a word is an established dictionary headword (vs. a neologism, internet slang, or inflected form that dictionaries don't list as a headword).
-
 **`AOZORA_BUNKO`** contains zero hiragana entries by design — it covers only kanji and jukugo from pre-1953 public-domain literature. A -1 for any hiragana word is structurally guaranteed.
 
 **`NIER`** covers only ~10,077 unique words from the NieR game scripts. A -1 simply means the word doesn't appear in those games.
-
-**`DD2_MIGAKU_NOVELS`** is a curated learner vocabulary deck (~16,500 entries), not a frequency corpus. Its ranking reflects which words were chosen for a study deck, not how frequently they appear in novels.
 
 **`H_FREQ`** is an adult (18+) content corpus. Common everyday words (私, 言う, 中) also rank high because they're universal. Only ranks that appear _exclusively_ high in `H_FREQ` carry domain-specific signal.
 

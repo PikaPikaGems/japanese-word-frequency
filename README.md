@@ -6,10 +6,12 @@ A comprehensive collection of Japanese word frequency datasets, analysis scripts
 
 ## References
 
+- [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md) — How to read `consolidated.csv`: column layout, what `-1` means, practical interpretation guide, and per-source caveats
+
 - [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of all frequency sources
 - [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Concise reference format
 
-TODO: ADD links and description for ./CONSOLIDATED_CSV_REFERENCEV1.md and notes/cleaned-datasets-reference-v1.md these are very important documents that the user should read.
+- [notes/cleaned-datasets-reference-v1.md](notes/cleaned-datasets-reference-v1.md) — Detailed descriptions of every frequency rank dataset included in the database, with source notes on corpus size, register, and tokenization
 
 ### Main Data Source
 
@@ -50,6 +52,7 @@ word-frequency-rankings/
 `data/ALL/`
 
 The primary output of this repo. Each `consolidated.csv` is a matrix of **words × rank columns**, one column per frequency source. The **anchor** is the source whose word list defines the rows — every word in the anchor appears as a row, and each column shows that word's rank in the other sources (`-1` if absent). Different anchors produce different matrices because each source has different vocabulary coverage and tokenization. Nine anchor variants exist: CEJC, BCCWJ, CC100, RSPEER, WIKIPEDIA_V2, ANIME_JDRAMA, NETFLIX, YOUTUBE_FREQ_V3, and JPDB. Analysis scripts and reports in `___experiments0/` and `___experiments1/`:
+Please see: [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md) for more details.
 
 ### CEJC — Everyday Spoken Japanese
 
@@ -218,21 +221,21 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 | YOUTUBE_FREQ_V3 | 63.4%   | 62.4%  | 54.8%  | 47.0%  | 27.9%   |
 | RSPEER          | 57.6%   | 57.3%  | 52.1%  | 45.2%  | 27.9%   |
 | ANIME_JDRAMA    | 55.8%   | 55.2%  | 47.0%  | 39.4%  | 25.6%   |
-| JPDB            | 18.0%   | 11.2%  |  4.9%  |  3.3%  |  1.5%   |
+| JPDB            | 18.0%   | 11.2%  | 4.9%   | 3.3%   | 1.5%    |
 
 **N≤3 missing sources by rank band** (top-12k slices, [`n_leq3_by_rank_band.py`](data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py)):
 
-| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 @25k                 |
-| --------------- | ------- | ------ | ------ | ------ | ------- | ------------------------ |
-| CC100           | 92.4%   | 88.0%  | 77.0%  | 67.6%  | 44.4%   | 5,935 (24.1%)            |
-| CEJC            | 92.6%   | 90.2%  | 76.6%  | 63.4%  | 39.8%   | 6,075 (21.7%)            |
-| BCCWJ           | 83.0%   | 82.9%  | 76.8%  | 68.3%  | 45.0%   | —                        |
-| WIKIPEDIA_V2    | 83.2%   | 79.5%  | 65.6%  | 56.5%  | 37.3%   | 5,568 (22.3%)            |
-| YOUTUBE_FREQ_V3 | 70.6%   | 73.1%  | 68.3%  | 61.6%  | 41.4%   | 5,786 (23.1%)            |
-| NETFLIX         | 71.0%   | 69.4%  | 63.5%  | 56.9%  | 39.8%   | 5,728 (22.9%)            |
-| RSPEER          | 63.6%   | 65.8%  | 63.7%  | 58.0%  | 39.7%   | 5,666 (22.7%)            |
-| ANIME_JDRAMA    | 62.6%   | 63.4%  | 59.5%  | 53.0%  | 37.5%   | 5,669 (22.7%)            |
-| JPDB            | 25.2%   | 22.1%  | 14.7%  | 10.2%  |  4.6%   | 564 (2.3%) — excluded    |
+| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 @25k              |
+| --------------- | ------- | ------ | ------ | ------ | ------- | --------------------- |
+| CC100           | 92.4%   | 88.0%  | 77.0%  | 67.6%  | 44.4%   | 5,935 (24.1%)         |
+| CEJC            | 92.6%   | 90.2%  | 76.6%  | 63.4%  | 39.8%   | 6,075 (21.7%)         |
+| BCCWJ           | 83.0%   | 82.9%  | 76.8%  | 68.3%  | 45.0%   | —                     |
+| WIKIPEDIA_V2    | 83.2%   | 79.5%  | 65.6%  | 56.5%  | 37.3%   | 5,568 (22.3%)         |
+| YOUTUBE_FREQ_V3 | 70.6%   | 73.1%  | 68.3%  | 61.6%  | 41.4%   | 5,786 (23.1%)         |
+| NETFLIX         | 71.0%   | 69.4%  | 63.5%  | 56.9%  | 39.8%   | 5,728 (22.9%)         |
+| RSPEER          | 63.6%   | 65.8%  | 63.7%  | 58.0%  | 39.7%   | 5,666 (22.7%)         |
+| ANIME_JDRAMA    | 62.6%   | 63.4%  | 59.5%  | 53.0%  | 37.5%   | 5,669 (22.7%)         |
+| JPDB            | 25.2%   | 22.1%  | 14.7%  | 10.2%  | 4.6%    | 564 (2.3%) — excluded |
 
 ## Setup
 
