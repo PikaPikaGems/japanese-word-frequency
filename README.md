@@ -402,6 +402,8 @@ Some findings are well-supported and linguistically established: gendered first-
 
 However, the methodology (raw PMW ratio across all speech by gender) does **not** control for conversation domain. Work/meeting vocabulary (会議, 担当, チーム) skewing male, and food/home vocabulary (野菜, 卵, 菓子) skewing female, may reflect which domains male vs. female participants in this corpus happened to participate in — not an intrinsic property of how men and women speak. Core function words show very little gender skew regardless.
 
+([Demographic analysis](data/CEJC/insights/demographic_analysis.md))
+
 ### Pairwise overlap across all anchors (experiments1)
 
 > JPDB's uniformly low scores (~25–45%) are explained in [Data Quality Notes](#data-quality-notes). Subtitle sources also contain inflected forms and proper nouns, but JPDB is the most extreme case — inflected forms like `だった` and `だろう` rank in its top 50.
@@ -471,8 +473,7 @@ However, the methodology (raw PMW ratio across all speech by gender) does **not*
 - **YOUTUBE_FREQ_V3 and CC100** show strong mutual coverage (~75–77% / ~66–76%), both capturing broad everyday language across many domains
 - **WIKIPEDIA_V2 ↔ RSPEER** is notably high (~70–72% at top-10k and above), consistent with both drawing from written, encyclopedic text
 - **CEJC rows are consistently the lowest** among general-purpose anchors (~55–65%), reflecting spoken-only UniDic lemma forms (e.g. 其れ, 為る) that diverge from the surface forms used by written and subtitle sources
-- **The matrix is asymmetric**: BCCWJ → CC100 is 72% but CC100 → BCCWJ is 74% at top-10k; ANIME_JDRAMA → NETFLIX is ~79% but NETFLIX → ANIME_JDRAMA is also ~79% — the subtitle pair happens to be nearly symmetric, while written ↔ spoken pairs diverge more
-  ([Demographic analysis](data/CEJC/insights/demographic_analysis.md))
+- **The matrix is asymmetric**: BCCWJ → CC100 is 72% but CC100 → BCCWJ is 74% at top-10k. A → B and B → A check different lookup sets: A → B tests each of A's top-N words against B's surface forms ∪ B's readings, while B → A tests against A's surface forms ∪ A's readings. Because each anchor has a different vocabulary and different reading coverage gaps (hiragana = `-` for some words), these sets differ in size and content — producing asymmetric percentages. The subtitle pair (ANIME_JDRAMA ↔ NETFLIX) is nearly symmetric because both sources have similar vocabulary and reading coverage, so their lookup sets are nearly the same size.
 
 ## License
 
