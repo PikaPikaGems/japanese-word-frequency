@@ -44,7 +44,8 @@ def find_duplicates(path: Path) -> list[tuple[str, str]]:
 
 
 def main():
-    root = Path(__file__).parent
+    # __file__ lives at data/ALL/___experiments1/ — go up 4 levels to repo root
+    root = Path(__file__).parent.parent.parent.parent
     csv_files = sorted(root.rglob("consolidated.csv"))
 
     if not csv_files:
