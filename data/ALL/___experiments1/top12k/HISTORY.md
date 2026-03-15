@@ -6,19 +6,19 @@ experiments1 setup: same 10-source EXCLUDE, same N≤3 threshold.
 
 ---
 
-## Rank-Band Zero-Missing (38 checked sources; CEJC checks 51)
+## Rank-Band Zero-Missing (51 checked sources; CEJC checks 38)
 
 | Anchor | Top-500 | Top-1k | Top-3k | Top-5k | Top-10k | Top-12k |
 | --- | --- | --- | --- | --- | --- | --- |
-| CC100 | **85.6%** | 79.4% | 63.4% | 52.7% | 34.6% | 30.1% |
-| NETFLIX | 78.0% | 71.1% | 57.6% | 48.7% | 35.4% | **31.7%** |
-| YOUTUBE_FREQ_V3 | 77.6% | 71.8% | **60.7%** | **52.0%** | **35.8%** | **31.8%** |
-| WIKIPEDIA_V2 | 77.2% | 73.4% | 56.9% | 47.6% | 33.8% | 30.1% |
-| BCCWJ | 75.2% | **74.1%** | **63.9%** | **52.5%** | 34.5% | 29.6% |
-| ANIME_JDRAMA | 70.6% | 66.4% | 54.9% | 46.2% | 34.0% | 30.6% |
-| CEJC | 71.8% | 68.5% | 54.3% | 43.7% | 28.9% | 25.5% |
-| RSPEER | 69.6% | 66.0% | 57.5% | 49.8% | 35.6% | 31.6% |
-| JPDB | 41.6% | 30.1% | 18.0% | 14.8% | 11.2% | 10.2% |
+| CC100 | **83.2%** | 76.5% | 61.7% | 51.1% | 33.3% | 28.9% |
+| CEJC | 78.2% | 72.1% | 56.0% | 45.0% | 29.8% | 26.3% |
+| BCCWJ | 75.0% | **74.0%** | **63.6%** | **52.3%** | 34.3% | 29.3% |
+| WIKIPEDIA_V2 | 73.4% | 69.8% | 53.4% | 44.4% | 30.3% | 26.7% |
+| NETFLIX | 65.4% | 61.0% | 50.9% | 42.9% | 30.5% | 27.2% |
+| YOUTUBE_FREQ_V3 | 63.4% | 62.4% | **54.8%** | **47.0%** | **31.9%** | **27.9%** |
+| RSPEER | 57.6% | 57.3% | 52.1% | 45.2% | 31.8% | 27.9% |
+| ANIME_JDRAMA | 55.8% | 55.2% | 47.0% | 39.4% | 28.6% | 25.6% |
+| JPDB | 18.0% | 11.2% |  4.9% |  3.3% |  1.8% |  1.5% |
 
 ---
 
@@ -26,15 +26,15 @@ experiments1 setup: same 10-source EXCLUDE, same N≤3 threshold.
 
 | Anchor | Words | High-freq (≤3 missing) | % |
 | --- | --- | --- | --- |
-| NETFLIX | 12,000 | 5,790 | **48.2%** |
-| YOUTUBE_FREQ_V3 | 12,000 | 5,766 | 48.0% |
-| CC100 | 12,000 | 5,746 | 47.9% |
-| BCCWJ | 12,000 | 5,691 | **47.4%** |
-| ANIME_JDRAMA | 12,000 | 5,573 | 46.4% |
-| RSPEER | 12,000 | 5,560 | 46.3% |
-| WIKIPEDIA_V2 | 12,000 | 5,199 | 43.3% |
-| CEJC | 12,000 | 4,766 | 39.7% |
-| JPDB | 12,000 | 2,108 | 17.6% |
+| BCCWJ | 12,000 | 5,405 | **45.0%** |
+| CC100 | 12,000 | 5,331 | 44.4% |
+| YOUTUBE_FREQ_V3 | 12,000 | 4,966 | 41.4% |
+| NETFLIX | 12,000 | 4,777 | 39.8% |
+| CEJC | 12,000 | 4,776 | 39.8% |
+| RSPEER | 12,000 | 4,767 | 39.7% |
+| WIKIPEDIA_V2 | 12,000 | 4,480 | 37.3% |
+| ANIME_JDRAMA | 12,000 | 4,504 | 37.5% |
+| JPDB | 12,000 | 549 | 4.6% |
 
 ---
 
@@ -42,66 +42,45 @@ experiments1 setup: same 10-source EXCLUDE, same N≤3 threshold.
 
 ### 1. BCCWJ is now directly comparable — and performs well
 
-At top-12k, BCCWJ (29.6% zero-missing, 47.4% at N≤3) is fully in line with ANIME_JDRAMA,
-CC100, NETFLIX, YOUTUBE, and RSPEER. Its top-1k zero-missing (74.1%) is the **highest** of any
-anchor except CC100's top-500 (85.6%) — meaning BCCWJ's top 1,000 most frequent words are
-exceptionally universal, present across essentially every domain.
+At top-12k, BCCWJ (29.3% zero-missing, 45.0% at N≤3) leads all anchors on equal footing.
+Its top-1k zero-missing (74.0%) is the **highest** of any anchor except CC100's top-500 (83.2%)
+— meaning BCCWJ's top 1,000 most frequent words are exceptionally universal, present across
+essentially every domain.
 
-BCCWJ's strong mid-range performance (top-3k: 63.9%, matching CC100 at 63.4%) confirms it is
+BCCWJ's strong mid-range performance (top-3k: 63.6%, highest of all anchors) confirms it is
 a high-quality anchor for general written Japanese. The UniDic POS deduplication issue that
 limits it to 16k unique words does not affect the quality of its top-12k word list.
 
-### 2. NETFLIX and YOUTUBE_FREQ_V3 lead overall at 12k
+### 2. CC100 leads at the very top; BCCWJ and YOUTUBE lead at N≤3
 
-Both achieve ~31.7–31.8% zero-missing at top-12k and 48.0–48.2% at N≤3. They have the
-broadest vocabulary coverage density of any anchor at this word-count level, likely because
-spoken subtitle corpora include both everyday conversational vocabulary and formal vocabulary
-(news, drama, variety shows).
+CC100's top-500 (83.2%) is the highest of any anchor. By top-12k it converges to 28.9%.
+At N≤3, BCCWJ (45.0%) and CC100 (44.4%) are ahead, with YOUTUBE (41.4%) close behind.
+NETFLIX/CEJC/RSPEER cluster around 39–40%.
 
-### 3. CC100 leads at the very top but falls to mid-pack at 12k
+### 3. BCCWJ vs WIKIPEDIA_V2 at equal footing
 
-CC100's top-500 advantage (85.6% vs 77–78% for others) reflects its broad web-text origin —
-it captures core vocabulary from every register at once. By top-12k it converges to 30.1%,
-similar to BCCWJ and WIKIPEDIA_V2. The web corpus is more concentrated at the top of the
-frequency distribution than subtitle corpora.
-
-### 4. BCCWJ vs WIKIPEDIA_V2 at equal footing
-
-Both are "written text" anchors and are nearly identical at most rank bands:
+Both are "written text" anchors but BCCWJ clearly outperforms in mid-frequency coverage:
 
 | Band | BCCWJ | WIKIPEDIA_V2 |
 | --- | --- | --- |
-| Top-500 | 75.2% | 77.2% |
-| Top-1k | **74.1%** | 73.4% |
-| Top-3k | **63.9%** | 56.9% |
-| Top-5k | **52.5%** | 47.6% |
-| Top-12k | 29.6% | 30.1% |
+| Top-500 | 75.0% | 73.4% |
+| Top-1k | **74.0%** | 69.8% |
+| Top-3k | **63.6%** | 53.4% |
+| Top-5k | **52.3%** | 44.4% |
+| Top-12k | 29.3% | 26.7% |
 
-BCCWJ has notably stronger coverage in the 1k–5k range, suggesting its mid-frequency vocabulary
-(words ranked 1,001–5,000) overlaps more broadly across domains. This makes sense: BCCWJ is a
-balanced corpus sampling books, magazines, newspapers, legal documents, and web forums, so its
-mid-frequency tier contains cross-domain common words. WIKIPEDIA_V2 in the 1k–5k range
-introduces more encyclopedia-specific vocabulary (proper nouns, technical terms) that is absent
-from casual corpora.
+BCCWJ's stronger 1k–5k coverage reflects its balanced design (books, magazines, newspapers,
+legal documents, web forums) — its mid-frequency tier contains cross-domain common words.
+WIKIPEDIA_V2 introduces more encyclopedia-specific vocabulary (proper nouns, technical terms)
+in that band.
 
-### 5. RSPEER performs like a solid subtitle anchor despite different methodology
+### 4. CEJC checks fewer sources and is directly comparable
 
-RSPEER's rank-band curve (69.6% → 31.6%) closely tracks ANIME_JDRAMA (70.6% → 30.6%) and
-CEJC (71.8% → 25.5%). Despite being a multi-source aggregate (Wikipedia + subtitles + web + Twitter),
-its Japanese word list is MeCab-tokenized and sorted by Zipf frequency — the combination produces
-a word list similar in coverage profile to a subtitle corpus. Its N≤3 count (5,560, 46.3%) is
-nearly identical to ANIME_JDRAMA (5,573, 46.4%).
+CEJC (26.3% zero-missing, 39.8% at N≤3) checks only 38 sources — its own 14 sub-corpus
+columns are excluded as anchor family. Other anchors check 51 sources (including all 14 CEJC
+sub-columns as separate checks). CEJC's numbers are therefore on a slightly less strict basis.
 
-### 6. CEJC remains lower at all bands due to 51 checked sources
+### 5. JPDB remains the structural outlier
 
-CEJC's results (25.5% zero-missing at 12k, 39.7% at N≤3) are lower than all non-JPDB anchors.
-As established in the parent experiments, this is because CEJC checks 51 sources (14 sub-corpus
-columns + external sources) vs 38 for other anchors. The 51-source zero-missing is a stricter
-requirement. If the analysis were re-run treating CEJC as a single column (ignoring sub-corpora),
-its numbers would be comparable to the 38-source anchors.
-
-### 7. JPDB remains the structural outlier
-
-10.2% zero-missing at top-12k, 17.6% at N≤3 — less than half of any other anchor. The gap
-is even starker on equal footing. JPDB's anime/game corpus cannot be used as a coverage anchor
-for general Japanese.
+1.5% zero-missing at top-12k, 4.6% at N≤3 — far below every other anchor. JPDB's anime/game
+corpus cannot be used as a coverage anchor for general Japanese.

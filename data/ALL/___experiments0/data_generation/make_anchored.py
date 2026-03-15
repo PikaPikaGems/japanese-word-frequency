@@ -9,7 +9,7 @@ Bidirectional kana/kanji lookup via JPDB v2 so that:
 
 Anchors generated:
   JPDB             — anime/games/novels, surface forms, 25k words
-  YOUTUBE_FREQ_V3  — spoken/conversational YouTube, surface forms, top 30k
+  YOUTUBE_FREQ_V3  — spoken/conversational YouTube, surface forms, top 25k
   ANIME_JDRAMA     — anime + j-drama subtitles, 25k words
   NETFLIX          — Netflix subtitles, 25k words
 """
@@ -36,7 +36,7 @@ RSPEER_FILE = os.path.join(ROOT, "data", "RSPEER", "top_25000_japanese.csv")
 # (anchor_source_name, max_words_to_include)
 ANCHORS = [
     ("JPDB", 25000),
-    ("YOUTUBE_FREQ_V3", 30000),
+    ("YOUTUBE_FREQ_V3", 25000),
     ("ANIME_JDRAMA", 25000),
     ("NETFLIX", 25000),
 ]

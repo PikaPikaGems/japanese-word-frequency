@@ -132,6 +132,6 @@ Coverage after lookup + pure-kana fill (categorized and consolidated are identic
 | JPDB | 24,231 | 0 | 0.0% |
 | ANIME_JDRAMA | 25,000 | 2,636 | 10.5% |
 | NETFLIX | 25,000 | 1,728 | 6.9% |
-| YOUTUBE_FREQ_V3 | 30,000 | 1,935 | 6.5% |
+| YOUTUBE_FREQ_V3 | 25,000 | 1,426 | 5.7% |
 
 Remaining gaps are almost entirely conjugated verb forms (`会える`, `行ける`, `使える`) and proper nouns/names (`悟`, `宮近`, `中村`). Non-Japanese tokens are negligible (1 across all files: `々`, the kanji repetition mark).

@@ -115,4 +115,4 @@ YOUTUBE_FREQ_V3                        1386   11.6%  [#####---------------------
 
 Words with zero -1s: 3152  (26.3%)
 Words with at least one -1: 8848  (73.7%)
-Words with at least one RARE category: 8992  (74.9%)
+Words with at least one RARE category: 8902  (74.2%)

@@ -135,72 +135,59 @@ Every other source lemmatizes these. The same underlying words occupy completely
 
 ### 6.1 Rank-Band Zero-Missing Analysis
 
-Zero-missing counts across 38 checked sources (10 excluded). All anchors now check 38 sources — see §4.
+Zero-missing counts across 51 checked sources (10 excluded). Non-CEJC anchors include all 14 CEJC sub-corpus columns as separate checked sources; CEJC excludes its own family columns (38 checked).
 
 | Anchor | Sources checked | Top-500 | Top-1k | Top-3k | Top-5k | Top-10k | All words |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| CC100 | 38 | **85.6%** | 79.4% | 63.4% | 52.7% | 34.6% | 15.9% |
-| CEJC | 38 | 78.2% | 72.1% | 56.0% | 45.0% | 29.8% | 13.4% |
-| NETFLIX | 38 | 78.0% | 71.1% | 57.6% | 48.7% | 35.4% | 17.8% |
-| YOUTUBE_FREQ_V3 | 38 | 77.6% | 71.8% | 60.7% | 52.0% | 35.8% | 15.2% |
-| WIKIPEDIA_V2 | 38 | 77.2% | 73.4% | 56.9% | 47.6% | 33.8% | 17.2% |
-| BCCWJ | 38 | 75.2% | 74.1% | 63.9% | 52.5% | 34.5% | 22.3%* |
-| ANIME_JDRAMA | 38 | 70.6% | 66.4% | 54.9% | 46.2% | 34.0% | 17.9% |
-| RSPEER | 38 | 69.6% | 66.0% | 57.5% | 49.8% | 35.6% | 17.3% |
-| JPDB | 38 | 41.6% | 30.1% | 18.0% | 14.8% | 11.2% | 6.9% |
+| CC100 | 51 | **83.2%** | 76.5% | 61.7% | 51.1% | 33.3% | 14.9% |
+| CEJC | 38 | 78.2% | 72.1% | 56.0% | 45.0% | 29.8% | 14.8% |
+| BCCWJ | 51 | 75.0% | 74.0% | 63.6% | 52.3% | 34.3% | 22.0%* |
+| WIKIPEDIA_V2 | 51 | 73.4% | 69.8% | 53.4% | 44.4% | 30.3% | 14.4% |
+| NETFLIX | 51 | 65.4% | 61.0% | 50.9% | 42.9% | 30.5% | 14.4% |
+| YOUTUBE_FREQ_V3 | 51 | 63.4% | 62.4% | 54.8% | 47.0% | 31.9% | 14.5% |
+| RSPEER | 51 | 57.6% | 57.3% | 52.1% | 45.2% | 31.8% | 14.5% |
+| ANIME_JDRAMA | 51 | 55.8% | 55.2% | 47.0% | 39.4% | 28.6% | 14.4% |
+| JPDB | 52 | 18.0% | 11.2% |  4.9% |  3.3% |  1.8% |  0.8% |
 
 \* BCCWJ has only 16,491 words total — its "All words" percentage is computed over 16,491 words, not 25,000.
 
 **Key findings:**
 
-1. **CC100 has the strongest top-500 coverage (85.6%)** — the highest of any anchor. CommonCrawl web text covers virtually all high-frequency vocabulary across every domain. This makes CC100 the best-performing single anchor for zero-missing at the top of the frequency range.
+1. **CC100 has the strongest top-500 coverage (83.2%)** — the highest of any anchor. CommonCrawl web text covers virtually all high-frequency vocabulary across every domain.
 
-2. **CEJC now ranks second at top-500 (78.2%)**, comparable to NETFLIX (78.0%) and YOUTUBE (77.6%). This reflects that CEJC's spoken-language core vocabulary is broadly covered across all corpora.
+2. **CEJC ranks second at top-500 (78.2%)**, still well above subtitle/spoken anchors. Its count is not directly comparable to non-CEJC anchors because it checks only 38 sources (its own sub-corpus family is excluded), while other anchors check 51.
 
-3. **The top-500 → top-1k drop is larger for spoken/subtitle anchors** than for written/web anchors:
-   - CC100: 85.6% → 79.4% (−6.2pp)
-   - YOUTUBE: 77.6% → 71.8% (−5.8pp)
-   - NETFLIX: 78.0% → 71.1% (−6.9pp)
-   - WIKIPEDIA: 77.2% → 73.4% (−3.8pp)
-   - BCCWJ: 75.2% → 74.1% (−1.1pp — very stable from 500 to 1000)
+3. **BCCWJ shows the smallest top-500 → top-1k drop** (75.0% → 74.0%, −1.0pp), consistent with its balanced corpus design. WIKIPEDIA also holds well (73.4% → 69.8%, −3.6pp). Subtitle/spoken anchors drop more sharply as domain-specific vocabulary enters the list.
 
-   BCCWJ shows minimal drop from rank 500 to 1000, suggesting its top-1000 words are exceptionally "universal" — likely the high-frequency core that appears in every domain.
+4. **All anchors converge near 14–15% zero-missing for their full word list** (except JPDB under 1% and BCCWJ at 22% over its 16k set). This confirms the mathematical ceiling effect: with 51 domain-specific sources checked, the ceiling is set by the worst-coverage source.
 
-3. **All anchors converge near 15–18% zero-missing for their full word list** (except JPDB at 7% and BCCWJ at 22% over its smaller 16k set). This confirms the mathematical ceiling effect described in §12 of Experiments 0: with 38 domain-specific sources, each adding coverage requirements, the ceiling is set by the worst-coverage source in the checked set.
-
-4. **RSPEER underperforms its size.** Despite being a multi-source aggregate, RSPEER's top-500 zero-missing (69.6%) is lower than YOUTUBE (77.6%) or NETFLIX (78.0%). Investigation: RSPEER's word list is sorted by Zipf frequency, not rank, and includes many colloquial/short tokens at the top (from social media sources like Twitter/Reddit). Some of these tokens are absent from formal written corpora. The aggregation methodology smooths out outliers but the Japanese word list still reflects MeCab tokenization which may include morpheme-level tokens.
-
-5. **JPDB's coverage collapses below top-500.** From 41.6% at top-500 to 30.1% at top-1000 to 6.9% overall — an almost linear collapse. Every 1,000-word band below the top adds a larger proportion of words absent from JPDB's anime/game register.
+5. **JPDB's coverage collapses below top-500.** From 18.0% at top-500 to 0.8% overall — nearly linear collapse. Every rank band adds a larger proportion of words absent from JPDB's anime/game register.
 
 ### 6.2 Threshold Analysis (N≤3 High-Frequency Words)
 
-Words missing from at most 3 of the 38 checked sources:
+Words missing from at most 3 of the checked sources:
 
 | Anchor | Total words | High-freq (≤3 missing) | % |
 | --- | --- | --- | --- |
-| YOUTUBE_FREQ_V3 | 30,000 | 7,500 | 25.0% |
-| ANIME_JDRAMA | 25,000 | 7,349 | 29.4% |
-| NETFLIX | 25,000 | 7,349 | 29.4% |
-| RSPEER | 25,000 | 6,987 | 27.9% |
-| WIKIPEDIA_V2 | 25,000 | 6,833 | 27.3% |
-| CC100 | 24,605 | 6,624 | 26.9% |
+| CC100 | 24,605 | 5,935 | 24.1% |
+| YOUTUBE_FREQ_V3 | 25,000 | 5,786 | 23.1% |
+| NETFLIX | 25,000 | 5,728 | 22.9% |
+| ANIME_JDRAMA | 25,000 | 5,669 | 22.7% |
+| RSPEER | 25,000 | 5,666 | 22.7% |
+| WIKIPEDIA_V2 | 25,000 | 5,568 | 22.3% |
 | CEJC | 27,988 | 6,075 | 21.7% |
-| BCCWJ | 16,491 | 6,186 | 37.5%* |
-| JPDB | 24,231 | 2,862 | 11.8% |
+| BCCWJ | 16,491 | 5,785 | 35.1%* |
+| JPDB | 24,231 | 564 | 2.3% |
 
-\* BCCWJ's 37.5% is over a 16,491-word list — not comparable to 25k-word anchors.
+\* BCCWJ's 35.1% is over a 16,491-word list — not comparable to 25k-word anchors.
 
 **Key findings:**
 
-1. **YOUTUBE_FREQ_V3 yields the most high-frequency words (7,500)** but covers 30,000 total, giving the lowest %. ANIME_JDRAMA and NETFLIX each yield 7,349 despite covering only 25,000 words — a higher density of broadly covered vocabulary.
+1. **All non-CEJC, non-BCCWJ, non-JPDB anchors cluster tightly at 22–24%** high-frequency density. The previous experiment's wider spread (21–29%) was partly an artifact of YOUTUBE having 30,000 words while others had 25,000.
 
-2. **The subtitle anchors (ANIME_JDRAMA, NETFLIX) have the best high-frequency density** at ~29%. They cover spoken/conversational Japanese where vocabulary overlaps heavily across all corpora. Written/web anchors (CC100, WIKIPEDIA_V2) produce slightly fewer high-frequency words per 25k — likely because they include more domain-specific written vocabulary that only appears in certain corpora.
+2. **CEJC's count (6,075, 21.7%) is lower than expected** given it's the largest anchor (27,988 words). The main reason is that CEJC includes UniDic lemma-form words (其れ, 為る) that are absent from surface-form sources and hard to bridge even with the bidirectional kana fallback.
 
-3. **CEJC's count (6,075, 21.7%) is lower than expected** given it's the largest anchor (27,988 words). The main reason is that CEJC includes UniDic lemma-form words (其れ, 為る) that are absent from surface-form sources and hard to bridge even with the bidirectional kana fallback.
-
-4. **RSPEER and WIKIPEDIA_V2 perform well** (6,987 and 6,833 respectively) for web/aggregated sources. Their threshold counts are comparable to the subtitle anchors, confirming they cover general Japanese vocabulary broadly.
-
-5. **JPDB remains the outlier** (2,862, 11.8%) — roughly 1/3 the high-frequency count of any other anchor. No change in EXCLUDE set affects this; it is a structural property of the corpus.
+3. **JPDB remains the extreme outlier** (564, 2.3%) — roughly 1/10 the high-frequency count of any other anchor. This is a structural property of the corpus, unchanged by any exclusion set.
 
 ### 6.3 Comparison with Experiments 0
 
@@ -209,13 +196,11 @@ In Experiments 0 (7 excluded, YOUTUBE anchor), the results were:
 | | Experiments 0 | Experiments 1 |
 | --- | --- | --- |
 | Excluded sources | 7 | 10 (+H_FREQ, NAROU, VN_FREQ) |
-| Checked sources (YOUTUBE) | 28 | 38 (+RSPEER and other new sources) |
-| Zero-missing (YOUTUBE, all words) | 4,463 (14.9%) | 4,557 (15.2%) |
-| High-freq N≤3 (YOUTUBE) | 7,834 (26.1%) | 7,500 (25.0%) |
+| Checked sources (YOUTUBE) | 28 | 51 (includes 14 CEJC sub-columns) |
+| Zero-missing (YOUTUBE, all words) | 4,463 (14.9%) | 3,635 (14.5%) |
+| High-freq N≤3 (YOUTUBE) | 7,834 (26.1%) | 5,786 (23.1%) |
 
-Zero-missing count is essentially the same (4,463 vs 4,557) despite 10 more sources being checked. This is because the 3 newly excluded sources (H_FREQ, NAROU, VN_FREQ) were causing ~1% of false failures that the 10 newly checked sources partially offset. The net effect is a slight improvement in zero-missing percentage (14.9% → 15.2%) because the removed false-negative sources caused more harm than the newly added sources.
-
-The threshold N≤3 count dropped slightly (7,834 → 7,500) because YOUTUBE now has 30,000 words checked instead of fewer — the threshold analysis runs on the full word list, and the extra words at ranks 25,001–30,000 are mostly domain-specific vocabulary with higher miss rates.
+The N≤3 count dropped significantly (7,834 → 5,786) because the checked-source count grew from 28 to 51 — the 14 CEJC sub-corpus columns now count as separate sources to satisfy, making the threshold stricter. Words absent from even one CEJC domain sub-corpus (e.g., not recorded in transportation conversations) now fail the N≤3 check.
 
 ---
 

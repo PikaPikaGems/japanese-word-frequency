@@ -10,7 +10,7 @@ When you open `consolidated.csv`, each row is a Japanese word. The first three c
 | `hiragana` | The word's reading in hiragana            |
 | `katakana` | The word's reading in katakana            |
 
-Every column after that is a **frequency rank** from a specific Japanese corpus or dataset. A value of **1** means this word is the single most frequent word in that dataset. A value of **5,000** means it is the 5,000th most frequent. A value of **-1** means the word either does not appear in that dataset, or ranked outside its top entries (most datasets are capped at top 25,000; YOUTUBE_FREQ_V3 goes to ~187,000; NIER only has ~10,000 total).
+Every column after that is a **frequency rank** from a specific Japanese corpus or dataset. A value of **1** means this word is the single most frequent word in that dataset. A value of **5,000** means it is the 5,000th most frequent. A value of **-1** means the word either does not appear in that dataset, or ranked outside its top entries (most datasets are capped at top 25,000; NIER only has ~10,000 total).
 
 **Ranks are not comparable across columns.** Rank 500 in one dataset and rank 500 in another does not mean the word is equally common — corpus sizes, topics, and tokenization methods all differ. Use ranks to judge relative order _within_ a column, or to see whether a word shows up across many different contexts.
 
@@ -27,6 +27,19 @@ Every column after that is a **frequency rank** from a specific Japanese corpus 
 - Word ranks high in entertainment columns but -1 in BCCWJ/CEJC → fiction/media jargon not used in daily life
 - Word ranks high in CEJC but -1 in BCCWJ → common in speech but rarely written formally
 - Word ranks high in JPDB but low everywhere else → likely an inflected form or entertainment-specific term
+
+---
+
+## SAMPLE DATA
+
+CEJC
+
+```
+    1  word,hiragana,katakana,cejc_combined_rank,cejc_small_talk_rank,cejc_consultation_rank,cejc_meeting_rank,cejc_class_rank,cejc_outdoors_rank,cejc_school_rank,cejc_transportation_rank,cejc_public_commercial_rank,cejc_home_rank,cejc_indoors_rank,cejc_workplace_rank,cejc_male_rank,cejc_female_rank,ADNO,ANIME_JDRAMA,AOZORA_BUNKO,BCCWJ,CC100,CHRISKEMPSON,DAVE_DOEBRICK,DD2_MIGAKU_NETFLIX,DD2_MIGAKU_NOVELS,DD2_MORPHMAN_NETFLIX,DD2_MORPHMAN_NOVELS,DD2_MORPHMAN_SHONEN,DD2_MORPHMAN_SOL,DD2_YOMICHAN_NOVELS,DD2_YOMICHAN_SHONEN,DD2_YOMICHAN_SHONEN_STARS,DD2_YOMICHAN_SOL,DD2_YOMICHAN_VN,HERMITDAVE_2016,HERMITDAVE_2018,HINGSTON,H_FREQ,ILYASEMENOV,INNOCENT_RANKED,JITEN_ANIME,JLAB,JPDB,KOKUGOJITEN,MALTESAA_CSJ,MALTESAA_CSJ_DOKWA_GAKKAI,MALTESAA_CSJ_DOKWA_MOGI,MALTESAA_CSJ_DOKWA_ROUDOKU,MALTESAA_CSJ_DOKWA_SAIRO,MALTESAA_CSJ_DOKWA_SONOTA,MALTESAA_CSJ_TAIKA_JIYU,MALTESAA_CSJ_TAIKA_KADAI,MALTESAA_CSJ_TAIKA_MOGI,MALTESAA_NWJC,MONODICTS,NAROU,NETFLIX,NIER,NOVELS,VN_FREQ,WIKIPEDIA_V2,YOUTUBE_FREQ,YOUTUBE_FREQ_V3,RSPEER
+     2  うん,うん,ウン,1,2,2,1,2,2,2,2,2,2,1,1,2,1,12004,59,326,2172,4034,50,100,102,-1,109,588,71,51,369,71,65,46,86,284,239,3066,3755,13881,519,76,62,85,554,104,2172,186,201,939,450,1,8,2,2061,2026,1798,103,722,393,2517,11480,158,145,584
+     3  だ,だ,ダ,2,1,1,2,1,1,1,1,1,1,2,2,1,2,54,2,113,9,6,13,2,1,3,1,9,1,1,3647,1,1,1,2,10,10,29,12909,3457,4,10,4,9,13,3,5,2,1,5,3,2,2,1,7,12,6225,2,6,4,9043,12,7,3,14
+     4  ね,ね,ネ,3,3,3,5,5,3,3,3,3,4,3,3,3,3,1543,19,394,73,42,10,20,19,36,21,50,27,20,1437,27,24,19,31,31,38,82,5508,13696,3042,15,13,18,126,24,38,21,41,24,14,5,3,5,46,224,2583,20,25,52,2133,1572,14,17,26
+```
 
 ---
 
@@ -133,7 +146,7 @@ These come from anime, drama, film, and Netflix subtitles — representing the v
 | `JLAB`            | Rank in anime sentences from ~1.85M Anki flashcards               | Built by Joe (japanese-like-a-breeze.com) from 301 Anki decks (anime/dorama sentences). Tokenized with MeCab + ipadic + a Jisho.org C++ parser that struggles with slang and informal speech — it sometimes treats multi-word expressions as single tokens (e.g., ような as よう な). Rankings below ~2,000 are unreliable due to these parsing errors. Readings come from JMdict's first entry only and may be outdated. |
 | `JITEN_ANIME`     | Rank in anime media tracked by jiten.moe                          | ~257k entries; updated periodically (latest revision 2026-01-10). More recently maintained than most other anime lists here, so newer anime series are better represented.                                                                                                                                                                                                                                                |
 | `YOUTUBE_FREQ`    | Rank in manually transcribed YouTube videos (older, ~56k entries) | Created by community members from manually transcribed videos. Note from the source: "Due to the limited size of the original dataset, frequencies should not be directly compared with larger corpora." Superseded by YOUTUBE_FREQ_V3.                                                                                                                                                                                   |
-| `YOUTUBE_FREQ_V3` | Rank in manually transcribed YouTube videos (v3, ~187k entries)   | Expanded version covering ~40,000 videos across 16 domains of spoken YouTube Japanese. The only dataset here not capped at 25,000 — entries go up to ~187,000. Same caveat about not comparing directly with larger corpora.                                                                                                                                                                                              |
+| `YOUTUBE_FREQ_V3` | Rank in manually transcribed YouTube videos (v3, top 25k)         | Expanded version covering ~40,000 videos across 16 domains of spoken YouTube Japanese. The upstream source contains ~187k entries; capped at top 25,000 here like all other sources. Same caveat about not comparing directly with larger corpora.                                                                                                                                                                        |
 | `HERMITDAVE_2016` | Rank in OpenSubtitles 2016 (movie/TV subtitles)                   | ⚠️ **Known structural issue:** The Japanese tokenizer (MeCab) split verbs into morphemes, so single characters like い, っ, て, る appear at high ranks as "words." Dictionary-form verbs like 思う essentially don't exist as entries. Treat a -1 here with caution — it may be a tokenization artifact, not a true absence.                                                                                             |
 | `HERMITDAVE_2018` | Rank in OpenSubtitles 2018 (movie/TV subtitles)                   | ⚠️ Same morpheme-splitting issue as HERMITDAVE_2016. Combined from two split source files. Use with the same caution.                                                                                                                                                                                                                                                                                                     |
 | `HINGSTON`        | Rank in a Japanese internet corpus from the University of Leeds   | A mid-2000s web corpus (~44,998 entries). Older and limited in size. Lower priority than CC100 or BCCWJ for most use cases.                                                                                                                                                                                                                                                                                               |
@@ -241,7 +254,7 @@ Sources are grouped by how much you should trust their ranks as signals of real-
 
 **`JITEN_ANIME`** is the most up-to-date anime-specific list (~257k entries, last revised 2026-01-10). `ANIME_JDRAMA` and `NETFLIX` predate many recent seasons; `JITEN_ANIME` is the better choice when recency matters.
 
-**`YOUTUBE_FREQ_V3`** covers ~40,000 manually transcribed YouTube videos across 16 spoken domains. It has ~75–77% top-5k overlap with `CC100`, suggesting their vocabulary largely agrees despite one being web text and the other spoken transcription. Note from the source: "frequencies should not be directly compared with larger corpora" — the raw counts are not comparable, but the rank order is useful. It is the only source here not capped at 25,000 entries (~187k total).
+**`YOUTUBE_FREQ_V3`** covers ~40,000 manually transcribed YouTube videos across 16 spoken domains. It has ~75–77% top-5k overlap with `CC100`, suggesting their vocabulary largely agrees despite one being web text and the other spoken transcription. Note from the source: "frequencies should not be directly compared with larger corpora" — the raw counts are not comparable, but the rank order is useful. The upstream source contains ~187k entries.
 
 **`MALTESAA_NWJC`** is one of the largest corpora here (~25.8 billion tokens from Japanese websites, 2014–2017). Its main value over `BCCWJ` is contemporary and informal web language; its main value over `CC100` is earlier coverage of the 2010s web. Ranks go up to ~106,762.
 
@@ -277,8 +290,6 @@ Sources are grouped by how much you should trust their ranks as signals of real-
 
 **`ILYASEMENOV`** uses document frequency (how many Wikipedia articles contain the word) rather than occurrence count, and is known to contain HTML entities (amp, gt, lt) as vocabulary entries in the raw data.
 
-**`DD2_MIGAKU_NOVELS`** is a curated learner vocabulary deck (~16,500 entries), not a frequency corpus. Its ranking reflects which words were chosen for a study deck, not how frequently they appear in novels.
-
 ---
 
 ### Not frequency corpora — different interpretation required
@@ -288,6 +299,8 @@ Sources are grouped by how much you should trust their ranks as signals of real-
 **`AOZORA_BUNKO`** contains zero hiragana entries by design — it covers only kanji and jukugo from pre-1953 public-domain literature. A -1 for any hiragana word is structurally guaranteed.
 
 **`NIER`** covers only ~10,077 unique words from the NieR game scripts. A -1 simply means the word doesn't appear in those games.
+
+**`DD2_MIGAKU_NOVELS`** is a curated learner vocabulary deck (~16,500 entries), not a frequency corpus. Its ranking reflects which words were chosen for a study deck, not how frequently they appear in novels.
 
 **`H_FREQ`** is an adult (18+) content corpus. Common everyday words (私, 言う, 中) also rank high because they're universal. Only ranks that appear _exclusively_ high in `H_FREQ` carry domain-specific signal.
 
@@ -323,14 +336,3 @@ Both are built from Japanese Wikipedia dumps but come from completely different 
 `ADNO` is closer to a raw corpus frequency list — it counts how many times each word appears in the Wikipedia text. `WIKIPEDIA_V2` comes packaged as a pre-ranked Yomitan dictionary, so the ranking methodology (and what was filtered) reflects the decisions of the MarvNC/Shoui collection rather than a single transparent pipeline. `WIKIPEDIA_V2` has ~850k unique entries, making it far larger than `ADNO`'s 25k cap in this CSV.
 
 In practice: if they disagree on a word's rank, the discrepancy reflects different pipeline decisions (tokenizer, filtering, normalization). `ADNO` is more transparent because the source dump and cleaning steps are documented. `ILYASEMENOV` is a third Wikipedia source using _document frequency_ (how many articles contain the word rather than total occurrences) — a fundamentally different metric — and has HTML entity noise in the raw data.
-
-# SAMPLE DATA
-
-CEJC
-
-```
-    1  word,hiragana,katakana,cejc_combined_rank,cejc_small_talk_rank,cejc_consultation_rank,cejc_meeting_rank,cejc_class_rank,cejc_outdoors_rank,cejc_school_rank,cejc_transportation_rank,cejc_public_commercial_rank,cejc_home_rank,cejc_indoors_rank,cejc_workplace_rank,cejc_male_rank,cejc_female_rank,ADNO,ANIME_JDRAMA,AOZORA_BUNKO,BCCWJ,CC100,CHRISKEMPSON,DAVE_DOEBRICK,DD2_MIGAKU_NETFLIX,DD2_MIGAKU_NOVELS,DD2_MORPHMAN_NETFLIX,DD2_MORPHMAN_NOVELS,DD2_MORPHMAN_SHONEN,DD2_MORPHMAN_SOL,DD2_YOMICHAN_NOVELS,DD2_YOMICHAN_SHONEN,DD2_YOMICHAN_SHONEN_STARS,DD2_YOMICHAN_SOL,DD2_YOMICHAN_VN,HERMITDAVE_2016,HERMITDAVE_2018,HINGSTON,H_FREQ,ILYASEMENOV,INNOCENT_RANKED,JITEN_ANIME,JLAB,JPDB,KOKUGOJITEN,MALTESAA_CSJ,MALTESAA_CSJ_DOKWA_GAKKAI,MALTESAA_CSJ_DOKWA_MOGI,MALTESAA_CSJ_DOKWA_ROUDOKU,MALTESAA_CSJ_DOKWA_SAIRO,MALTESAA_CSJ_DOKWA_SONOTA,MALTESAA_CSJ_TAIKA_JIYU,MALTESAA_CSJ_TAIKA_KADAI,MALTESAA_CSJ_TAIKA_MOGI,MALTESAA_NWJC,MONODICTS,NAROU,NETFLIX,NIER,NOVELS,VN_FREQ,WIKIPEDIA_V2,YOUTUBE_FREQ,YOUTUBE_FREQ_V3,RSPEER
-     2  うん,うん,ウン,1,2,2,1,2,2,2,2,2,2,1,1,2,1,12004,59,326,2172,4034,50,100,102,-1,109,588,71,51,369,71,65,46,86,284,239,3066,3755,13881,519,76,62,85,554,104,2172,186,201,939,450,1,8,2,2061,2026,1798,103,722,393,2517,11480,158,145,584
-     3  だ,だ,ダ,2,1,1,2,1,1,1,1,1,1,2,2,1,2,54,2,113,9,6,13,2,1,3,1,9,1,1,3647,1,1,1,2,10,10,29,12909,3457,4,10,4,9,13,3,5,2,1,5,3,2,2,1,7,12,6225,2,6,4,9043,12,7,3,14
-     4  ね,ね,ネ,3,3,3,5,5,3,3,3,3,4,3,3,3,3,1543,19,394,73,42,10,20,19,36,21,50,27,20,1437,27,24,19,31,31,38,82,5508,13696,3042,15,13,18,126,24,38,21,41,24,14,5,3,5,46,224,2583,20,25,52,2133,1572,14,17,26
-```

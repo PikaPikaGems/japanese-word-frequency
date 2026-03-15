@@ -9,6 +9,8 @@ A comprehensive collection of Japanese word frequency datasets, analysis scripts
 - [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of all frequency sources
 - [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Concise reference format
 
+TODO: ADD links and description for ./CONSOLIDATED_CSV_REFERENCEV1.md and notes/cleaned-datasets-reference-v1.md these are very important documents that the user should read.
+
 ### Main Data Source
 
 - https://github.com/Kuuuube/yomitan-dictionaries
@@ -140,7 +142,7 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 | VN_FREQ                    | Visual novel corpus                                 |
 | WIKIPEDIA_V2               | Wikipedia (v2)                                      |
 | YOUTUBE_FREQ               | YouTube subtitle frequency                          |
-| YOUTUBE_FREQ_V3            | YouTube subtitle frequency (v3, ~187k entries)      |
+| YOUTUBE_FREQ_V3            | YouTube subtitle frequency (v3, top 25k)            |
 
 Note: `DD2_*` sources are from Dave Doebrick's Frequency List Compilation (MIGAKU, MORPHMAN, and YOMICHAN dictionary formats). Three were removed as duplicates: `DD2_YOMICHAN_NETFLIX` (= `NETFLIX`), `DD2_MIGAKU_SOL` (= `DD2_YOMICHAN_SOL`), `DD2_MIGAKU_SHONEN` (= `DD2_YOMICHAN_SHONEN_STARS`). `MALTESAA_*` sources are from Maltesaa's CSJ and NWJC yomitan frequency dictionaries.
 
@@ -208,29 +210,29 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 
 | Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k |
 | --------------- | ------- | ------ | ------ | ------ | ------- |
-| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 30.1%   |
+| CC100           | 83.2%   | 76.5%  | 61.7%  | 51.1%  | 28.9%   |
 | CEJC            | 78.2%   | 72.1%  | 56.0%  | 45.0%  | 26.3%   |
-| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 31.7%   |
-| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 31.8%   |
-| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 30.1%   |
-| BCCWJ           | 75.2%   | 74.1%  | 63.9%  | 52.5%  | 29.6%   |
-| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 30.6%   |
-| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 31.6%   |
-| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 10.2%   |
+| BCCWJ           | 75.0%   | 74.0%  | 63.6%  | 52.3%  | 29.3%   |
+| WIKIPEDIA_V2    | 73.4%   | 69.8%  | 53.4%  | 44.4%  | 26.7%   |
+| NETFLIX         | 65.4%   | 61.0%  | 50.9%  | 42.9%  | 27.2%   |
+| YOUTUBE_FREQ_V3 | 63.4%   | 62.4%  | 54.8%  | 47.0%  | 27.9%   |
+| RSPEER          | 57.6%   | 57.3%  | 52.1%  | 45.2%  | 27.9%   |
+| ANIME_JDRAMA    | 55.8%   | 55.2%  | 47.0%  | 39.4%  | 25.6%   |
+| JPDB            | 18.0%   | 11.2%  |  4.9%  |  3.3%  |  1.5%   |
 
 **N≤3 missing sources by rank band** (top-12k slices, [`n_leq3_by_rank_band.py`](data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py)):
 
 | Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 @25k                 |
 | --------------- | ------- | ------ | ------ | ------ | ------- | ------------------------ |
-| CC100           | 95.2%   | 91.3%  | 79.5%  | 70.4%  | 47.9%   | 6,624 (26.9%)            |
+| CC100           | 92.4%   | 88.0%  | 77.0%  | 67.6%  | 44.4%   | 5,935 (24.1%)            |
 | CEJC            | 92.6%   | 90.2%  | 76.6%  | 63.4%  | 39.8%   | 6,075 (21.7%)            |
-| YOUTUBE_FREQ_V3 | 87.8%   | 85.1%  | 76.1%  | 68.6%  | 48.0%   | 7,349 (29.4%)            |
-| WIKIPEDIA_V2    | 87.2%   | 83.7%  | 71.1%  | 62.0%  | 43.3%   | 7,500 (25.0%)            |
-| NETFLIX         | 86.4%   | 82.6%  | 73.4%  | 66.3%  | 48.2%   | 6,833 (27.3%)            |
-| BCCWJ           | 83.2%   | 83.2%  | 77.7%  | 69.8%  | 47.4%   | —                        |
-| ANIME_JDRAMA    | 81.4%   | 78.3%  | 71.3%  | 63.7%  | 46.4%   | 7,349 (29.4%)            |
-| RSPEER          | 76.6%   | 75.9%  | 70.2%  | 64.2%  | 46.3%   | 6,987 (27.9%)            |
-| JPDB            | 54.6%   | 47.4%  | 34.1%  | 27.0%  | 17.6%   | 2,862 (11.8%) — excluded |
+| BCCWJ           | 83.0%   | 82.9%  | 76.8%  | 68.3%  | 45.0%   | —                        |
+| WIKIPEDIA_V2    | 83.2%   | 79.5%  | 65.6%  | 56.5%  | 37.3%   | 5,568 (22.3%)            |
+| YOUTUBE_FREQ_V3 | 70.6%   | 73.1%  | 68.3%  | 61.6%  | 41.4%   | 5,786 (23.1%)            |
+| NETFLIX         | 71.0%   | 69.4%  | 63.5%  | 56.9%  | 39.8%   | 5,728 (22.9%)            |
+| RSPEER          | 63.6%   | 65.8%  | 63.7%  | 58.0%  | 39.7%   | 5,666 (22.7%)            |
+| ANIME_JDRAMA    | 62.6%   | 63.4%  | 59.5%  | 53.0%  | 37.5%   | 5,669 (22.7%)            |
+| JPDB            | 25.2%   | 22.1%  | 14.7%  | 10.2%  |  4.6%   | 564 (2.3%) — excluded    |
 
 ## Setup
 

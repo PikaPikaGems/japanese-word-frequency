@@ -1,7 +1,7 @@
 """
 Generates DATA.csv from the YoutubeFreqV3 Yomitan frequency dictionary (MarvNC collection).
 Source: term_meta_bank_1.json — [word, "freq", rank_as_string]
-Output: all ~187k words with WORD, FREQUENCY_RANKING columns.
+Output: top 25,000 words with WORD, FREQUENCY_RANKING columns.
 """
 
 import json
@@ -12,6 +12,8 @@ INPUT_FILE = os.path.join(
     "../../MARVNC/[JA Freq] YoutubeFreqV3/term_meta_bank_1.json",
 )
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "DATA.csv")
+
+TOP_N = 25000
 
 
 def main():
@@ -32,13 +34,14 @@ def main():
         rows.append((word, rank))
 
     rows.sort(key=lambda x: x[1])
+    top = rows[:TOP_N]
 
     with open(OUTPUT_FILE, "w", encoding="utf-8", newline="") as f:
         f.write("WORD,FREQUENCY_RANKING\n")
-        for rank, (word, _orig_rank) in enumerate(rows, start=1):
+        for rank, (word, _orig_rank) in enumerate(top, start=1):
             f.write(f"{word},{rank}\n")
 
-    print(f"Written {len(rows)} rows to {OUTPUT_FILE}")
+    print(f"Written {len(top)} rows to {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":

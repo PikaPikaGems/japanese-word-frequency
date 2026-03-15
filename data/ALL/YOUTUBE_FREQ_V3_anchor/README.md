@@ -4,9 +4,7 @@ Word frequency rankings anchored on **YouTube Frequency V3** — a frequency lis
 
 ## What this is
 
-`consolidated.csv` lists the top 30,000 words by YouTube V3 frequency, with each word's rank across CEJC and 34 other sources as additional columns. `categorized.csv` maps those ranks to 5 vocabulary tiers.
-
-Note: this is the largest anchor at 30,000 words (vs 25,000 for others).
+`consolidated.csv` lists the top 25,000 words by YouTube V3 frequency, with each word's rank across CEJC and 34 other sources as additional columns. `categorized.csv` maps those ranks to 5 vocabulary tiers.
 
 ## Why YouTube as an anchor
 
