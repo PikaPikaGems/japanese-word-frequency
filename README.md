@@ -155,7 +155,7 @@ See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbo
 **Pipeline bugs fixed:**
 
 - Quite a few sources had duplicate word entries; the pipeline now keeps the minimum (most frequent) rank.
-- CEJC uses UniDic kanji lemma forms (其れ for それ, 為る for する). A bidirectional kana/kanji fallback via JPDB v2 readings was added to bridge form mismatches: kanji anchor words look up their kana reading in other sources, and kana anchor words look up any kanji form that shares the same reading. This resolved 4,703 additional rank lookups (0.35% of cells) in the CEJC anchor vs a unidirectional kanji→kana-only fallback.
+- CEJC uses UniDic kanji lemma forms (其れ for それ, 為る for する). A bidirectional kana/kanji fallback via JPDB v2 readings was added to bridge form mismatches: kanji anchor words look up their kana reading in other sources, and kana anchor words look up any kanji form that shares the same reading.
 - AOZORA_BUNKO contains zero hiragana words by design (kanji-only source) and must be excluded from coverage checks.
 
 **Structurally incompatible sources:**
@@ -171,8 +171,6 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 | JPDB                 | Anime/game register — misses 36–42% of general vocabulary (e.g. 企業, 男性, 監督)                                          |
 
 **Tokenization mismatch:** Even top-1,000 common words are missing from HERMITDAVE because morpheme-split tokenization atomizes verbs — `思う` → `思` + `っ` + `て` + `い` + `る`. This is structural and cannot be fixed by lookup.
-
-**Recommended coverage algorithm:** Use a threshold-based filter (`missing_count ≤ N`) rather than requiring zero-missing.
 
 **Kana reading enrichment:** `hiragana` and `katakana` columns for each word are included per row media-anchored files (ANIME, NETFLIX, YOUTUBE) have 6–11% gaps, mostly conjugated verb forms and proper nouns not listed as dictionary headwords.
 
@@ -194,33 +192,35 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 **How to read these tables:**
 
 - **Top-N %** (zero-missing): of the first N words in the anchor's frequency list, the percentage that appear in _every_ checked source (no `-1` rank). A high Top-500 means the most common words are universally found everywhere. The percentage naturally falls as N grows because rarer words start appearing in fewer domain-specific corpora.
-- **N≤3 words / N≤3 (%)**: words missing from _at most 3_ of the ~38 checked sources. These are the "broadly common" core vocabulary — present in nearly all corpora. The count form (e.g. 6,624) is used for the 25k table where list sizes differ; the % form is used for the 12k equal-footing table.
+- **N≤3**: words missing from _at most 3_ of the ~38 checked sources — the "broadly common" core vocabulary present in nearly all corpora.
 
-**At 25k words** (BCCWJ excluded — only yields 16,491 unique words due to UniDic POS duplication):
+**Zero-missing by rank band** ([`top12k/`](data/ALL/___experiments1/top12k/HISTORY.md)):
 
-| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | N≤3 words (% of list)    |
-| --------------- | ------- | ------ | ------ | ------ | ------------------------ |
-| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 6,624 (26.9%)            |
-| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 7,349 (29.4%)            |
-| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 7,500 (25.0%)            |
-| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 6,833 (27.3%)            |
-| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 7,349 (29.4%)            |
-| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 6,987 (27.9%)            |
-| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 2,862 (11.8%) — excluded |
+| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k |
+| --------------- | ------- | ------ | ------ | ------ | ------- |
+| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 30.1%   |
+| CEJC            | 78.2%   | 72.1%  | 56.0%  | 45.0%  | 26.3%   |
+| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 31.7%   |
+| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 31.8%   |
+| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 30.1%   |
+| BCCWJ           | 75.2%   | 74.1%  | 63.9%  | 52.5%  | 29.6%   |
+| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 30.6%   |
+| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 31.6%   |
+| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 10.2%   |
 
-**At 12k words** ([`top12k/`](data/ALL/___experiments1/top12k/HISTORY.md) — all anchors capped at 12,000 so BCCWJ is directly comparable):
+**N≤3 missing sources by rank band** (top-12k slices, [`n_leq3_by_rank_band.py`](data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py)):
 
-| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 (%) |
-| --------------- | ------- | ------ | ------ | ------ | ------- | ------- |
-| CC100           | 85.6%   | 79.4%  | 63.4%  | 52.7%  | 30.1%   | 47.9%   |
-| CEJC            | 78.2%   | 72.1%  | 56.0%  | 45.0%  | 26.3%   | 39.8%   |
-| NETFLIX         | 78.0%   | 71.1%  | 57.6%  | 48.7%  | 31.7%   | 48.2%   |
-| YOUTUBE_FREQ_V3 | 77.6%   | 71.8%  | 60.7%  | 52.0%  | 31.8%   | 48.0%   |
-| WIKIPEDIA_V2    | 77.2%   | 73.4%  | 56.9%  | 47.6%  | 30.1%   | 43.3%   |
-| BCCWJ           | 75.2%   | 74.1%  | 63.9%  | 52.5%  | 29.6%   | 47.4%   |
-| ANIME_JDRAMA    | 70.6%   | 66.4%  | 54.9%  | 46.2%  | 30.6%   | 46.4%   |
-| RSPEER          | 69.6%   | 66.0%  | 57.5%  | 49.8%  | 31.6%   | 46.3%   |
-| JPDB            | 41.6%   | 30.1%  | 18.0%  | 14.8%  | 10.2%   | 17.6%   |
+| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 @25k                 |
+| --------------- | ------- | ------ | ------ | ------ | ------- | ------------------------ |
+| CC100           | 95.2%   | 91.3%  | 79.5%  | 70.4%  | 47.9%   | 6,624 (26.9%)            |
+| CEJC            | 92.6%   | 90.2%  | 76.6%  | 63.4%  | 39.8%   | 6,075 (21.7%)            |
+| YOUTUBE_FREQ_V3 | 87.8%   | 85.1%  | 76.1%  | 68.6%  | 48.0%   | 7,349 (29.4%)            |
+| WIKIPEDIA_V2    | 87.2%   | 83.7%  | 71.1%  | 62.0%  | 43.3%   | 7,500 (25.0%)            |
+| NETFLIX         | 86.4%   | 82.6%  | 73.4%  | 66.3%  | 48.2%   | 6,833 (27.3%)            |
+| BCCWJ           | 83.2%   | 83.2%  | 77.7%  | 69.8%  | 47.4%   | —                        |
+| ANIME_JDRAMA    | 81.4%   | 78.3%  | 71.3%  | 63.7%  | 46.4%   | 7,349 (29.4%)            |
+| RSPEER          | 76.6%   | 75.9%  | 70.2%  | 64.2%  | 46.3%   | 6,987 (27.9%)            |
+| JPDB            | 54.6%   | 47.4%  | 34.1%  | 27.0%  | 17.6%   | 2,862 (11.8%) — excluded |
 
 ## Setup
 
@@ -323,6 +323,9 @@ python data/ALL/___experiments1/top12k/analyze_coverage.py
 
 # Threshold analysis on top-12k slices
 python data/ALL/___experiments1/top12k/threshold_analysis.py
+
+# N≤3 missing sources by rank band summary table (prints markdown)
+python data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py
 ```
 
 #### CEJC analysis reports
