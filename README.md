@@ -47,7 +47,7 @@ word-frequency-rankings/
 
 `data/ALL/`
 
-The primary output of this repo. Combines CEJC rankings with all 47 filtered sources plus RSPEER into a single file. Anchor variants exist. **`consolidated.csv`** — words x rank columns for that anchor. Analysis scripts and reports in `___experiments0/` and `___experiments1/`:
+The primary output of this repo. Each `consolidated.csv` is a matrix of **words × rank columns**, one column per frequency source. The **anchor** is the source whose word list defines the rows — every word in the anchor appears as a row, and each column shows that word's rank in the other sources (`-1` if absent). Different anchors produce different matrices because each source has different vocabulary coverage and tokenization. Nine anchor variants exist: CEJC, BCCWJ, CC100, RSPEER, WIKIPEDIA_V2, ANIME_JDRAMA, NETFLIX, YOUTUBE_FREQ_V3, and JPDB. Analysis scripts and reports in `___experiments0/` and `___experiments1/`:
 
 ### CEJC — Everyday Spoken Japanese
 
@@ -462,7 +462,7 @@ However, the methodology (raw PMW ratio across all speech by gender) does **not*
 **Key observations:**
 
 - **NETFLIX ↔ ANIME_JDRAMA** is the highest-overlap pair (~79–80% both directions at all tiers) — both are subtitle corpora covering similar spoken registers
-- **JPDB rows score 25–45%** across all partners at all tiers, far below every other anchor, confirming its narrow entertainment register misses a large share of general vocabulary
+- **JPDB rows score 25–45%** across all partners at all tiers, far below every other anchor, because it uses a different vocabulary model (surface forms vs lemmas)
 - **YOUTUBE_FREQ_V3 and CC100** show strong mutual coverage (~75–77% / ~66–76%), both capturing broad everyday language across many domains
 - **WIKIPEDIA_V2 ↔ RSPEER** is notably high (~70–72% at top-10k and above), consistent with both drawing from written, encyclopedic text
 - **CEJC rows are consistently the lowest** among general-purpose anchors (~55–65%), reflecting spoken-only UniDic lemma forms (e.g. 其れ, 為る) that diverge from the surface forms used by written and subtitle sources
