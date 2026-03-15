@@ -106,7 +106,6 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 | CHRISKEMPSON               | Japanese subtitles                                  |
 | DAVE_DOEBRICK              | Netflix subtitles (Dave Doebrick, full report)      |
 | DD2_MIGAKU_NETFLIX         | Netflix subtitles (Migaku dictionary format)        |
-| DD2_MIGAKU_NOVELS          | Novel corpus (Migaku dictionary format)             |
 | DD2_MORPHMAN_NETFLIX       | Netflix subtitles (Morphman report, no names)       |
 | DD2_MORPHMAN_NOVELS        | Novel corpus (Morphman report)                      |
 | DD2_MORPHMAN_SHONEN        | Shonen anime/manga (Morphman report)                |
@@ -125,7 +124,6 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 | JITEN_ANIME                | Anime-focused frequency                             |
 | JLAB                       | Anime frequency (Japanese Like a Breeze)            |
 | JPDB                       | Entertainment media (jpdb.io)                       |
-| KOKUGOJITEN                | Japanese dictionary headwords                       |
 | MALTESAA_CSJ               | Corpus of Spontaneous Japanese (CSJ), overall       |
 | MALTESAA_CSJ_DOKWA_GAKKAI  | CSJ monologue — academic presentations (独話・学会) |
 | MALTESAA_CSJ_DOKWA_MOGI    | CSJ monologue — simulated speeches (独話・模擬)     |
@@ -136,7 +134,6 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 | MALTESAA_CSJ_TAIKA_KADAI   | CSJ dialogue — task-based (対話・課題)              |
 | MALTESAA_CSJ_TAIKA_MOGI    | CSJ dialogue — simulated (対話・模擬)               |
 | MALTESAA_NWJC              | NINJAL Web Japanese Corpus (NWJC)                   |
-| MONODICTS                  | Monolingual dictionary terms                        |
 | NAROU                      | Web novels (Narou)                                  |
 | NETFLIX                    | Netflix subtitle frequency                          |
 | NIER                       | NieR game script frequency                          |
@@ -473,7 +470,7 @@ However, the methodology (raw PMW ratio across all speech by gender) does **not*
 - **YOUTUBE_FREQ_V3 and CC100** show strong mutual coverage (~75–77% / ~66–76%), both capturing broad everyday language across many domains
 - **WIKIPEDIA_V2 ↔ RSPEER** is notably high (~70–72% at top-10k and above), consistent with both drawing from written, encyclopedic text
 - **CEJC rows are consistently the lowest** among general-purpose anchors (~55–65%), reflecting spoken-only UniDic lemma forms (e.g. 其れ, 為る) that diverge from the surface forms used by written and subtitle sources
-- **The matrix is asymmetric**: BCCWJ → CC100 is 72% but CC100 → BCCWJ is 74% at top-10k. A → B and B → A check different lookup sets: A → B tests each of A's top-N words against B's surface forms ∪ B's readings, while B → A tests against A's surface forms ∪ A's readings. Because each anchor has a different vocabulary and different reading coverage gaps (hiragana = `-` for some words), these sets differ in size and content — producing asymmetric percentages. The subtitle pair (ANIME_JDRAMA ↔ NETFLIX) is nearly symmetric because both sources have similar vocabulary and reading coverage, so their lookup sets are nearly the same size.
+- **The matrix is asymmetric**: BCCWJ → CC100 is 72% but CC100 → BCCWJ is 74% at top-10k; ANIME_JDRAMA → NETFLIX is ~79% but NETFLIX → ANIME_JDRAMA is also ~79% — the subtitle pair happens to be nearly symmetric, while written ↔ spoken pairs diverge more
 
 ## License
 
