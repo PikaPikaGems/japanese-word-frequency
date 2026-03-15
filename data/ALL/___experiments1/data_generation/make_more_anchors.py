@@ -48,14 +48,20 @@ ANCHORS = [
 jlookup = JapaneseLookup(JPDB_RAW, CEJC_TSV)
 
 
-# ── Load CEJC as a plain rank source (cejc_combined_rank only) ────────────────────
-cejc_source: dict[str, int] = {}
+# ── Load all CEJC columns ─────────────────────────────────────────────────────
+cejc_cols: list[str] = []
+cejc_source: dict[str, dict[str, int]] = {}
 with open(CEJC_FILE, newline="", encoding="utf-8") as f:
-    for row in csv.DictReader(f):
-        try:
-            cejc_source[row["word"]] = int(row["cejc_combined_rank"])
-        except (ValueError, KeyError):
-            cejc_source[row["word"]] = -1
+    reader = csv.DictReader(f)
+    cejc_cols = [c for c in reader.fieldnames if c != "word"]
+    for row in reader:
+        word = row["word"]
+        cejc_source[word] = {}
+        for col in cejc_cols:
+            try:
+                cejc_source[word][col] = int(row[col])
+            except (ValueError, KeyError):
+                cejc_source[word][col] = -1
 
 # ── Load all ___FILTERED sources ─────────────────────────────────────────────
 all_sources: dict[str, dict[str, int]] = {}
@@ -99,20 +105,19 @@ for anchor_name, top_n in ANCHORS:
     anchor_words = sorted(anchor_source.items(), key=lambda x: x[1])[:top_n]
 
     other_names = [s for s in sorted(all_sources) if s != anchor_name]
-    out_cols = [
-        "word",
-        "hiragana",
-        "katakana",
-        f"{anchor_name}_rank",
-        "CEJC_rank",
-    ] + other_names
+    out_cols = (
+        ["word", "hiragana", "katakana", f"{anchor_name}_rank"]
+        + cejc_cols
+        + other_names
+    )
 
     rows = []
     for word, anchor_rank in anchor_words:
         hira, kata = jlookup.get_reading(word)
-        cejc_r = jlookup.lookup(cejc_source, word)
+        word_cejc = cejc_source.get(word, {})
+        cejc_vals = [word_cejc.get(col, -1) for col in cejc_cols]
         other_vals = [jlookup.lookup(all_sources[s], word) for s in other_names]
-        rows.append([word, hira, kata, anchor_rank, cejc_r] + other_vals)
+        rows.append([word, hira, kata, anchor_rank] + cejc_vals + other_vals)
 
     anchor_dir = os.path.join(BASE, "..", "..", f"{anchor_name}_anchor")
     os.makedirs(anchor_dir, exist_ok=True)
