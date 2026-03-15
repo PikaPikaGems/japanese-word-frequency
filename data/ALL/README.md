@@ -44,7 +44,8 @@ Data lives in anchor-specific subdirectories; generation scripts are in `___expe
 | `ADNO` | RAW/___FILTERED/ADNO | Cleaned Japanese Wikipedia frequency list by adno (fork of IlyaSemenov) |
 | `ANIME_JDRAMA` | RAW/___FILTERED/ANIME_JDRAMA | Anime & J-drama subtitle frequency from Shoui's collection |
 | `AOZORA_BUNKO` | RAW/___FILTERED/AOZORA_BUNKO | Kanji/jukugo frequency from Aozora Bunko public-domain literature |
-| `BCCWJ` | RAW/___FILTERED/BCCWJ | Balanced Corpus of Contemporary Written Japanese (Kuuube/yomitan) |
+| `BCCWJ_LUW` | RAW/___FILTERED/BCCWJ_LUW | Balanced Corpus of Contemporary Written Japanese — Long Unit Word (toasted-nutbread) |
+| `BCCWJ_SUW` | RAW/___FILTERED/BCCWJ_SUW | Balanced Corpus of Contemporary Written Japanese — Short Unit Word (toasted-nutbread) |
 | `CC100` | RAW/___FILTERED/CC100 | CommonCrawl Japanese web text frequency (CC-100 dataset) |
 | `CHRISKEMPSON` | RAW/___FILTERED/CHRISKEMPSON | Japanese subtitle word frequency by chriskempson |
 | `DAVE_DOEBRICK` | RAW/___FILTERED/DAVE_DOEBRICK | Netflix Japanese subtitle frequency compiled by Dave Doebrick |
@@ -113,6 +114,9 @@ python data/ALL/___experiments0/data_generation/CATEGORIZED.py  # produces CEJC_
 
 # Other anchors (JPDB, ANIME_JDRAMA, NETFLIX, YOUTUBE_FREQ_V3)
 python data/ALL/___experiments0/data_generation/make_anchored.py
+
+# BCCWJ_LUW, BCCWJ_SUW, CC100, RSPEER, WIKIPEDIA_V2 anchors
+python data/ALL/___experiments1/data_generation/make_more_anchors.py
 ```
 
 ## Kana reading coverage
@@ -128,10 +132,15 @@ Coverage after lookup + pure-kana fill (categorized and consolidated are identic
 
 | Anchor | Words | Missing reading | % missing |
 |--------|-------|----------------|-----------|
-| CEJC | 27,987 | 0 | 0.0% |
+| CEJC | 27,988 | 0 | 0.0% |
 | JPDB | 24,231 | 0 | 0.0% |
 | ANIME_JDRAMA | 25,000 | 2,636 | 10.5% |
 | NETFLIX | 25,000 | 1,728 | 6.9% |
 | YOUTUBE_FREQ_V3 | 25,000 | 1,426 | 5.7% |
+| BCCWJ_LUW | 25,000 | 4,904 | 19.6% |
+| BCCWJ_SUW | 25,000 | 349 | 1.4% |
+| CC100 | 24,605 | 470 | 1.9% |
+| RSPEER | 25,000 | 4,544 | 18.2% |
+| WIKIPEDIA_V2 | 25,000 | 3,250 | 13.0% |
 
 Remaining gaps are almost entirely conjugated verb forms (`会える`, `行ける`, `使える`) and proper nouns/names (`悟`, `宮近`, `中村`). Non-Japanese tokens are negligible (1 across all files: `々`, the kanji repetition mark).

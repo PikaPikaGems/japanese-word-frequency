@@ -61,7 +61,7 @@ MEDIA_GROUPS = {
         "description": "YouTube subtitle frequency lists",
     },
     "Dictionary / Balanced": {
-        "sources": ["KOKUGOJITEN", "MONODICTS", "H_FREQ", "BCCWJ"],
+        "sources": ["KOKUGOJITEN", "MONODICTS", "H_FREQ", "BCCWJ_LUW", "BCCWJ_SUW"],
         "description": "Dictionary headwords, community lists, NINJAL balanced written corpus",
     },
 }

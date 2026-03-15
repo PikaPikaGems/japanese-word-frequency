@@ -54,7 +54,7 @@ with open(CEJC_FILE, newline="", encoding="utf-8") as f:
         except (ValueError, KeyError):
             cejc_source[row["word"]] = -1
 
-EXCLUDED_SOURCES = {"KOKUGOJITEN", "MONODICTS", "DD2_MIGAKU_NOVELS"}
+EXCLUDED_SOURCES = {"KOKUGOJITEN", "MONODICTS", "DD2_MIGAKU_NOVELS", "BCCWJ"}
 
 # ── Load all ___FILTERED sources ─────────────────────────────────────────────
 all_sources: dict[str, dict[str, int]] = {}

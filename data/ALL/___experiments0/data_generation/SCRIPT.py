@@ -33,7 +33,7 @@ with open(CEJC_FILE, newline="", encoding="utf-8") as f:
 words_in_order = [row["word"] for row in cejc_rows]
 word_index = {w: i for i, w in enumerate(words_in_order)}
 
-EXCLUDED_SOURCES = {"KOKUGOJITEN", "MONODICTS", "DD2_MIGAKU_NOVELS"}
+EXCLUDED_SOURCES = {"KOKUGOJITEN", "MONODICTS", "DD2_MIGAKU_NOVELS", "BCCWJ"}
 
 # Load each DATA.csv source
 source_dirs = sorted(glob.glob(os.path.join(FILTERED_DIR, "*", "DATA.csv")))

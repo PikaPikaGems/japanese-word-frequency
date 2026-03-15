@@ -1,13 +1,14 @@
 """
 Regenerates all non-CEJC anchor consolidated.csv and categorized.csv files,
-now including RSPEER, and generates 4 new anchors: BCCWJ, CC100, RSPEER, WIKIPEDIA_V2.
+now including RSPEER, and generates anchors: BCCWJ_LUW, BCCWJ_SUW, CC100, RSPEER, WIKIPEDIA_V2.
 
 All anchors generated:
   JPDB             — anime/games/novels, surface forms, 25k words
   YOUTUBE_FREQ_V3  — spoken/conversational YouTube, surface forms, top 25k
   ANIME_JDRAMA     — anime + j-drama subtitles, 25k words
   NETFLIX          — Netflix subtitles, 25k words
-  BCCWJ            — balanced written Japanese (NINJAL), 25k words
+  BCCWJ_LUW        — balanced written Japanese LUW (NINJAL), 25k words
+  BCCWJ_SUW        — balanced written Japanese SUW (NINJAL), 25k words
   CC100            — CommonCrawl web text, 25k words
   RSPEER           — multi-source aggregated (wordfreq), 25k words
   WIKIPEDIA_V2     — Wikipedia (clean), 25k words
@@ -38,7 +39,8 @@ ANCHORS = [
     ("YOUTUBE_FREQ_V3", 25000),
     ("ANIME_JDRAMA", 25000),
     ("NETFLIX", 25000),
-    ("BCCWJ", 25000),
+    ("BCCWJ_LUW", 25000),
+    ("BCCWJ_SUW", 25000),
     ("CC100", 25000),
     ("RSPEER", 25000),
     ("WIKIPEDIA_V2", 25000),
@@ -63,7 +65,7 @@ with open(CEJC_FILE, newline="", encoding="utf-8") as f:
             except (ValueError, KeyError):
                 cejc_source[word][col] = -1
 
-EXCLUDED_SOURCES = {"KOKUGOJITEN", "MONODICTS", "DD2_MIGAKU_NOVELS"}
+EXCLUDED_SOURCES = {"KOKUGOJITEN", "MONODICTS", "DD2_MIGAKU_NOVELS", "BCCWJ"}
 
 # ── Load all ___FILTERED sources ─────────────────────────────────────────────
 all_sources: dict[str, dict[str, int]] = {}

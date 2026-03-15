@@ -42,7 +42,7 @@ MEDIA_GROUPS = {
     "Slice of Life Anime": ["DD2_MORPHMAN_SOL", "DD2_YOMICHAN_SOL"],
     "Visual Novels": ["VN_FREQ", "DD2_YOMICHAN_VN"],
     "YouTube": ["YOUTUBE_FREQ", "YOUTUBE_FREQ_V3"],
-    "Dictionary/Balanced": ["KOKUGOJITEN", "MONODICTS", "H_FREQ", "BCCWJ"],
+    "Dictionary/Balanced": ["KOKUGOJITEN", "MONODICTS", "H_FREQ", "BCCWJ_LUW", "BCCWJ_SUW"],
     "Other": ["JPDB", "NIER", "HERMITDAVE_2016", "HERMITDAVE_2018"],
 }
 
