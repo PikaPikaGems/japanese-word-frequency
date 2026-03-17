@@ -34,7 +34,7 @@ A comprehensive collection of Japanese word frequency datasets, analysis scripts
 ```
 word-frequency-rankings/
 ├── data/
-│   ├── ALL/          # Consolidated multi-source rankings (27,988 words × 60+ rank columns)
+│   ├── ALL/          # Consolidated multi-source rankings (27,988 words × 70+ rank columns)
 │   ├── CEJC/         # Corpus of Everyday Japanese Conversation (~2.4M words, 577 conversations)
 │   ├── JPDBV2/       # JPDB v2.2 entertainment media frequency list (~497k entries)
 │   ├── RSPEER/       # rspeer/wordfreq library output (top 25,000 words)
@@ -68,12 +68,12 @@ The full pipeline has the following dependency order: RAW/\_\_\_FILTERED → CEJ
 
 Each source under `data/RAW/___FILTERED/` has a `SCRIPT.py` that reads the raw upstream file and outputs a normalized `DATA.csv` (columns: `WORD`, `FREQUENCY_RANKING`, top 25k entries). Run each from the repo root:
 
-```bash
+````bash
 python data/RAW/___FILTERED/ADNO/SCRIPT.py
 python data/RAW/___FILTERED/ANIME_JDRAMA/SCRIPT.py
 python data/RAW/___FILTERED/AOZORA_BUNKO/SCRIPT.py
 # ... repeat for all subdirectories under data/RAW/___FILTERED/
-```
+``
 
 #### Step 2 — Preprocess CEJC, RSPEER, and JPDBV2
 
@@ -113,6 +113,10 @@ python data/ALL/___experiments0/data_generation/make_anchored.py
 #### Step 4 — Coverage and threshold analysis (experiments0)
 
 ```bash
+# TODO: Write this part of the documentation
+# RUN check of duplicate frequency list  and report before proceeding
+#  See also  is @data/ALL/___experiments1/check_duplicate_rank_columns.py#1-6
+
 # Run coverage analysis across all anchors
 python data/ALL/___experiments0/coverage_analysis/analyze_coverage.py
 
@@ -130,6 +134,11 @@ python data/ALL/___experiments0/threshold_analysis/threshold_analysis.py
 ```bash
 # Regenerate all non-CEJC anchor consolidated.csv files (adds BCCWJ_LUW, BCCWJ_SUW, CC100, RSPEER, WIKIPEDIA_V2)
 python data/ALL/___experiments1/data_generation/make_more_anchors.py
+
+# TODO: Write this part of the documentation
+# RUN check of duplicate frequency list  and report before proceeding
+#  See also  is @data/ALL/___experiments1/check_duplicate_rank_columns.py#1-6
+
 
 # Coverage analysis across all anchors (updated EXCLUDE set: 10 sources)
 python data/ALL/___experiments1/coverage_analysis/analyze_coverage.py
@@ -217,7 +226,7 @@ Generated from the [rspeer/wordfreq](https://github.com/rspeer/wordfreq) Python 
 
 See [data/RSPEER/INSIGHTS.md](data/RSPEER/INSIGHTS.md) for analysis results.
 
-### RAW/\_\_\_FILTERED — 46+ Source Datasets + RSPEER
+### RAW/\_\_\_FILTERED — 56+ Source Datasets + RSPEER
 
 `data/RAW/___FILTERED/`
 
@@ -249,7 +258,17 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 | H_FREQ                     | Adult content corpus                                |
 | ILYASEMENOV                | Wikipedia word frequency                            |
 | INNOCENT_RANKED            | Innocent Corpus (novels)                            |
-| JITEN_ANIME                | Anime-focused frequency                             |
+| JITEN_ANIME                | Anime-focused frequency (jiten.moe)                 |
+| JITEN_AUDIO                | Audio media frequency (jiten.moe)                   |
+| JITEN_DRAMA                | Japanese drama frequency (jiten.moe)                |
+| JITEN_GLOBAL               | All-media combined frequency (jiten.moe)            |
+| JITEN_MANGA                | Manga frequency (jiten.moe)                         |
+| JITEN_MOVIE                | Movie frequency (jiten.moe)                         |
+| JITEN_NON_FICTION          | Non-fiction media frequency (jiten.moe)             |
+| JITEN_NOVEL                | Novel frequency (jiten.moe)                         |
+| JITEN_VIDEO_GAME           | Video game frequency (jiten.moe)                    |
+| JITEN_VISUAL_NOVEL         | Visual novel frequency (jiten.moe)                  |
+| JITEN_WEB_NOVEL            | Web novel frequency (jiten.moe)                     |
 | JLAB                       | Anime frequency (Japanese Like a Breeze)            |
 | JPDB                       | Entertainment media (jpdb.io)                       |
 | MALTESAA_CSJ               | Corpus of Spontaneous Japanese (CSJ), overall       |
@@ -316,7 +335,7 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 
 ## Experiments 1
 
-[`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 49 external sources and 4 new anchors were added.
+[`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 59 external sources and 4 new anchors were added.
 
 **New anchors added (10 total):**
 
@@ -333,37 +352,37 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 **How to read these tables:**
 
 - **Top-N %** (zero-missing): of the first N words in the anchor's frequency list, the percentage that appear in _every_ checked source (no `-1` rank). A high Top-500 means the most common words are universally found everywhere. The percentage naturally falls as N grows because rarer words start appearing in fewer domain-specific corpora.
-- **N≤3**: words missing from _at most 3_ of the ~38 checked sources — the "broadly common" core vocabulary present in nearly all corpora.
+- **N≤3**: words missing from _at most 3_ of the ~60 checked sources — the "broadly common" core vocabulary present in nearly all corpora.
 
 **Zero-missing by rank band** ([`top12k/`](data/ALL/___experiments1/top12k/HISTORY.md)):
 
 | Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k |
 | --------------- | ------- | ------ | ------ | ------ | ------- |
-| CC100           | 84.6%   | 79.3%  | 64.8%  | 54.1%  | 31.9%   |
-| CEJC            | 78.2%   | 72.5%  | 56.6%  | 45.6%  | 26.8%   |
-| BCCWJ_SUW       | 82.4%   | 81.3%  | 70.8%  | 59.2%  | 32.1%   |
-| BCCWJ_LUW       | 76.6%   | 73.2%  | 60.5%  | 49.8%  | 29.5%   |
-| YOUTUBE_FREQ_V3 | 78.2%   | 72.7%  | 61.8%  | 53.1%  | 33.2%   |
-| NETFLIX         | 78.0%   | 71.5%  | 58.3%  | 50.0%  | 33.4%   |
-| WIKIPEDIA_V2    | 74.8%   | 72.0%  | 56.9%  | 48.0%  | 31.3%   |
-| ANIME_JDRAMA    | 71.2%   | 67.1%  | 56.0%  | 47.5%  | 32.2%   |
-| RSPEER          | 68.8%   | 65.6%  | 57.3%  | 50.6%  | 33.2%   |
-| JPDB            | 43.0%   | 31.3%  | 19.0%  | 15.4%  | 10.6%   |
+| CC100           | 76.4%   | 65.9%  | 46.6%  | 35.2%  | 17.8%   |
+| CEJC            | 76.0%   | 66.7%  | 44.1%  | 32.6%  | 16.9%   |
+| BCCWJ_SUW       | 73.0%   | 67.3%  | 51.1%  | 38.1%  | 18.1%   |
+| BCCWJ_LUW       | 73.4%   | 67.8%  | 47.1%  | 34.6%  | 17.2%   |
+| YOUTUBE_FREQ_V3 | 60.8%   | 56.0%  | 42.3%  | 33.3%  | 17.3%   |
+| NETFLIX         | 63.6%   | 58.1%  | 43.0%  | 32.9%  | 17.2%   |
+| WIKIPEDIA_V2    | 51.4%   | 47.3%  | 33.9%  | 27.0%  | 15.9%   |
+| ANIME_JDRAMA    | 54.2%   | 52.5%  | 40.6%  | 31.4%  | 16.9%   |
+| RSPEER          | 52.4%   | 49.5%  | 38.1%  | 30.2%  | 17.1%   |
+| JPDB            | 17.8%   | 11.1%  | 4.5%   | 3.0%   | 1.3%    |
 
 **N≤3 missing sources by rank band** (top-12k slices, [`n_leq3_by_rank_band.py`](data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py)):
 
 | Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 @25k     |
 | --------------- | ------- | ------ | ------ | ------ | ------- | ------------ |
-| CEJC            | 94.2%   | 91.5%  | 79.7%  | 67.0%  | 42.6%   | —            |
-| CC100           | 93.2%   | 89.5%  | 80.0%  | 70.7%  | 47.3%   | —            |
-| BCCWJ_SUW       | 92.8%   | 92.3%  | 87.4%  | 79.6%  | 50.3%   | —            |
-| WIKIPEDIA_V2    | 83.8%   | 80.5%  | 66.9%  | 58.2%  | 38.9%   | —            |
-| BCCWJ_LUW       | 84.0%   | 81.8%  | 73.0%  | 65.8%  | 43.7%   | —            |
-| YOUTUBE_FREQ_V3 | 71.4%   | 73.9%  | 70.2%  | 64.2%  | 43.9%   | —            |
-| NETFLIX         | 71.6%   | 70.2%  | 64.9%  | 59.1%  | 42.4%   | —            |
-| RSPEER          | 64.0%   | 66.1%  | 65.3%  | 60.3%  | 42.0%   | —            |
-| ANIME_JDRAMA    | 63.2%   | 64.3%  | 61.4%  | 55.2%  | 40.2%   | —            |
-| JPDB            | 26.2%   | 25.2%  | 20.4%  | 14.5%  | 6.5%    | — (excluded) |
+| CEJC            | 92.2%   | 88.7%  | 72.5%  | 59.3%  | 36.4%   | —            |
+| CC100           | 92.2%   | 87.0%  | 74.2%  | 63.9%  | 40.8%   | —            |
+| BCCWJ_SUW       | 92.2%   | 90.6%  | 82.2%  | 72.8%  | 42.9%   | —            |
+| WIKIPEDIA_V2    | 79.8%   | 75.9%  | 60.2%  | 51.1%  | 33.4%   | —            |
+| BCCWJ_LUW       | 83.6%   | 81.1%  | 70.7%  | 62.2%  | 38.2%   | —            |
+| YOUTUBE_FREQ_V3 | 70.8%   | 72.1%  | 65.4%  | 58.2%  | 38.0%   | —            |
+| NETFLIX         | 70.8%   | 69.5%  | 61.6%  | 54.7%  | 37.1%   | —            |
+| RSPEER          | 63.4%   | 64.5%  | 60.6%  | 54.2%  | 36.3%   | —            |
+| ANIME_JDRAMA    | 62.2%   | 63.2%  | 58.0%  | 50.9%  | 35.2%   | —            |
+| JPDB            | 25.8%   | 21.6%  | 11.9%  | 7.6%   | 3.3%    | — (excluded) |
 
 ## Notable Insights
 
@@ -483,3 +502,4 @@ However, the methodology (raw PMW ratio across all speech by gender) does **not*
 ## License
 
 MIT License — Copyright 2026 PikaPikaGems. Individual datasets retain their original licenses and attributions as documented in each source's README.
+````
