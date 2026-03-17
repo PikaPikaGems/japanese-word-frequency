@@ -11,6 +11,8 @@ A comprehensive collection of Japanese word frequency datasets, analysis scripts
 - [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of some frequency sources
 - [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Bullet point information of some frequency sources
 
+- [data/ALL/___experiments2/PAIRWISE_OVERLAPS.md](data/ALL/___experiments2/PAIRWISE_OVERLAPS.md) — Pairwise reading-aware overlap tables for thematically grouped source datasets (Japanese web, Wikipedia, YouTube, Netflix/drama, slice-of-life, anime) at Top-2k, 5k, and 10k
+
 ### Main Data Sources
 
 - https://github.com/Kuuuube/yomitan-dictionaries
