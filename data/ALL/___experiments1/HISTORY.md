@@ -1,6 +1,6 @@
 # Data Quality Experiments 1
 
-This document records findings from re-running coverage experiments after the dataset grew from ~35 to 59 external sources and 4 new anchors were added. §1 covers the setup and changes from Experiments 0. §2–§5 cover new findings. §6 covers the rank-band and threshold results. §8 documents the impact of adding 10 new JITEN media-category sources.
+This document records findings from re-running coverage experiments after the dataset grew from ~35 to 60 external sources and 4 new anchors were added. §1 covers the setup and changes from Experiments 0. §2–§5 cover new findings. §6 covers the rank-band and threshold results. §8 documents the impact of adding 10 new JITEN media-category sources.
 
 ---
 
@@ -220,12 +220,13 @@ The N≤3 count dropped significantly (7,834 → 5,786) because the checked-sour
 
 ---
 
-## 8. Impact of Adding 10 JITEN Media-Category Sources
+## 8. Impact of Adding 11 JITEN Media-Category Sources
 
-Ten new sources from jiten.moe were added to `data/RAW/___FILTERED/`:
+Eleven new sources from jiten.moe were added to `data/RAW/___FILTERED/`:
 
 | Source | Media category | Entries |
 | --- | --- | --- |
+| JITEN_ANIME_V2 | Anime (CSV export) | 25,000 |
 | JITEN_AUDIO | Podcasts / audio dramas | ~8,370 |
 | JITEN_DRAMA | Japanese drama | 25,000 |
 | JITEN_GLOBAL | All media combined | 25,000 |
@@ -237,19 +238,19 @@ Ten new sources from jiten.moe were added to `data/RAW/___FILTERED/`:
 | JITEN_VISUAL_NOVEL | Visual novels | 25,000 |
 | JITEN_WEB_NOVEL | Web novels | 25,000 |
 
-(JITEN_ANIME already existed as a separate source using the Yomitan JSON format and was not replaced.)
+Note: JITEN_ANIME already existed as a separate source (Yomitan JSON format). JITEN_ANIME_V2 is a distinct source from the direct CSV download (`frequency_list_Anime.csv`) — the two differ in content (different ranks at the same positions) and are both included.
 
 All consolidated CSVs were regenerated (`make_more_anchors.py`, `SCRIPT.py`) and all analysis scripts were re-run. The duplicate-column check (`check_duplicate_rank_columns.py`) confirmed no two rank columns are identical across any of the 22 consolidated CSV files.
 
 ### 8.1 Effect on Checked-Source Count
 
-The EXCLUDE set (§1.3) was not changed — the 10 JITEN sources are all included in coverage checks. This raised the effective checked-source count from **~51 to ~60** for most anchors (CEJC checks ~47 due to its own family exclusions; JPDB checks ~61 because JPDB itself is in the EXCLUDE set for other anchors but not its own).
+The EXCLUDE set (§1.3) was not changed — all 11 new JITEN sources are included in coverage checks. This raised the effective checked-source count from **~51 to ~61** for most anchors (CEJC checks ~48 due to its own family exclusions; JPDB checks ~62 because JPDB itself is in the EXCLUDE set for other anchors but not its own).
 
 More checked sources means any word must appear in more lists to satisfy the zero-missing or N≤3 criteria — so both metrics are expected to drop.
 
 ### 8.2 Zero-Missing by Rank Band — Before vs After JITEN
 
-"Before" = pre-JITEN run reflected in §6.1 (51 checked sources). "After" = current run (60 checked sources), top-12k slices.
+"Before" = pre-JITEN run reflected in §6.1 (51 checked sources). "After" = current run (61 checked sources), top-12k slices.
 
 **Zero-missing (words present in every checked source):**
 
@@ -272,7 +273,7 @@ The largest drops at top-500 were WIKIPEDIA_V2 (−21.9pp) and RSPEER (−5.2pp)
 
 ### 8.3 N≤3 Missing Sources by Rank Band — Before vs After JITEN
 
-"N≤3" = missing from at most 3 of the checked sources. The threshold of 3 is fixed; the denominator grew from ~51 to ~60. This makes the criterion meaningfully stricter — a word previously "broadly common" (absent from 3 of 51) may now fail (absent from 4 of 60 if a JITEN source lacks it).
+"N≤3" = missing from at most 3 of the checked sources. The threshold of 3 is fixed; the denominator grew from ~51 to ~61. This makes the criterion meaningfully stricter — a word previously "broadly common" (absent from 3 of 51) may now fail (absent from 4 of 60 if a JITEN source lacks it).
 
 | Anchor | Top-500 before | Top-500 after | Top-1k before | Top-1k after | Top-5k before | Top-5k after | Top-12k before | Top-12k after |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |

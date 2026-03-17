@@ -226,7 +226,7 @@ Generated from the [rspeer/wordfreq](https://github.com/rspeer/wordfreq) Python 
 
 See [data/RSPEER/INSIGHTS.md](data/RSPEER/INSIGHTS.md) for analysis results.
 
-### RAW/\_\_\_FILTERED — 56+ Source Datasets + RSPEER
+### RAW/\_\_\_FILTERED — 60+ Source Datasets + RSPEER
 
 `data/RAW/___FILTERED/`
 
@@ -258,7 +258,8 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 | H_FREQ                     | Adult content corpus                                |
 | ILYASEMENOV                | Wikipedia word frequency                            |
 | INNOCENT_RANKED            | Innocent Corpus (novels)                            |
-| JITEN_ANIME                | Anime-focused frequency (jiten.moe)                 |
+| JITEN_ANIME                | Anime-focused frequency (jiten.moe, Yomitan JSON)   |
+| JITEN_ANIME_V2             | Anime-focused frequency (jiten.moe, CSV format)     |
 | JITEN_AUDIO                | Audio media frequency (jiten.moe)                   |
 | JITEN_DRAMA                | Japanese drama frequency (jiten.moe)                |
 | JITEN_GLOBAL               | All-media combined frequency (jiten.moe)            |
@@ -335,7 +336,7 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 
 ## Experiments 1
 
-[`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 59 external sources and 4 new anchors were added.
+[`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 60 external sources and 4 new anchors were added.
 
 **New anchors added (10 total):**
 
@@ -352,7 +353,7 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 **How to read these tables:**
 
 - **Top-N %** (zero-missing): of the first N words in the anchor's frequency list, the percentage that appear in _every_ checked source (no `-1` rank). A high Top-500 means the most common words are universally found everywhere. The percentage naturally falls as N grows because rarer words start appearing in fewer domain-specific corpora.
-- **N≤3**: words missing from _at most 3_ of the ~60 checked sources — the "broadly common" core vocabulary present in nearly all corpora.
+- **N≤3**: words missing from _at most 3_ of the ~61 checked sources — the "broadly common" core vocabulary present in nearly all corpora.
 
 **Zero-missing by rank band** ([`top12k/`](data/ALL/___experiments1/top12k/HISTORY.md)):
 
