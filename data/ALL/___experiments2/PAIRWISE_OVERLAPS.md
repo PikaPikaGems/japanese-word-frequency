@@ -6,6 +6,15 @@ Row = source A (denominator); cell = % of A's top-N that appear in B's top-N.
 > **Reading-aware match**: a word in A counts as matching B if its surface form
 > or hiragana reading equals B's surface form or reading.
 
+> **Why the matrix is asymmetric**: the row source is the denominator, so the
+> percentage reflects how much of *that source's* vocabulary is covered by the
+> column source — not the reverse. If source A has 2,000 words and source B has
+> 25,000 words, nearly all of A's words will appear somewhere in B's large list,
+> giving a high A→B score. But B→A will be low because most of B's 25,000 words
+> are absent from A's small list. Even between same-sized sources, asymmetry
+> arises when one source skews toward a narrower register (e.g. shonen manga
+> vocabulary covered by a broad corpus, but not the other way around).
+
 ## Table 1 — Japanese Web
 
 ### Top 2,000
