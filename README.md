@@ -2,18 +2,16 @@
 
 # Japanese Word Frequency Rankings
 
-A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating 47+ datasets into unified formats for language learning, linguistics, and NLP research.
+A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating datasets into unified formats for language learning, linguistics, and NLP research.
 
-## References
+## Notes
 
-- [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md) — How to read `consolidated.csv`: column layout, what `-1` means, practical interpretation guide, and per-source caveats
+- [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md) — How to read `consolidated.csv` (Aggregated Frequency Word Rankings): column layout, practical interpretation guide, and per-source caveats
+- [notes/cleaned-datasets-reference-v1.md](notes/cleaned-datasets-reference-v1.md) — Detailed descriptions of some frequency rank datasets included in the database, with source notes on corpus size, register, and tokenization
+- [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of some frequency sources
+- [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Bullet point information of some frequency sources
 
-- [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of all frequency sources
-- [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Concise reference format
-
-- [notes/cleaned-datasets-reference-v1.md](notes/cleaned-datasets-reference-v1.md) — Detailed descriptions of every frequency rank dataset included in the database, with source notes on corpus size, register, and tokenization
-
-### Main Data Source
+### Main Data Sources
 
 - https://github.com/Kuuuube/yomitan-dictionaries
 - https://github.com/MarvNC/yomitan-dictionaries
@@ -28,7 +26,8 @@ A comprehensive collection of Japanese word frequency datasets, analysis scripts
 - https://drive.google.com/drive/folders/1g1drkFzokc8KNpsPHoRmDJ4OtMTWFuXi
 - https://drive.google.com/drive/folders/1xURpMJN7HTtSLuVs9ZtIbE7MDRCdoU29
 - https://drive.google.com/file/d/1qHEfYHXjEp83i6PxxMlSxluFyQg2W8Up
-- https://docs.google.com/document/d/1IUWkvBxhoazBSTyRbdyRVk7hfKE51yorE86DCRNQVuw/edit
+- https://docs.google.com/document/d/1IUWkvBxhoazBSTyRbdyRVk7hfKE51yorE86DCRNQVuw/
+- https://jiten.moe/other
 
 ## Repository Structure
 
@@ -40,9 +39,137 @@ word-frequency-rankings/
 │   ├── JPDBV2/       # JPDB v2.2 entertainment media frequency list (~497k entries)
 │   ├── RSPEER/       # rspeer/wordfreq library output (top 25,000 words)
 │   └── RAW/
-│       └── ___FILTERED/   # 46+ datasets, each with a standardized DATA.csv
+│       └── ___FILTERED/   # All datasets, each with a standardized DATA.csv
 ├── notes/            # Reference documentation for all frequency sources
 └── utils/            # Shared Python utilities (formatting, kana conversion, JP word lookup)
+```
+
+## Setup
+
+### Requirements
+
+- Python 3.10+
+- For plotting scripts: `matplotlib`, `numpy`
+- For RSPEER generation: `wordfreq`
+
+### Install dependencies
+
+```bash
+pip install matplotlib numpy wordfreq
+```
+
+### Running scripts
+
+Scripts under `data/ALL/___experiments0/` and `data/ALL/___experiments1/` can be run from the repo root. CEJC, RSPEER, and JPDB scripts must be run from their own directories.
+
+The full pipeline has the following dependency order: RAW/\_\_\_FILTERED → CEJC + RSPEER preprocessing → data/ALL consolidation → analysis.
+
+#### Step 1 — Generate standardized DATA.csv for each RAW source
+
+Each source under `data/RAW/___FILTERED/` has a `SCRIPT.py` that reads the raw upstream file and outputs a normalized `DATA.csv` (columns: `WORD`, `FREQUENCY_RANKING`, top 25k entries). Run each from the repo root:
+
+```bash
+python data/RAW/___FILTERED/ADNO/SCRIPT.py
+python data/RAW/___FILTERED/ANIME_JDRAMA/SCRIPT.py
+python data/RAW/___FILTERED/AOZORA_BUNKO/SCRIPT.py
+# ... repeat for all subdirectories under data/RAW/___FILTERED/
+```
+
+#### Step 2 — Preprocess CEJC, RSPEER, and JPDBV2
+
+These outputs are consumed by the data/ALL consolidation scripts.
+
+```bash
+# CEJC: generate JSON and CSV breakdowns from the source TSV, then deduplicate
+cd data/CEJC
+python3 scripts/tsv_to_json.py 2_cejc_frequencylist_suw_token.tsv json 25000
+python3 scripts/tsv_to_csv.py 2_cejc_frequencylist_suw_token.tsv csv 25000
+python3 scripts/make_consolidated_unique.py   # reads CONSOLIDATED.csv → writes CONSOLIDATED_UNIQUE.csv
+
+# RSPEER: generate top_25000_japanese.csv via the wordfreq library
+cd data/RSPEER
+python generate_top_japanese.py
+
+# JPDBV2: generate task1_top25k.csv and task2_kana_higher.csv
+cd data/JPDBV2
+python process.py
+```
+
+#### Step 3 — Generate consolidated.csv and categorized.csv (experiments0)
+
+Run from the repo root. Reads CEJC CONSOLIDATED_UNIQUE.csv, all DATA.csv files from RAW/\_\_\_FILTERED, and RSPEER top_25000_japanese.csv.
+
+```bash
+# Generate CEJC_anchor/consolidated.csv (CEJC as the anchor word list)
+python data/ALL/___experiments0/data_generation/SCRIPT.py
+
+# Generate CEJC_anchor/categorized.csv (vocab tier categories from consolidated.csv)
+python data/ALL/___experiments0/data_generation/CATEGORIZED.py
+
+# Generate consolidated.csv + categorized.csv for JPDB, YOUTUBE_FREQ_V3, ANIME_JDRAMA, NETFLIX anchors
+python data/ALL/___experiments0/data_generation/make_anchored.py
+```
+
+#### Step 4 — Coverage and threshold analysis (experiments0)
+
+```bash
+# Run coverage analysis across all anchors
+python data/ALL/___experiments0/coverage_analysis/analyze_coverage.py
+
+# Quick CEJC-anchor word filter (negative ranks / rare categories)
+python data/ALL/___experiments0/coverage_analysis/filter_words.py
+
+# Threshold analysis across all anchors
+python data/ALL/___experiments0/threshold_analysis/threshold_analysis.py
+```
+
+#### Step 5 — Add new anchors and re-run analysis (experiments1)
+
+> Note: `make_more_anchors.py` must be run before the analysis scripts, and `generate_12k.py` must be run before the top12k analysis scripts.
+
+```bash
+# Regenerate all non-CEJC anchor consolidated.csv files (adds BCCWJ_LUW, BCCWJ_SUW, CC100, RSPEER, WIKIPEDIA_V2)
+python data/ALL/___experiments1/data_generation/make_more_anchors.py
+
+# Coverage analysis across all anchors (updated EXCLUDE set: 10 sources)
+python data/ALL/___experiments1/coverage_analysis/analyze_coverage.py
+
+# Threshold analysis across all anchors
+python data/ALL/___experiments1/coverage_analysis/threshold_analysis.py
+
+# Slice all anchors to top 12k rows for equal-footing comparison
+python data/ALL/___experiments1/top12k/generate_12k.py
+
+# Coverage analysis on top-12k slices
+python data/ALL/___experiments1/top12k/analyze_coverage.py
+
+# Threshold analysis on top-12k slices
+python data/ALL/___experiments1/top12k/threshold_analysis.py
+
+# N≤3 missing sources by rank band summary table (prints markdown)
+python data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py
+
+# Pairwise reading-aware overlap between all anchor datasets (top 5k/10k/15k/25k)
+python data/ALL/___experiments1/anchor_pairwise_overlap.py
+```
+
+#### CEJC analysis reports
+
+```bash
+cd data/CEJC/scripts
+python vocab_tier_breakdown.py ../json
+python domain_profiles.py ../json
+python demographic_analysis.py ../json
+# ... (see data/CEJC/scripts/ for all scripts — all take ../json as the first argument)
+```
+
+#### RSPEER plots
+
+```bash
+cd data/RSPEER
+python plot_coverage_curve.py
+python plot_zipf_distribution.py
+# ... (see data/RSPEER/ for all 6 plotting scripts)
 ```
 
 ## Datasets
@@ -193,13 +320,13 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 
 **New anchors added (10 total):**
 
-| Anchor       | Type                                          | Words  |
-| ------------ | --------------------------------------------- | ------ |
-| BCCWJ_LUW    | Balanced written Japanese — LUW (NINJAL)      | 25,000 |
-| BCCWJ_SUW    | Balanced written Japanese — SUW (NINJAL)      | 25,000 |
-| CC100        | CommonCrawl web text                          | 24,605 |
-| RSPEER       | Multi-source aggregated (wordfreq)            | 25,000 |
-| WIKIPEDIA_V2 | Wikipedia (clean)                             | 25,000 |
+| Anchor       | Type                                     | Words  |
+| ------------ | ---------------------------------------- | ------ |
+| BCCWJ_LUW    | Balanced written Japanese — LUW (NINJAL) | 25,000 |
+| BCCWJ_SUW    | Balanced written Japanese — SUW (NINJAL) | 25,000 |
+| CC100        | CommonCrawl web text                     | 24,605 |
+| RSPEER       | Multi-source aggregated (wordfreq)       | 25,000 |
+| WIKIPEDIA_V2 | Wikipedia (clean)                        | 25,000 |
 
 **Updated EXCLUDE set (10 sources):** H_FREQ, NAROU, and VN_FREQ added to the original 7 — all use UniDic kanji lemma forms or domain-skewed tokenization that causes basic particles to score as absent.
 
@@ -225,146 +352,18 @@ Seven sources are excluded from all coverage quality checks because their -1s re
 
 **N≤3 missing sources by rank band** (top-12k slices, [`n_leq3_by_rank_band.py`](data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py)):
 
-| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 @25k              |
-| --------------- | ------- | ------ | ------ | ------ | ------- | --------------------- |
-| CEJC            | 94.2%   | 91.5%  | 79.7%  | 67.0%  | 42.6%   | —                     |
-| CC100           | 93.2%   | 89.5%  | 80.0%  | 70.7%  | 47.3%   | —                     |
-| BCCWJ_SUW       | 92.8%   | 92.3%  | 87.4%  | 79.6%  | 50.3%   | —                     |
-| WIKIPEDIA_V2    | 83.8%   | 80.5%  | 66.9%  | 58.2%  | 38.9%   | —                     |
-| BCCWJ_LUW       | 84.0%   | 81.8%  | 73.0%  | 65.8%  | 43.7%   | —                     |
-| YOUTUBE_FREQ_V3 | 71.4%   | 73.9%  | 70.2%  | 64.2%  | 43.9%   | —                     |
-| NETFLIX         | 71.6%   | 70.2%  | 64.9%  | 59.1%  | 42.4%   | —                     |
-| RSPEER          | 64.0%   | 66.1%  | 65.3%  | 60.3%  | 42.0%   | —                     |
-| ANIME_JDRAMA    | 63.2%   | 64.3%  | 61.4%  | 55.2%  | 40.2%   | —                     |
-| JPDB            | 26.2%   | 25.2%  | 20.4%  | 14.5%  | 6.5%    | — (excluded)          |
-
-## Setup
-
-### Requirements
-
-- Python 3.10+
-- For plotting scripts: `matplotlib`, `numpy`
-- For RSPEER generation: `wordfreq`
-
-### Install dependencies
-
-```bash
-pip install matplotlib numpy wordfreq
-```
-
-### Running scripts
-
-Scripts under `data/ALL/___experiments0/` and `data/ALL/___experiments1/` can be run from the repo root. CEJC, RSPEER, and JPDB scripts must be run from their own directories.
-
-The full pipeline has the following dependency order: RAW/\_\_\_FILTERED → CEJC + RSPEER preprocessing → data/ALL consolidation → analysis.
-
-#### Step 1 — Generate standardized DATA.csv for each RAW source
-
-Each source under `data/RAW/___FILTERED/` has a `SCRIPT.py` that reads the raw upstream file and outputs a normalized `DATA.csv` (columns: `WORD`, `FREQUENCY_RANKING`, top 25k entries). Run each from the repo root:
-
-```bash
-python data/RAW/___FILTERED/ADNO/SCRIPT.py
-python data/RAW/___FILTERED/ANIME_JDRAMA/SCRIPT.py
-python data/RAW/___FILTERED/AOZORA_BUNKO/SCRIPT.py
-# ... repeat for all subdirectories under data/RAW/___FILTERED/
-```
-
-#### Step 2 — Preprocess CEJC, RSPEER, and JPDBV2
-
-These outputs are consumed by the data/ALL consolidation scripts.
-
-```bash
-# CEJC: generate JSON and CSV breakdowns from the source TSV, then deduplicate
-cd data/CEJC
-python3 scripts/tsv_to_json.py 2_cejc_frequencylist_suw_token.tsv json 25000
-python3 scripts/tsv_to_csv.py 2_cejc_frequencylist_suw_token.tsv csv 25000
-python3 scripts/make_consolidated_unique.py   # reads CONSOLIDATED.csv → writes CONSOLIDATED_UNIQUE.csv
-
-# RSPEER: generate top_25000_japanese.csv via the wordfreq library
-cd data/RSPEER
-python generate_top_japanese.py
-
-# JPDBV2: generate task1_top25k.csv and task2_kana_higher.csv
-cd data/JPDBV2
-python process.py
-```
-
-#### Step 3 — Generate consolidated.csv and categorized.csv (experiments0)
-
-Run from the repo root. Reads CEJC CONSOLIDATED_UNIQUE.csv, all DATA.csv files from RAW/\_\_\_FILTERED, and RSPEER top_25000_japanese.csv.
-
-```bash
-# Generate CEJC_anchor/consolidated.csv (CEJC as the anchor word list)
-python data/ALL/___experiments0/data_generation/SCRIPT.py
-
-# Generate CEJC_anchor/categorized.csv (vocab tier categories from consolidated.csv)
-python data/ALL/___experiments0/data_generation/CATEGORIZED.py
-
-# Generate consolidated.csv + categorized.csv for JPDB, YOUTUBE_FREQ_V3, ANIME_JDRAMA, NETFLIX anchors
-python data/ALL/___experiments0/data_generation/make_anchored.py
-```
-
-#### Step 4 — Coverage and threshold analysis (experiments0)
-
-```bash
-# Run coverage analysis across all anchors
-python data/ALL/___experiments0/coverage_analysis/analyze_coverage.py
-
-# Quick CEJC-anchor word filter (negative ranks / rare categories)
-python data/ALL/___experiments0/coverage_analysis/filter_words.py
-
-# Threshold analysis across all anchors
-python data/ALL/___experiments0/threshold_analysis/threshold_analysis.py
-```
-
-#### Step 5 — Add new anchors and re-run analysis (experiments1)
-
-> Note: `make_more_anchors.py` must be run before the analysis scripts, and `generate_12k.py` must be run before the top12k analysis scripts.
-
-```bash
-# Regenerate all non-CEJC anchor consolidated.csv files (adds BCCWJ_LUW, BCCWJ_SUW, CC100, RSPEER, WIKIPEDIA_V2)
-python data/ALL/___experiments1/data_generation/make_more_anchors.py
-
-# Coverage analysis across all anchors (updated EXCLUDE set: 10 sources)
-python data/ALL/___experiments1/coverage_analysis/analyze_coverage.py
-
-# Threshold analysis across all anchors
-python data/ALL/___experiments1/coverage_analysis/threshold_analysis.py
-
-# Slice all anchors to top 12k rows for equal-footing comparison
-python data/ALL/___experiments1/top12k/generate_12k.py
-
-# Coverage analysis on top-12k slices
-python data/ALL/___experiments1/top12k/analyze_coverage.py
-
-# Threshold analysis on top-12k slices
-python data/ALL/___experiments1/top12k/threshold_analysis.py
-
-# N≤3 missing sources by rank band summary table (prints markdown)
-python data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py
-
-# Pairwise reading-aware overlap between all anchor datasets (top 5k/10k/15k/25k)
-python data/ALL/___experiments1/anchor_pairwise_overlap.py
-```
-
-#### CEJC analysis reports
-
-```bash
-cd data/CEJC/scripts
-python vocab_tier_breakdown.py ../json
-python domain_profiles.py ../json
-python demographic_analysis.py ../json
-# ... (see data/CEJC/scripts/ for all scripts — all take ../json as the first argument)
-```
-
-#### RSPEER plots
-
-```bash
-cd data/RSPEER
-python plot_coverage_curve.py
-python plot_zipf_distribution.py
-# ... (see data/RSPEER/ for all 6 plotting scripts)
-```
+| Anchor          | Top-500 | Top-1k | Top-3k | Top-5k | Top-12k | N≤3 @25k     |
+| --------------- | ------- | ------ | ------ | ------ | ------- | ------------ |
+| CEJC            | 94.2%   | 91.5%  | 79.7%  | 67.0%  | 42.6%   | —            |
+| CC100           | 93.2%   | 89.5%  | 80.0%  | 70.7%  | 47.3%   | —            |
+| BCCWJ_SUW       | 92.8%   | 92.3%  | 87.4%  | 79.6%  | 50.3%   | —            |
+| WIKIPEDIA_V2    | 83.8%   | 80.5%  | 66.9%  | 58.2%  | 38.9%   | —            |
+| BCCWJ_LUW       | 84.0%   | 81.8%  | 73.0%  | 65.8%  | 43.7%   | —            |
+| YOUTUBE_FREQ_V3 | 71.4%   | 73.9%  | 70.2%  | 64.2%  | 43.9%   | —            |
+| NETFLIX         | 71.6%   | 70.2%  | 64.9%  | 59.1%  | 42.4%   | —            |
+| RSPEER          | 64.0%   | 66.1%  | 65.3%  | 60.3%  | 42.0%   | —            |
+| ANIME_JDRAMA    | 63.2%   | 64.3%  | 61.4%  | 55.2%  | 40.2%   | —            |
+| JPDB            | 26.2%   | 25.2%  | 20.4%  | 14.5%  | 6.5%    | — (excluded) |
 
 ## Notable Insights
 
