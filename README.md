@@ -44,143 +44,6 @@ word-frequency-rankings/
 └── utils/            # Shared Python utilities (formatting, kana conversion, JP word lookup)
 ```
 
-## Setup
-
-### Requirements
-
-- Python 3.10+
-- For plotting scripts: `matplotlib`, `numpy`
-- For RSPEER generation: `wordfreq`
-
-### Install dependencies
-
-```bash
-pip install matplotlib numpy wordfreq
-```
-
-### Running scripts
-
-Scripts under `data/ALL/___experiments0/` and `data/ALL/___experiments1/` can be run from the repo root. CEJC, RSPEER, and JPDB scripts must be run from their own directories.
-
-The full pipeline has the following dependency order: RAW/\_\_\_FILTERED → CEJC + RSPEER preprocessing → data/ALL consolidation → analysis.
-
-#### Step 1 — Generate standardized DATA.csv for each RAW source
-
-Each source under `data/RAW/___FILTERED/` has a `SCRIPT.py` that reads the raw upstream file and outputs a normalized `DATA.csv` (columns: `WORD`, `FREQUENCY_RANKING`, top 25k entries). Run each from the repo root:
-
-````bash
-python data/RAW/___FILTERED/ADNO/SCRIPT.py
-python data/RAW/___FILTERED/ANIME_JDRAMA/SCRIPT.py
-python data/RAW/___FILTERED/AOZORA_BUNKO/SCRIPT.py
-# ... repeat for all subdirectories under data/RAW/___FILTERED/
-``
-
-#### Step 2 — Preprocess CEJC, RSPEER, and JPDBV2
-
-These outputs are consumed by the data/ALL consolidation scripts.
-
-```bash
-# CEJC: generate JSON and CSV breakdowns from the source TSV, then deduplicate
-cd data/CEJC
-python3 scripts/tsv_to_json.py 2_cejc_frequencylist_suw_token.tsv json 25000
-python3 scripts/tsv_to_csv.py 2_cejc_frequencylist_suw_token.tsv csv 25000
-python3 scripts/make_consolidated_unique.py   # reads CONSOLIDATED.csv → writes CONSOLIDATED_UNIQUE.csv
-
-# RSPEER: generate top_25000_japanese.csv via the wordfreq library
-cd data/RSPEER
-python generate_top_japanese.py
-
-# JPDBV2: generate task1_top25k.csv and task2_kana_higher.csv
-cd data/JPDBV2
-python process.py
-```
-
-#### Step 3 — Generate consolidated.csv and categorized.csv (experiments0)
-
-Run from the repo root. Reads CEJC CONSOLIDATED_UNIQUE.csv, all DATA.csv files from RAW/\_\_\_FILTERED, and RSPEER top_25000_japanese.csv.
-
-```bash
-# Generate CEJC_anchor/consolidated.csv (CEJC as the anchor word list)
-python data/ALL/___experiments0/data_generation/SCRIPT.py
-
-# Generate CEJC_anchor/categorized.csv (vocab tier categories from consolidated.csv)
-python data/ALL/___experiments0/data_generation/CATEGORIZED.py
-
-# Generate consolidated.csv + categorized.csv for JPDB, YOUTUBE_FREQ_V3, ANIME_JDRAMA, NETFLIX anchors
-python data/ALL/___experiments0/data_generation/make_anchored.py
-```
-
-#### Step 4 — Coverage and threshold analysis (experiments0)
-
-```bash
-# TODO: Write this part of the documentation
-# RUN check of duplicate frequency list  and report before proceeding
-#  See also  is @data/ALL/___experiments1/check_duplicate_rank_columns.py#1-6
-
-# Run coverage analysis across all anchors
-python data/ALL/___experiments0/coverage_analysis/analyze_coverage.py
-
-# Quick CEJC-anchor word filter (negative ranks / rare categories)
-python data/ALL/___experiments0/coverage_analysis/filter_words.py
-
-# Threshold analysis across all anchors
-python data/ALL/___experiments0/threshold_analysis/threshold_analysis.py
-```
-
-#### Step 5 — Add new anchors and re-run analysis (experiments1)
-
-> Note: `make_more_anchors.py` must be run before the analysis scripts, and `generate_12k.py` must be run before the top12k analysis scripts.
-
-```bash
-# Regenerate all non-CEJC anchor consolidated.csv files (adds BCCWJ_LUW, BCCWJ_SUW, CC100, RSPEER, WIKIPEDIA_V2)
-python data/ALL/___experiments1/data_generation/make_more_anchors.py
-
-# TODO: Write this part of the documentation
-# RUN check of duplicate frequency list  and report before proceeding
-#  See also  is @data/ALL/___experiments1/check_duplicate_rank_columns.py#1-6
-
-
-# Coverage analysis across all anchors (updated EXCLUDE set: 10 sources)
-python data/ALL/___experiments1/coverage_analysis/analyze_coverage.py
-
-# Threshold analysis across all anchors
-python data/ALL/___experiments1/coverage_analysis/threshold_analysis.py
-
-# Slice all anchors to top 12k rows for equal-footing comparison
-python data/ALL/___experiments1/top12k/generate_12k.py
-
-# Coverage analysis on top-12k slices
-python data/ALL/___experiments1/top12k/analyze_coverage.py
-
-# Threshold analysis on top-12k slices
-python data/ALL/___experiments1/top12k/threshold_analysis.py
-
-# N≤3 missing sources by rank band summary table (prints markdown)
-python data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py
-
-# Pairwise reading-aware overlap between all anchor datasets (top 5k/10k/15k/25k)
-python data/ALL/___experiments1/anchor_pairwise_overlap.py
-```
-
-#### CEJC analysis reports
-
-```bash
-cd data/CEJC/scripts
-python vocab_tier_breakdown.py ../json
-python domain_profiles.py ../json
-python demographic_analysis.py ../json
-# ... (see data/CEJC/scripts/ for all scripts — all take ../json as the first argument)
-```
-
-#### RSPEER plots
-
-```bash
-cd data/RSPEER
-python plot_coverage_curve.py
-python plot_zipf_distribution.py
-# ... (see data/RSPEER/ for all 6 plotting scripts)
-```
-
 ## Datasets
 
 ### ALL — Consolidated Rankings
@@ -296,7 +159,120 @@ Note: `DD2_*` sources are from Dave Doebrick's Frequency List Compilation (MIGAK
 
 See [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) for detailed descriptions of all sources.
 
-## Data Quality Notes
+## Setup
+
+### Requirements
+
+- Python 3.10+
+- For plotting scripts: `matplotlib`, `numpy`
+- For RSPEER generation: `wordfreq`
+
+### Install dependencies
+
+```bash
+# To get RSPeer dataset
+pip install wordfreq
+# For generating graphs and insights
+pip install matplotlib numpy
+```
+
+### Running scripts
+
+Scripts under `data/ALL/___experiments0/` and `data/ALL/___experiments1/` can be run from the repo root. CEJC, RSPEER, and JPDB scripts must be run from their own directories.
+
+The full pipeline has the following dependency order: RAW/\_\_\_FILTERED → CEJC + RSPEER preprocessing → data/ALL consolidation → analysis.
+
+#### Step 1 — Generate standardized DATA.csv for each RAW source
+
+Each source under `data/RAW/___FILTERED/` has a `SCRIPT.py` that reads the raw upstream file and outputs a normalized `DATA.csv` (columns: `WORD`, `FREQUENCY_RANKING`, top 25k entries). Run each from the repo root:
+
+```bash
+python data/RAW/___FILTERED/ADNO/SCRIPT.py
+python data/RAW/___FILTERED/ANIME_JDRAMA/SCRIPT.py
+python data/RAW/___FILTERED/AOZORA_BUNKO/SCRIPT.py
+# ... repeat for all subdirectories under data/RAW/___FILTERED/
+```
+
+#### Step 2 — Preprocess CEJC, RSPEER, and JPDBV2
+
+These outputs are consumed by the data/ALL consolidation scripts.
+
+```bash
+# CEJC: generate JSON and CSV breakdowns from the source TSV, then deduplicate
+cd data/CEJC
+python3 scripts/tsv_to_json.py 2_cejc_frequencylist_suw_token.tsv json 25000
+python3 scripts/tsv_to_csv.py 2_cejc_frequencylist_suw_token.tsv csv 25000
+python3 scripts/make_consolidated_unique.py   # reads CONSOLIDATED.csv → writes CONSOLIDATED_UNIQUE.csv
+
+# RSPEER: generate top_25000_japanese.csv via the wordfreq library
+cd data/RSPEER
+python generate_top_japanese.py
+
+# JPDBV2: generate task1_top25k.csv and task2_kana_higher.csv
+cd data/JPDBV2
+python process.py
+```
+
+#### Step 3 — Generate consolidated.csv and categorized.csv
+
+Run from the repo root. Reads CEJC `CONSOLIDATED_UNIQUE.csv`, all `DATA.csv` files from `RAW/___FILTERED`, and RSPEER `top_25000_japanese.csv`.
+
+```bash
+# Check for duplicate rank columns across all consolidated.csv files
+python data/ALL/data_generation/check_duplicate_rank_columns.py
+
+# Generate CEJC_anchor/consolidated.csv (CEJC as the anchor word list)
+python data/ALL/data_generation/SCRIPT.py
+
+# Generate CEJC_anchor/categorized.csv (vocab tier categories from consolidated.csv)
+python data/ALL/data_generation/CATEGORIZED.py
+
+# Generate consolidated.csv + categorized.csv for all non-CEJC anchors
+python data/ALL/data_generation/make_more_anchors.py
+```
+
+#### Step 4 — Analysis Reports (optional)
+
+Coverage and threshold analysis
+
+> These steps reproduce the analysis in `___experiments0/` and `___experiments1/`. They are not required when adding new frequency sources — only re-run if you want updated coverage statistics or reports.
+
+```bash
+# experiments0: coverage and threshold analysis
+python data/ALL/___experiments0/coverage_analysis/analyze_coverage.py
+python data/ALL/___experiments0/coverage_analysis/filter_words.py
+python data/ALL/___experiments0/threshold_analysis/threshold_analysis.py
+
+# experiments1: coverage, threshold, top-12k analysis
+python data/ALL/___experiments1/coverage_analysis/analyze_coverage.py
+python data/ALL/___experiments1/coverage_analysis/threshold_analysis.py
+python data/ALL/___experiments1/top12k/generate_12k.py
+python data/ALL/___experiments1/top12k/analyze_coverage.py
+python data/ALL/___experiments1/top12k/threshold_analysis.py
+python data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py
+python data/ALL/___experiments1/anchor_pairwise_overlap.py
+```
+
+CEJC analysis reports (optional)
+
+```bash
+cd data/CEJC/scripts
+python vocab_tier_breakdown.py ../json
+python domain_profiles.py ../json
+python demographic_analysis.py ../json
+# ... (see data/CEJC/scripts/ for all scripts — all take ../json as the first argument)
+```
+
+#### RSPEER plots (optional)
+
+```bash
+cd data/RSPEER
+python plot_coverage_curve.py
+python plot_zipf_distribution.py
+# ... (see data/RSPEER/ for all 6 plotting scripts)
+```
+
+## Data Quality Notes (Last Run March 18, 2026)
 
 ### Inspecting the JPDB dataset
 
@@ -503,4 +479,3 @@ However, the methodology (raw PMW ratio across all speech by gender) does **not*
 ## License
 
 MIT License — Copyright 2026 PikaPikaGems. Individual datasets retain their original licenses and attributions as documented in each source's README.
-````
