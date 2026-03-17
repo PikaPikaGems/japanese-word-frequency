@@ -221,16 +221,16 @@ Run from the repo root. Reads CEJC `CONSOLIDATED_UNIQUE.csv`, all `DATA.csv` fil
 
 ```bash
 # Check for duplicate rank columns across all consolidated.csv files
-python data/ALL/data_generation/check_duplicate_rank_columns.py
+python data/ALL/___data_generation/check_duplicate_rank_columns.py
 
 # Generate CEJC_anchor/consolidated.csv (CEJC as the anchor word list)
-python data/ALL/data_generation/SCRIPT.py
+python data/ALL/___data_generation/SCRIPT.py
 
 # Generate CEJC_anchor/categorized.csv (vocab tier categories from consolidated.csv)
-python data/ALL/data_generation/CATEGORIZED.py
+python data/ALL/___data_generation/CATEGORIZED.py
 
 # Generate consolidated.csv + categorized.csv for all non-CEJC anchors
-python data/ALL/data_generation/make_more_anchors.py
+python data/ALL/___data_generation/make_more_anchors.py
 ```
 
 #### Step 4 — Analysis Reports (optional)
