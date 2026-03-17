@@ -4,7 +4,7 @@
 
 A comprehensive collection of Japanese word frequency datasets, analysis scripts, and insights, consolidating datasets into unified formats for language learning, linguistics, and NLP research.
 
-## TODO: What should be the name of this section?
+## Overview
 
 Repository Structure
 
@@ -23,16 +23,16 @@ word-frequency-rankings/
 
 - `data/ALL/` - The primary output of this repo. Each `consolidated.csv` is a matrix of **words × rank columns**, one column per frequency source.
 - [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md) — How to read `consolidated.csv` (Aggregated Frequency Word Rankings): column layout, practical interpretation guide, and per-source caveats
-- TODO: Add reference to dataset-directory-tree.md here
-- TODO; Add reference to running-scripts.md here
+- [notes/dataset-directory-tree.md](notes/dataset-directory-tree.md) — Full directory tree of all datasets with descriptions
+- [notes/running-scripts.md](notes/running-scripts.md) — Instructions for running the data processing scripts
 
-## TODO: What should be the name of this section?
+## Analysis & Documentation
 
 ### Experiments
 
 - [data/ALL/\_\_\_experiments2/PAIRWISE_OVERLAPS.md](data/ALL/___experiments2/PAIRWISE_OVERLAPS.md) — Pairwise reading-aware overlap tables for thematically grouped source datasets (Japanese web, Wikipedia, YouTube, Netflix/drama, slice-of-life, anime) at Top-2k, 5k, and 10k
-- TODO: add notable-insights-03-18-2026.md here
-- TODO: Add data-quality-summary-03-18-2026.md here
+- [notes/notable-insights-03-18-2026.md](notes/notable-insights-03-18-2026.md) — Notable findings and insights from the consolidated dataset
+- [notes/data-quality-summary-03-18-2026.md](notes/data-quality-summary-03-18-2026.md) — Data quality assessment across all frequency sources
 - [`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources.
 - [`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 60 external sources and 4 new anchors were added.
 
