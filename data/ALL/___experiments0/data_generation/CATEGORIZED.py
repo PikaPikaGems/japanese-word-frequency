@@ -8,12 +8,13 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 INPUT_FILE = os.path.join(BASE, "..", "..", "CEJC_anchor", "consolidated.csv")
 OUTPUT_FILE = os.path.join(BASE, "..", "..", "CEJC_anchor", "categorized.csv")
 
+
 # Category thresholds (rank -> category number)
-# 5 = basic   (rank 1–1000)
-# 4 = common  (rank 1001–4000)
-# 3 = fluent  (rank 4001–10000)
-# 2 = advanced (rank 10001–25000)
-# 1 = rare    (rank 25001+)
+# 5 = basic
+# 4 = common
+# 3 = fluent
+# 2 = advanced
+# 1 = rare
 def categorize(rank_str):
     try:
         rank = int(rank_str)
@@ -21,21 +22,23 @@ def categorize(rank_str):
         return 1
     if rank == -1:
         return 1
-    if rank <= 1000:
+    if rank <= 1800:
         return 5
-    elif rank <= 4000:
+    elif rank <= 5000:
         return 4
-    elif rank <= 10000:
+    elif rank <= 12000:
         return 3
     elif rank <= 25000:
         return 2
     else:
         return 1
 
+
 PASSTHROUGH = {"hiragana", "katakana"}
 
-with open(INPUT_FILE, newline="", encoding="utf-8") as fin, \
-     open(OUTPUT_FILE, "w", newline="", encoding="utf-8") as fout:
+with open(INPUT_FILE, newline="", encoding="utf-8") as fin, open(
+    OUTPUT_FILE, "w", newline="", encoding="utf-8"
+) as fout:
 
     reader = csv.DictReader(fin)
     other_columns = [c for c in reader.fieldnames if c not in {"word"} | PASSTHROUGH]
@@ -57,4 +60,6 @@ with open(INPUT_FILE, newline="", encoding="utf-8") as fin, \
                 out_row.append(categorize(row[c]))
         writer.writerow(out_row)
 
-print(f"Written categorized.csv with category values (5=basic, 4=common, 3=fluent, 2=advanced, 1=rare/not-in-source)")
+print(
+    f"Written categorized.csv with category values (5=basic, 4=common, 3=fluent, 2=advanced, 1=rare/not-in-source)"
+)
