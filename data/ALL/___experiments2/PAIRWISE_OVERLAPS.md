@@ -15,6 +15,31 @@ Row = source A (denominator); cell = % of A's top-N that appear in B's top-N.
 > arises when one source skews toward a narrower register (e.g. shonen manga
 > vocabulary covered by a broad corpus, but not the other way around).
 
+## Key Observations and Insights
+
+**Near-duplicate sources identified.**
+NETFLIX and DAVE_DOEBRICK are essentially the same list: 96–98% mutual overlap across all N sizes. Similarly, DD2_YOMICHAN_SHONEN and DD2_YOMICHAN_SHONEN_STARS share 93–100% overlap — SHONEN appears to be a near-complete subset of SHONEN_STARS.
+
+**Strong within-group agreement for web and general corpora.**
+The two Japanese web sources (MALTESAA_NWJC ↔ CC100) agree at ~75–79%, and the two Wikipedia sources ADNO ↔ WIKIPEDIA_V2 agree at ~76–80%. Both pairs are close to symmetric, indicating they draw from similar registers and vocabulary distributions.
+
+**ILYASEMENOV is a Wikipedia outlier.**
+Despite being labeled a Wikipedia source, ILYASEMENOV shares only 23–38% overlap with ADNO and WIKIPEDIA_V2. This strongly suggests a fundamentally different vocabulary selection methodology or scope — it is not safely interchangeable with the other two Wikipedia sources.
+
+**CHRISKEMPSON is the weakest-fitting drama source.**
+In Table 5, CHRISKEMPSON has the lowest row scores of any source (47–68%), meaning it covers less of other sources' top words than any other drama list. It appears to skew toward a narrower or different vocabulary register than the rest of the drama/Netflix cluster.
+
+**The DD2 Morphman sources sit between clusters.**
+DD2_MORPHMAN_NETFLIX overlaps 83–91% with DD2_MIGAKU_NETFLIX but only 65–80% with ANIME_JDRAMA and NETFLIX. DD2_MORPHMAN_SOL scores higher when going toward DD2_YOMICHAN_SOL (79–84%) than the reverse (69–75%), pointing to MORPHMAN having a tighter, more concentrated vocabulary that is largely contained within the broader YOMICHAN/MIGAKU lists.
+
+**Overlap is stable across N cutoffs.**
+In almost every table, moving from top-2,000 to top-10,000 changes pairwise overlap by only 2–8 percentage points — and sometimes not at all. The relative ranking and clustering of sources is essentially the same at every cutoff, so top-2,000 comparisons are representative of deeper-list behavior.
+
+**Asymmetry quantifies size and register differences.**
+Large asymmetries (e.g., ILYASEMENOV, CHRISKEMPSON) signal either a smaller list being swamped by a larger one, or a source covering a narrower register. Near-symmetric pairs (ADNO ↔ WIKIPEDIA_V2, MALTESAA_NWJC ↔ CC100) indicate comparable scope and register coverage.
+
+---
+
 ## Table 1 — Japanese Web
 
 ### Top 2,000
