@@ -95,6 +95,9 @@ python data/ALL/___experiments1/top12k/analyze_coverage.py
 python data/ALL/___experiments1/top12k/threshold_analysis.py
 python data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py
 python data/ALL/___experiments1/anchor_pairwise_overlap.py
+
+# RIRIKKU_CONSOLIDATED.csv (union of all shortlisted anchors + RIRIKKU_RANK)
+python data/ALL/___experiments1/data_generation/make_ririkku.py
 ```
 
 CEJC analysis reports
