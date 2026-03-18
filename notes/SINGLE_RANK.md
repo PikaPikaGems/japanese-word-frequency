@@ -109,7 +109,7 @@ BASIC/COMMON/FLUENT are stable across all three thresholds — truly common word
 
 ≥3 was chosen over ≥4 because the shortlisted sources include 7 media/subtitle sources (ANIME_JDRAMA, NETFLIX, DD2_MORPHMAN_NETFLIX, YOUTUBE_FREQ_V3, DD2_MORPHMAN_SOL, JITEN_ANIME_V2, JITEN_GLOBAL). A word appearing in 3 of these is genuine signal — domain-specific lyric vocabulary that would be unfairly discarded at ≥4. Going ≥2 was rejected because two sources is insufficient cross-validation and produces an ADVANCED tier (28k words) that is too broad.
 
-## Category Tiers V1 (Historical Purposes)
+## Alternative Category Rank ranges
 
 | Tier     | Rank range    | Word count |
 | -------- | ------------- | ---------- |
@@ -117,10 +117,6 @@ BASIC/COMMON/FLUENT are stable across all three thresholds — truly common word
 | COMMON   | 1,001–4,000   | 9,379      |
 | FLUENT   | 4,001–10,000  | 15,480     |
 | ADVANCED | 10,001–25,000 | 13,689     |
-
-## Results
-
-# Columns
 
 | Threshold | TOTAL  | BASIC | COMMON | FLUENT | ADVANCED | Unranked |
 | --------- | ------ | ----- | ------ | ------ | -------- | -------- |
