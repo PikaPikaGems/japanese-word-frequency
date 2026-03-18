@@ -57,6 +57,7 @@ word-frequency-rankings/
 
 ## Miscellaneous Notes
 
+- [notes/CCWJ_LUW_SUW.md](notes/CCWJ_LUW_SUW.md) — Deep dive into the differences between BCCWJ_LUW and BCCWJ_SUW: tokenization philosophy, lemmatization, compound verb forms, number inflation, and which list to use for what purpose
 - [notes/cleaned-datasets-reference-v1.md](notes/cleaned-datasets-reference-v1.md) — Detailed descriptions of some frequency rank datasets included in the database, with source notes on corpus size, register, and tokenization
 - [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of some frequency sources
 - [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Bullet point information of some frequency sources
