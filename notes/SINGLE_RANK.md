@@ -133,6 +133,6 @@ BASIC/COMMON/FLUENT are stable across all three thresholds — truly common word
 ## Properties of This Rank
 
 - **Domain-inclusive**: a word gains a good rank if it is frequent in _any_ relevant domain.
-- **Not easily gamed by a single source**: the 2-source floor ensures some cross-validation.
+- **Not easily gamed by a single source**: the 3-source floor ensures meaningful cross-validation.
 - **Learner-oriented**: prioritizes words a learner is likely to encounter in Japanese media and lyrics, rather than words that are statistically frequent in formal written corpora alone.
 - **Stable**: uses only shortlisted, quality-vetted sources. Sources in the "Not Recommended" section of `dataset-catalog.md` are never included.
