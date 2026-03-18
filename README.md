@@ -23,6 +23,7 @@ word-frequency-rankings/
 
 - `data/ALL/` - The primary output of this repo. Each `consolidated.csv` is a matrix of **words × rank columns**, one column per frequency source.
 - [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md) — How to read `consolidated.csv` (Aggregated Frequency Word Rankings): column layout, practical interpretation guide, and per-source caveats
+- [notes/dataset-catalog.md](notes/dataset-catalog.md) — All frequency sources organized by category (academic corpora, Wikipedia, subtitles, fiction), with highlighted/shortlisted picks, per-source caveats, and a "not recommended" section explaining why certain datasets should be excluded
 - [notes/dataset-directory-tree.md](notes/dataset-directory-tree.md) — Full directory tree of all datasets with descriptions
 - [notes/running-scripts.md](notes/running-scripts.md) — Instructions for running the data processing scripts
 - [notes/running-scripts.py](notes/running-scripts.py) — Quick reference for running data generation and validation scripts
@@ -54,6 +55,10 @@ word-frequency-rankings/
 - [notes/data-quality-summary-03-18-2026.md](notes/data-quality-summary-03-18-2026.md) — Data quality assessment across all frequency sources
 - [`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources.
 - [`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 60 external sources and 4 new anchors were added.
+
+## Single Rank Algorithm
+
+- [notes/SINGLE_RANK.md](notes/SINGLE_RANK.md) — Algorithm for producing a single consolidated rank from multiple frequency sources, designed for use in ririkku.com
 
 ## Miscellaneous Notes
 
