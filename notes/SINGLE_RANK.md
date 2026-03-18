@@ -120,10 +120,13 @@ BASIC/COMMON/FLUENT are stable across all three thresholds — truly common word
 
 ## Results
 
-Threshold Ranked BASIC COMMON FLUENT ADVANCED Unranked
-≥2 63,539 4,799 10,784 19,849 28,107 28,553
-≥3 43,060 4,512 9,379 15,480 13,689 49,032
-≥4 36,130 4,433 9,074 13,753 8,870 55,962
+# Columns
+
+| Threshold | TOTAL  | BASIC | COMMON | FLUENT | ADVANCED | Unranked |
+| --------- | ------ | ----- | ------ | ------ | -------- | -------- |
+| ≥2        | 63,539 | 4,799 | 10,784 | 19,849 | 28,107   | 28,553   |
+| ≥3        | 43,060 | 4,512 | 9,379  | 15,480 | 13,689   | 49,032   |
+| ≥4        | 36,130 | 4,433 | 9,074  | 13,753 | 8,870    | 55,962   |
 
 ---
 
