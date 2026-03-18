@@ -25,6 +25,8 @@ word-frequency-rankings/
 - [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md) — How to read `consolidated.csv` (Aggregated Frequency Word Rankings): column layout, practical interpretation guide, and per-source caveats
 - [notes/dataset-directory-tree.md](notes/dataset-directory-tree.md) — Full directory tree of all datasets with descriptions
 - [notes/running-scripts.md](notes/running-scripts.md) — Instructions for running the data processing scripts
+- [notes/running-scripts.py](notes/running-scripts.py) — Quick reference for running data generation and validation scripts
+- [notes/ADDING-A-NEW-DATA-SET.md](notes/ADDING-A-NEW-DATA-SET.md) — Step-by-step guide for adding a new frequency source
 
 ## Data Set Sources
 

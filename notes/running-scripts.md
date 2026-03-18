@@ -58,7 +58,12 @@ Run from the repo root. Reads CEJC `CONSOLIDATED_UNIQUE.csv`, all `DATA.csv` fil
 
 ```bash
 # Check for duplicate rank columns across all consolidated.csv files
+# (exits with code 1 if any two columns have identical values — catches accidentally duplicated sources)
 python data/ALL/___data_generation/check_duplicate_rank_columns.py
+
+# Check that every word in every consolidated.csv has hiragana and katakana readings
+# (exits with code 1 if any readings are missing)
+python data/ALL/___data_generation/check_missing_reading.py
 
 # Generate CEJC_anchor/consolidated.csv (CEJC as the anchor word list)
 python data/ALL/___data_generation/SCRIPT.py
