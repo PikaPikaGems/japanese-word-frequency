@@ -75,7 +75,17 @@ python data/ALL/___data_generation/CATEGORIZED.py
 python data/ALL/___data_generation/make_more_anchors.py
 ```
 
-#### Step 4 — Analysis Reports (optional)
+#### Step 4 — Generate RIRIKKU_CONSOLIDATED.csv
+
+Produces `data/ALL/RIRIKKU_CONSOLIDATED.csv` — the primary word frequency output for ririkku.com.
+Takes the union of all shortlisted source word lists (~92k words) and assigns each word a `RIRIKKU_RANK`
+(minimum rank across shortlisted sources, requiring ≥3 sources). See `notes/SINGLE_RANK.md` for rationale.
+
+```bash
+python data/ALL/___experiments1/data_generation/make_ririkku.py
+```
+
+#### Step 5 — Analysis Reports (optional)
 
 Coverage and threshold analysis
 
@@ -95,9 +105,6 @@ python data/ALL/___experiments1/top12k/analyze_coverage.py
 python data/ALL/___experiments1/top12k/threshold_analysis.py
 python data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py
 python data/ALL/___experiments1/anchor_pairwise_overlap.py
-
-# RIRIKKU_CONSOLIDATED.csv (union of all shortlisted anchors + RIRIKKU_RANK)
-python data/ALL/___experiments1/data_generation/make_ririkku.py
 ```
 
 CEJC analysis reports

@@ -99,10 +99,10 @@ Same columns as `consolidated.csv`, but each rank value is replaced with a vocab
 
 | Value | Tier | Rank Range | Description |
 |-------|------|-----------|-------------|
-| `5` | basic | 1–1,000 | Foundational and essential vocabulary |
-| `4` | common | 1,001–4,000 | Frequent in everyday speech and writing |
-| `3` | fluent | 4,001–10,000 | Expansive vocabulary for natural expression |
-| `2` | advanced | 10,001–25,000 | Formal, academic, technical or specialized |
+| `5` | basic | 1–1,800 | Foundational and essential vocabulary |
+| `4` | common | 1,801–5,000 | Frequent in everyday speech and writing |
+| `3` | fluent | 5,001–12,000 | Expansive vocabulary for natural expression |
+| `2` | advanced | 12,001–25,000 | Formal, academic, technical or specialized |
 | `1` | rare | 25,001+ or not in source | Archaic, obscure, uncommon, invalid, or absent |
 
 ## Regenerating

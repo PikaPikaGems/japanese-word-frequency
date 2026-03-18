@@ -142,7 +142,7 @@ for word in union_words:
     hira, kata = jlookup.get_reading(word)
     ranks = get_shortlisted_ranks(word)
     valid = [r for r in ranks.values() if r != -1]
-    ririkku_rank = min(valid) if len(valid) >= 2 else -1
+    ririkku_rank = min(valid) if len(valid) >= 3 else -1
     rows.append((word, hira, kata, ririkku_rank, ranks))
 
 # Sort: ranked words first (ascending), unranked last, then word alphabetically
