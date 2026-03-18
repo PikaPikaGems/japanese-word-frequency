@@ -89,6 +89,7 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 | JITEN_WEB_NOVEL            | Web novel frequency (jiten.moe)                     |
 | JLAB                       | Anime frequency (Japanese Like a Breeze)            |
 | JPDB                       | Entertainment media (jpdb.io)                       |
+| KUUUUBE_JMDICT_FREQ        | JMdict newspaper frequency (Kuuube)                 |
 | MALTESAA_CSJ               | Corpus of Spontaneous Japanese (CSJ), overall       |
 | MALTESAA_CSJ_DOKWA_GAKKAI  | CSJ monologue — academic presentations (独話・学会) |
 | MALTESAA_CSJ_DOKWA_MOGI    | CSJ monologue — simulated speeches (独話・模擬)     |
