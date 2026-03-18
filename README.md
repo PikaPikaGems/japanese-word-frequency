@@ -1,4 +1,4 @@
-> **Use at your own risk.** The code and logic for generating this data have not been fully reviewed. Data quality, coverage, and methodology vary across sources. No guarantees are made about accuracy, completeness, or fitness for any particular purpose.
+> ⚠️ **Use at your own risk.** The code and logic for generating this data have not been fully reviewed. Data quality, coverage, and methodology vary across sources. No guarantees are made about accuracy, completeness, or fitness for any particular purpose.
 
 # Japanese Word Frequency Rankings
 
@@ -26,24 +26,10 @@ word-frequency-rankings/
 - [notes/dataset-directory-tree.md](notes/dataset-directory-tree.md) — Full directory tree of all datasets with descriptions
 - [notes/running-scripts.md](notes/running-scripts.md) — Instructions for running the data processing scripts
 
-## Analysis & Documentation
+## Data Set Sources
 
-### Experiments
-
-- [data/ALL/\_\_\_experiments2/PAIRWISE_OVERLAPS.md](data/ALL/___experiments2/PAIRWISE_OVERLAPS.md) — Pairwise reading-aware overlap tables for thematically grouped source datasets (Japanese web, Wikipedia, YouTube, Netflix/drama, slice-of-life, anime) at Top-2k, 5k, and 10k
-- [notes/notable-insights-03-18-2026.md](notes/notable-insights-03-18-2026.md) — Notable findings and insights from the consolidated dataset
-- [notes/data-quality-summary-03-18-2026.md](notes/data-quality-summary-03-18-2026.md) — Data quality assessment across all frequency sources
-- [`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources.
-- [`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 60 external sources and 4 new anchors were added.
-
-### Dataset Descriptions
-
-- [notes/cleaned-datasets-reference-v1.md](notes/cleaned-datasets-reference-v1.md) — Detailed descriptions of some frequency rank datasets included in the database, with source notes on corpus size, register, and tokenization
-- [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of some frequency sources
-- [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Bullet point information of some frequency sources
-
-### Main Data Sources
-
+- https://learnjapanese.moe/yomichan/#recommended-frequency-dictionaries
+- https://jiten.moe/other
 - https://github.com/Kuuuube/yomitan-dictionaries
 - https://github.com/MarvNC/yomitan-dictionaries
 - https://github.com/IlyaSemenov/wikipedia-word-frequency
@@ -58,7 +44,20 @@ word-frequency-rankings/
 - https://drive.google.com/drive/folders/1xURpMJN7HTtSLuVs9ZtIbE7MDRCdoU29
 - https://drive.google.com/file/d/1qHEfYHXjEp83i6PxxMlSxluFyQg2W8Up
 - https://docs.google.com/document/d/1IUWkvBxhoazBSTyRbdyRVk7hfKE51yorE86DCRNQVuw/
-- https://jiten.moe/other
+
+## Experiments
+
+- [data/ALL/\_\_\_experiments2/PAIRWISE_OVERLAPS.md](data/ALL/___experiments2/PAIRWISE_OVERLAPS.md) — Pairwise reading-aware overlap tables for thematically grouped source datasets (Japanese web, Wikipedia, YouTube, Netflix/drama, slice-of-life, anime) at Top-2k, 5k, and 10k
+- [notes/notable-insights-03-18-2026.md](notes/notable-insights-03-18-2026.md) — Notable findings and insights from the consolidated dataset
+- [notes/data-quality-summary-03-18-2026.md](notes/data-quality-summary-03-18-2026.md) — Data quality assessment across all frequency sources
+- [`data/ALL/___experiments0/HISTORY.md`](data/ALL/___experiments0/HISTORY.md) documents the bugs, anomalies, and design decisions discovered while consolidating frequency sources.
+- [`data/ALL/___experiments1/HISTORY.md`](data/ALL/___experiments1/HISTORY.md) documents findings from re-running coverage experiments after the dataset grew from ~35 to 60 external sources and 4 new anchors were added.
+
+## Miscellaneous Notes
+
+- [notes/cleaned-datasets-reference-v1.md](notes/cleaned-datasets-reference-v1.md) — Detailed descriptions of some frequency rank datasets included in the database, with source notes on corpus size, register, and tokenization
+- [notes/consolidated-reference-verbose.md](notes/consolidated-reference-verbose.md) — Detailed descriptions of some frequency sources
+- [notes/consolidated-reference-short.md](notes/consolidated-reference-short.md) — Bullet point information of some frequency sources
 
 ## License
 

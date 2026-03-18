@@ -92,7 +92,7 @@ python data/ALL/___experiments1/top12k/n_leq3_by_rank_band.py
 python data/ALL/___experiments1/anchor_pairwise_overlap.py
 ```
 
-CEJC analysis reports (optional)
+CEJC analysis reports
 
 ```bash
 cd data/CEJC/scripts
@@ -102,7 +102,7 @@ python demographic_analysis.py ../json
 # ... (see data/CEJC/scripts/ for all scripts — all take ../json as the first argument)
 ```
 
-#### RSPEER plots (optional)
+RSPEER plots
 
 ```bash
 cd data/RSPEER
