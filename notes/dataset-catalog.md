@@ -11,18 +11,18 @@
 
 | Column ID              | Source          | Description                                                                                                    |
 | ---------------------- | --------------- | -------------------------------------------------------------------------------------------------------------- |
-| `RSPEER`               | rspeer/wordfreq | Multi-source aggregate (Wikipedia, subtitles, news, books, web, Twitter/Reddit). Robust to single-corpus bias. |
+| `RSPEER`               | rspeer/wordfreq | Multi-source aggregate (Wikipedia, subtitles, news, books, web, Twitter/Reddit). Discontinued 2021; data frozen. |
 | `cejc_combined_rank`   | NINJAL CEJC     | Everyday spoken Japanese — all conversations combined.                                                         |
 | `cejc_small_talk_rank` | NINJAL CEJC     | Everyday spoken Japanese — casual small talk only (雑談).                                                      |
-| `BCCWJ_LUW`            | NINJAL BCCWJ    | Balanced written corpus, Long Unit Word tokenization. Most authoritative written Japanese reference.           |
+| `BCCWJ_LUW`            | NINJAL BCCWJ    | Japan's official balanced written corpus (104M words, 1976–2006), Long Unit Word tokenization. Compound words treated as single units. |
 | `BCCWJ_SUW`            | NINJAL BCCWJ    | Same BCCWJ corpus, Short Unit Word tokenization. Top ranks dominated by particles and auxiliaries.             |
-| `CC100`                | CommonCrawl     | Filtered Japanese web text (~2020, ~70 GB). Broad contemporary vocabulary; well-differentiated output.         |
+| `CC100`                | CommonCrawl     | Filtered Japanese web text (~2020, ~70 GB). Broad contemporary vocabulary.                                     |
 | `MALTESAA_NWJC`        | NINJAL NWJC     | Web Japanese Corpus (~25.8B tokens, crawled 2014–2017). More informal than BCCWJ_LUW.                          |
-| `MALTESAA_CSJ`         | NINJAL CSJ      | Corpus of Spontaneous Japanese — all sub-corpora combined (~7M words, formal academic speech).                 |
+| `MALTESAA_CSJ`         | NINJAL CSJ      | Corpus of Spontaneous Japanese — all sub-corpora combined (~7M words). Recorded 1999–2003. Primarily formal academic speech. |
 | `JITEN_GLOBAL`         | jiten.moe       | All jiten.moe media categories combined (~430k source entries).                                                |
 | `JITEN_DRAMA`          | jiten.moe       | Japanese drama frequency (~217k source entries). Live-action drama register.                                   |
 | `ANIME_JDRAMA`         | Shoui           | Anime and J-drama subtitles (~100k entries). Widely cited in the community (TheMoeWay, Refold).                |
-| `YOUTUBE_FREQ_V3`      | MarvNC          | Manually transcribed YouTube videos across 16 spoken domains (~187k source). Supersedes `YOUTUBE_FREQ`.        |
+| `YOUTUBE_FREQ_V3`      | MarvNC          | Manually transcribed YouTube videos across 16 spoken domains (~187k entries). Supersedes `YOUTUBE_FREQ`.       |
 | `NETFLIX`              | Shoui           | Netflix Japan subtitles, anime + drama + live-action (~129k entries). Broad coverage, includes proper names.   |
 | `DD2_MORPHMAN_NETFLIX` | Dave Doebrick 2 | Netflix subtitles, Morphman/UniDic format, **proper names excluded** (~105k entries). Cleaner lemmatization.   |
 | `WIKIPEDIA_V2`         | MarvNC / Shoui  | Community-built Wikipedia frequency dictionary (~850k source entries). Broad coverage.                         |
@@ -57,7 +57,7 @@ Recorded daily conversations by 1,675 speakers (April 2016–2020). ~2.4M words 
 
 ### CSJ — Corpus of Spontaneous Japanese
 
-~652 hours of speech, ~7M words. Primarily **academic monologues and formal presentations** — not casual speech. Use CEJC for everyday conversation.
+~652 hours of speech, ~7M words. Recorded 1999–2003. Primarily **academic monologues and formal presentations** — not casual speech.
 
 | Column ID                    | Japanese     | Description                                                 |
 | ---------------------------- | ------------ | ----------------------------------------------------------- |
@@ -93,7 +93,7 @@ All jiten.moe frequency lists. Regularly maintained and updated.
 | -------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `JITEN_GLOBAL`       | ~430k          | All media categories combined. ✅ **Shortlisted.**                                                                                                                                    |
 | `JITEN_DRAMA`        | ~217k          | Japanese drama. ✅ **Shortlisted.**                                                                                                                                                   |
-| `JITEN_ANIME_V2`     | ~215k          | Anime — direct CSV export. Most recent. Included as informational column in `RIRIKKU_CONSOLIDATED.csv`; not used for rank computation (superseded by `JITEN_DRAMA` + `JITEN_GLOBAL`). |
+| `JITEN_ANIME_V2`     | ~215k          | Anime — direct CSV export. Most recent jiten.moe anime list; use `JITEN_GLOBAL` for broader cross-media coverage.                                                                     |
 | `JITEN_ANIME`        | ~257k          | Anime — Yomitan JSON export. Older format.                                                                                                                                            |
 | `JITEN_MOVIE`        | ~142k          | Movies                                                                                                                                                                                |
 | `JITEN_MANGA`        | ~264k          | Manga                                                                                                                                                                                 |
@@ -148,16 +148,13 @@ All jiten.moe frequency lists. Regularly maintained and updated.
 
 | Column ID             | Source                | Description                                                                                                                                                                              |
 | --------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  |
 | `JITEN_DRAMA`         | jiten.moe             | Japanese drama frequency (~217k source entries). Live-action drama register. ✅ **Shortlisted.**                                                                                         |
 | `ANIME_JDRAMA`        | Shoui                 | Anime and J-drama subtitles (~100k entries). Widely cited in the community. ✅ **Shortlisted.**                                                                                          |
 | `HLORENZI_ANIMEDRAMA` | hlorenzi / jisho-open | Anime & drama subtitle rankings used by jisho-open (~100k source, top 25k included). Lightweight cross-check for entertainment subtitle vocabulary.                                      |
-| `JITEN_ANIME_V2`      | jiten.moe             | Anime — direct CSV export. Most recent. Included as informational column in `RIRIKKU_CONSOLIDATED.csv`; not used for rank computation.                                                   |
+| `JITEN_ANIME_V2`      | jiten.moe             | Anime — direct CSV export. Most recent jiten.moe anime list; use `JITEN_GLOBAL` for broader cross-media coverage.                                                                       |
 | `JPDB`                | JPDB                  | Anime and games vocabulary from JPDB. Uses surface/inflected forms — conjugated verb forms appear as separate entries. Heavy bias toward JPDB's content catalog. ⚠️ **Not Recommended.** |
 | `JLAB`                | JLAB                  | Anime-only source built from ~1.85M Anki flashcards. Parser (Jisho.org C++ + MeCab/ipadic) struggles with slang; rankings below ~2,000 unreliable. ⚠️ **Not Recommended.**               |
 | `CHRISKEMPSON`        | Community             | Subtitle corpus (12,277 files) built with older tools. Less curated than Shoui collections, not actively maintained. ⚠️ **Not Recommended.**                                             |
-
-                                             |
 
 ### Shonen
 
@@ -229,5 +226,5 @@ These datasets are included in `consolidated.csv` for completeness but should no
 | `JITEN_AUDIO`         | Only ~8,370 entries — the smallest dataset here. Audio/podcast domain with very limited signal outside that niche.                                                                                                                                               |
 | `HERMITDAVE_2016`     | OpenSubtitles 2016. **Known tokenization bug**: MeCab split verbs into morphemes, so dictionary-form verbs (思う, 分かる) essentially don't exist as entries. Single characters like い, っ, て, る appear as "words". `-1` here may be a tokenization artifact. |
 | `HERMITDAVE_2018`     | Same morpheme-splitting issue as `HERMITDAVE_2016`. OpenSubtitles 2018, combined from two split source files.                                                                                                                                                    |
-| `H_FREQ`              | Adult (18+) content corpus (~44.7k entries). Highly domain-specific; introducing this to a general vocabulary website would be inappropriate.                                                                                                                    |
+| `H_FREQ`              | Adult (18+) content corpus (~44.7k entries). Highly domain-specific; vocabulary skews heavily toward adult content tropes and register.                                                                                                                          |
 | `NIER`                | Single game series script (~10,077 entries, entire vocabulary of the NieR games). A `-1` here simply means the word doesn't appear in NieR — no general vocabulary signal.                                                                                       |
