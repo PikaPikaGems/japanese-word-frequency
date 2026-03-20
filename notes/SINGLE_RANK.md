@@ -1,8 +1,8 @@
 # Single Rank Algorithm
 
-**Output:** [data/ALL/RIRIKKU_CONSOLIDATED.csv](../data/ALL/RIRIKKU_CONSOLIDATED.csv)
-**Script:** [data/ALL/\_\_\_data_generation/make_ririkku.py](../data/ALL/___data_generation/make_ririkku.py)
-**Category tables script:** [data/ALL/\_\_\_experiments3/category_tables.py](../data/ALL/___experiments3/category_tables.py)
+- **Output:** [data/ALL/RIRIKKU_CONSOLIDATED.csv](../data/ALL/RIRIKKU_CONSOLIDATED.csv)
+- **Script:** [data/ALL/\_\_\_data_generation/make_ririkku.py](../data/ALL/___data_generation/make_ririkku.py)
+- **Category tables script:** [data/ALL/\_\_\_experiments3/category_tables.py](../data/ALL/___experiments3/category_tables.py)
 
 ---
 
