@@ -82,7 +82,7 @@ Takes the union of all shortlisted source word lists (~92k words) and assigns ea
 (minimum rank across shortlisted sources, requiring ≥3 sources). See `notes/SINGLE_RANK.md` for rationale.
 
 ```bash
-python data/ALL/___experiments1/data_generation/make_ririkku.py
+python data/ALL/___data_generation/make_ririkku.py
 ```
 
 #### Step 4b — Regenerate category tier tables (optional)

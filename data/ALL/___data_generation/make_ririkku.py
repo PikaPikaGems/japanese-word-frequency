@@ -28,7 +28,7 @@ import sys
 csv.field_size_limit(10_000_000)
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(BASE, "..", "..", "..", ".."))
+ROOT = os.path.abspath(os.path.join(BASE, "..", "..", ".."))
 sys.path.insert(0, ROOT)
 
 from utils import JapaneseLookup  # noqa: E402

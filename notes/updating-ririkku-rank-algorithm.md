@@ -8,7 +8,7 @@ See [SINGLE_RANK.md](SINGLE_RANK.md) for the algorithm rationale and [dataset-ca
 
 ## Step 1 — Edit `make_ririkku.py`
 
-Open [data/ALL/___experiments1/data_generation/make_ririkku.py](../data/ALL/___experiments1/data_generation/make_ririkku.py).
+Open [data/ALL/___data_generation/make_ririkku.py](../data/ALL/___data_generation/make_ririkku.py).
 
 ### To add a new source to RIRIKKU_RANK computation
 
@@ -32,7 +32,7 @@ Simply remove it from both `SHORTLISTED` and `EXTRA_COLS`. It will no longer app
 From the repo root:
 
 ```bash
-python data/ALL/___experiments1/data_generation/make_ririkku.py
+python data/ALL/___data_generation/make_ririkku.py
 ```
 
 This regenerates `data/ALL/RIRIKKU_CONSOLIDATED.csv`.
