@@ -1,7 +1,7 @@
 # Single Rank Algorithm
 
-**Output:** `data/ALL/RIRIKKU_CONSOLIDATED.csv`
-**Script:** `data/ALL/___experiments1/data_generation/make_ririkku.py`
+**Output:** [data/ALL/RIRIKKU_CONSOLIDATED.csv](../data/ALL/RIRIKKU_CONSOLIDATED.csv)
+**Script:** [data/ALL/___experiments1/data_generation/make_ririkku.py](../data/ALL/___experiments1/data_generation/make_ririkku.py)
 
 ---
 
