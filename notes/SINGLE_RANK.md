@@ -35,7 +35,7 @@ single_rank(word) =
 - **Minimum = best-case rank**: if _any_ shortlisted source considers this word very common, it gets a good rank.
 - For a lyric app, this is the right signal. A word that's very frequent in anime/drama subtitles but only middling in web text is still a high-priority word for a learner — minimum surfaces it appropriately.
 - **Mean/median** would dilute domain-specific vocabulary. A lyric-relevant word ranked #200 in ANIME_JDRAMA but #8000 in Wikipedia would land around #4000 — burying it unfairly.
-- The **2-source threshold** prevents a single outlier source from inflating a word's rank. It requires at least minimal cross-source validation.
+- The **3-source threshold** prevents a single outlier source from inflating a word's rank. It requires at least minimal cross-source validation.
 
 ---
 
@@ -76,40 +76,28 @@ CEJC uses UniDic lemma forms (e.g. 為る for する, 其れ for それ). This i
 
 ---
 
-## Output Summary (RIRIKKU_CONSOLIDATED.csv)
+## Category Breakdown and Threshold Selection
 
-| Stat                         | Count  |
-| ---------------------------- | ------ |
-| Union word list (total rows) | 92,092 |
-| Ranked (≥3 sources)          | 43,060 |
-| Unranked / RARE (<3 sources) | 49,032 |
+### Category Rank Ranges (Type A)
 
-**Category breakdown of ranked words** (using same tier thresholds as `CATEGORIZED.py`):
+| Tier     | Rank range    | Word count ≥3 |
+| -------- | ------------- | ------------- |
+| BASIC    | 1–1,800       | 7,271         |
+| COMMON   | 1,801–5,000   | 9,338         |
+| FLUENT   | 5,001–12,000  | 16,787        |
+| ADVANCED | 12,001–25,000 | 9,664         |
 
-| Tier     | Rank range    | Word count |
-| -------- | ------------- | ---------- |
-| BASIC    | 1–1,800       | 7,271      |
-| COMMON   | 1,801–5,000   | 9,338      |
-| FLUENT   | 5,001–12,000  | 16,787     |
-| ADVANCED | 12,001–25,000 | 9,664      |
-
-> **Note on inflated BASIC:** because RIRIKKU*RANK uses the \_minimum* across 16 sources, a word only needs to be top-1k in _one_ of those sources to land in BASIC. The ≥3 source threshold provides meaningful cross-validation while preserving domain-specific lyric vocabulary — words appearing in only 1–2 sources are treated as RARE. The full list is a backend reference; users only see ranks for words that appear in lyric content.
-
-### Threshold selection
+> **Note on inflated BASIC:** because **RIRIKKU_RANK** uses the _minimum_ across 16 sources, a word only needs to be top-1.8k in _one_ of those sources to land in BASIC. The ≥3 source threshold provides meaningful cross-validation while preserving domain-specific lyric vocabulary — words appearing in only 1–2 sources are treated as RARE. The full list is a backend reference; users only see ranks for words that appear in lyric content.
 
 We evaluated ≥2, ≥3, and ≥4 before settling on ≥3:
 
-| Threshold | Ranked     | BASIC (1–1,800) | COMMON (1,801–5,000) | FLUENT (5,001–12,000) | ADVANCED (12,001–25,000) | Unranked   |
-| --------- | ---------- | --------------- | -------------------- | --------------------- | ------------------------ | ---------- |
-| ≥2        | 63,539     | 7,873           | 11,023               | 22,549                | 22,094                   | 28,553     |
-| **≥3** ✅ | **43,060** | **7,271**       | **9,338**            | **16,787**            | **9,664**                | **49,032** |
-| ≥4        | 36,130     | 7,129           | 8,908                | 14,375                | 5,718                    | 55,962     |
+| Threshold | TOTAL      | BASIC     | COMMON    | FLUENT     | ADVANCED  | Unranked   |
+| --------- | ---------- | --------- | --------- | ---------- | --------- | ---------- |
+| ≥2        | 63,539     | 7,873     | 11,023    | 22,549     | 22,094    | 28,553     |
+| **≥3** ✅ | **43,060** | **7,271** | **9,338** | **16,787** | **9,664** | **49,032** |
+| ≥4        | 36,130     | 7,129     | 8,908     | 14,375     | 5,718     | 55,962     |
 
-BASIC/COMMON/FLUENT are stable across all three thresholds — truly common words appear in many sources regardless. The threshold almost entirely controls how many ADVANCED words survive vs. fall into RARE.
-
-≥3 was chosen over ≥4 because the shortlisted sources include 7 media/subtitle sources (ANIME_JDRAMA, NETFLIX, DD2_MORPHMAN_NETFLIX, YOUTUBE_FREQ_V3, DD2_MORPHMAN_SOL, JITEN_ANIME_V2, JITEN_GLOBAL). A word appearing in 3 of these is genuine signal — domain-specific lyric vocabulary that would be unfairly discarded at ≥4. Going ≥2 was rejected because two sources is insufficient cross-validation and produces an ADVANCED tier (28k words) that is too broad.
-
-## Alternative Category Rank ranges
+### Category Rank Ranges (Type B)
 
 | Tier     | Rank range    | Word count |
 | -------- | ------------- | ---------- |
@@ -123,6 +111,10 @@ BASIC/COMMON/FLUENT are stable across all three thresholds — truly common word
 | ≥2        | 63,539 | 4,799 | 10,784 | 19,849 | 28,107   | 28,553   |
 | ≥3        | 43,060 | 4,512 | 9,379  | 15,480 | 13,689   | 49,032   |
 | ≥4        | 36,130 | 4,433 | 9,074  | 13,753 | 8,870    | 55,962   |
+
+BASIC/COMMON/FLUENT are stable across all three thresholds — truly common words appear in many sources regardless. The threshold almost entirely controls how many ADVANCED words survive vs. fall into RARE.
+
+≥3 was chosen over ≥4 because the shortlisted sources include 7 media/subtitle sources (ANIME_JDRAMA, NETFLIX, DD2_MORPHMAN_NETFLIX, YOUTUBE_FREQ_V3, DD2_MORPHMAN_SOL, JITEN_ANIME_V2, JITEN_GLOBAL). A word appearing in 3 of these is genuine signal — domain-specific lyric vocabulary that would be unfairly discarded at ≥4. Going ≥2 was rejected because two sources is insufficient cross-validation and produces an ADVANCED tier (28k words) that is too broad.
 
 ---
 
