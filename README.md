@@ -59,6 +59,7 @@ word-frequency-rankings/
 ## Single Rank Algorithm
 
 - [notes/SINGLE_RANK.md](notes/SINGLE_RANK.md) — Algorithm for producing a single consolidated rank from multiple frequency sources, designed for use in ririkku.com
+- [notes/updating-ririkku-rank-algorithm.md](notes/updating-ririkku-rank-algorithm.md) — Step-by-step guide for modifying which sources are included in the `RIRIKKU_RANK` computation (add/remove sources, re-run scripts, update docs)
 
 ## Miscellaneous Notes
 
