@@ -48,7 +48,11 @@ After regenerating the anchor outputs, generate the primary RIRIKKU_CONSOLIDATED
 
 To regenerate the category tier breakdown tables printed in notes/SINGLE_RANK.md:
 
+    # Single Rank (minimum) algorithm tables
     python data/ALL/___experiments3/category_tables.py
+
+    # Bucket Count algorithm tables (alternative — counts how many ranks fall in each tier bucket)
+    python data/ALL/___experiments3/bucket_category_tables.py
 
 === FULL PIPELINE (one-liner) ===
 

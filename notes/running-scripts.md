@@ -91,7 +91,11 @@ Prints the markdown tables for `SINGLE_RANK.md` (Type A / Type B breakdowns at �
 Re-run this whenever `RIRIKKU_CONSOLIDATED.csv` is regenerated and you want to update the numbers in the doc.
 
 ```bash
+# Single Rank (minimum) algorithm tables
 python data/ALL/___experiments3/category_tables.py
+
+# Bucket Count algorithm tables (alternative — counts how many ranks fall in each tier bucket)
+python data/ALL/___experiments3/bucket_category_tables.py
 ```
 
 #### Step 5 — Analysis Reports (optional)
