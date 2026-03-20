@@ -15,6 +15,7 @@ Raw source files live in `data/RAW/<AUTHOR_OR_GROUP>/`. Each source must be conv
 Put the raw source files in `data/RAW/<AUTHOR_OR_GROUP>/<dataset_name>/`. Do not modify the originals.
 
 Example:
+
 ```
 data/RAW/KUUUUBE/jmdict_freq/
     index.json
@@ -34,6 +35,7 @@ data/RAW/___FILTERED/<SOURCE_NAME>/
 ```
 
 Choose a name that is:
+
 - Descriptive and unique
 - Alphabetically placed correctly (the consolidation scripts sort sources alphabetically — the name determines column order in all consolidated CSVs)
 
@@ -47,9 +49,11 @@ Describe the source. Template:
 # <SOURCE_NAME> — <Short title>
 
 ## Source
+
 - **GitHub / URL:** <link>
 
 ## Description
+
 <What corpus or resource this is, who created it, data type, coverage.>
 
 **Author:** <author>
@@ -57,9 +61,11 @@ Describe the source. Template:
 **Coverage:** <time period, size, etc.>
 
 ## Format (<format name>)
+
 <Describe the raw file format — TSV, JSON, etc. — and what fields it contains.>
 
 ## DATA.csv
+
 Top 25,000 words by frequency rank. Columns: `WORD`, `FREQUENCY_RANKING` (1 = most frequent).
 ```
 
@@ -68,6 +74,7 @@ Top 25,000 words by frequency rank. Columns: `WORD`, `FREQUENCY_RANKING` (1 = mo
 ## Step 4 — Write SCRIPT.py
 
 Rules:
+
 - **No pandas** — use the stdlib `csv` and `json` modules only
 - Input path: relative to `__file__`, pointing into `../../<AUTHOR>/...`
 - Output path: `os.path.join(os.path.dirname(__file__), "DATA.csv")`
@@ -124,6 +131,7 @@ python data/RAW/___FILTERED/<SOURCE_NAME>/SCRIPT.py
 ```
 
 Verify the output:
+
 - File exists: `data/RAW/___FILTERED/<SOURCE_NAME>/DATA.csv`
 - First row is the header `WORD,FREQUENCY_RANKING`
 - Row count ≤ 25,000
@@ -174,5 +182,17 @@ Edit [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md):
 Add a row to the table in the `RAW/___FILTERED — 60+ Source Datasets + RSPEER` section of [notes/dataset-directory-tree.md](notes/dataset-directory-tree.md). Insert alphabetically by source name:
 
 ```markdown
-| <SOURCE_NAME>              | <Short description>                                 |
+| <SOURCE_NAME> | <Short description> |
 ```
+
+## Step 9 — Update notes/dataset-catalog.md
+
+Add a row to [notes/dataset-catalog.md](dataset-catalog.md) describing the new source. Insert it into the section that best fits the source type (Academic / Research Corpora, Written Corpora, Subtitle / Media, etc.). If the source is particularly high-quality or widely useful, also add it to the **⭐ Highlighted (Shortlisted)** table at the top.
+
+Row format:
+
+```markdown
+| `SOURCE_NAME` | <Author / Project> | <One-sentence description: corpus type, size, date, notable properties.> |
+```
+
+Insert alphabetically within the section, or in rough quality/relevance order for the Highlighted table.
