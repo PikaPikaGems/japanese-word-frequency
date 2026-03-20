@@ -40,11 +40,22 @@ Exits with code 0 if all columns are unique; code 1 if any duplicates are found.
 
     python data/ALL/___data_generation/check_duplicate_rank_columns.py
 
+=== RIRIKKU RANK ===
+
+After regenerating the anchor outputs, generate the primary RIRIKKU_CONSOLIDATED.csv:
+
+    python data/ALL/___experiments1/data_generation/make_ririkku.py
+
+To regenerate the category tier breakdown tables printed in notes/SINGLE_RANK.md:
+
+    python data/ALL/___experiments3/category_tables.py
+
 === FULL PIPELINE (one-liner) ===
 
     python data/ALL/___data_generation/SCRIPT.py && \\
     python data/ALL/___data_generation/make_anchored.py && \\
     python data/ALL/___data_generation/make_more_anchors.py && \\
     python data/ALL/___data_generation/check_missing_reading.py && \\
-    python data/ALL/___data_generation/check_duplicate_rank_columns.py
+    python data/ALL/___data_generation/check_duplicate_rank_columns.py && \\
+    python data/ALL/___experiments1/data_generation/make_ririkku.py
 """

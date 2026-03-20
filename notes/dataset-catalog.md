@@ -20,7 +20,7 @@
 | `MALTESAA_NWJC` | NINJAL NWJC | Web Japanese Corpus (~25.8B tokens, crawled 2014–2017). More informal than BCCWJ_LUW. |
 | `MALTESAA_CSJ` | NINJAL CSJ | Corpus of Spontaneous Japanese — all sub-corpora combined (~7M words, formal academic speech). |
 | `JITEN_GLOBAL` | jiten.moe | All jiten.moe media categories combined (~430k source entries). |
-| `JITEN_ANIME_V2` | jiten.moe | Anime frequency — most recent jiten.moe export (CSV, ~215k source entries, last updated 2026-01-10). |
+| `JITEN_DRAMA` | jiten.moe | Japanese drama frequency (~217k source entries). Live-action drama register. |
 | `ANIME_JDRAMA` | Shoui | Anime and J-drama subtitles (~100k entries). Widely cited in the community (TheMoeWay, Refold). |
 | `YOUTUBE_FREQ_V3` | MarvNC | Manually transcribed YouTube videos across 16 spoken domains (~187k source). Supersedes `YOUTUBE_FREQ`. |
 | `NETFLIX` | Shoui | Netflix Japan subtitles, anime + drama + live-action (~129k entries). Broad coverage, includes proper names. |
@@ -90,9 +90,9 @@ All jiten.moe frequency lists. Regularly maintained and updated.
 | Column ID | Source entries | Description |
 |---|---|---|
 | `JITEN_GLOBAL` | ~430k | All media categories combined |
-| `JITEN_ANIME_V2` | ~215k | Anime — direct CSV export. **Most recent.** |
+| `JITEN_DRAMA` | ~217k | Japanese drama. ✅ **Shortlisted for RIRIKKU_RANK.** |
+| `JITEN_ANIME_V2` | ~215k | Anime — direct CSV export. Most recent. Included as informational column in `RIRIKKU_CONSOLIDATED.csv`; not used for rank computation (superseded by `JITEN_DRAMA` + `JITEN_GLOBAL`). |
 | `JITEN_ANIME` | ~257k | Anime — Yomitan JSON export. Older format. |
-| `JITEN_DRAMA` | ~25k | Japanese drama |
 | `JITEN_MOVIE` | ~142k | Movies |
 | `JITEN_MANGA` | ~264k | Manga |
 | `JITEN_NOVEL` | ~285k | Novels |

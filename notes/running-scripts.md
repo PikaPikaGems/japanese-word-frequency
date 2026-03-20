@@ -85,6 +85,15 @@ Takes the union of all shortlisted source word lists (~92k words) and assigns ea
 python data/ALL/___experiments1/data_generation/make_ririkku.py
 ```
 
+#### Step 4b — Regenerate category tier tables (optional)
+
+Prints the markdown tables for `SINGLE_RANK.md` (Type A / Type B breakdowns at ≥2/≥3/≥4 thresholds).
+Re-run this whenever `RIRIKKU_CONSOLIDATED.csv` is regenerated and you want to update the numbers in the doc.
+
+```bash
+python data/ALL/___experiments3/category_tables.py
+```
+
 #### Step 5 — Analysis Reports (optional)
 
 Coverage and threshold analysis

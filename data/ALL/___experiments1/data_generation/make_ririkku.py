@@ -3,16 +3,19 @@ Generates data/ALL/RIRIKKU_CONSOLIDATED.csv
 
 Word list: union of all words in the top-25k of any shortlisted source.
 RIRIKKU_RANK: minimum rank across all shortlisted sources, requiring
-              at least 2 sources to have the word (rank != -1).
-              Words with fewer than 2 sources are assigned rank -1.
+              at least 3 sources to have the word (rank != -1).
+              Words with fewer than 3 sources are assigned rank -1.
 
 Output columns:
   word, hiragana, katakana, RIRIKKU_RANK,
+  [SHORTLISTED columns — used for rank computation]
   RSPEER, cejc_combined_rank, cejc_small_talk_rank,
   BCCWJ_LUW, BCCWJ_SUW, CC100, MALTESAA_NWJC,
-  JITEN_GLOBAL, JITEN_ANIME_V2, ANIME_JDRAMA,
+  JITEN_GLOBAL, JITEN_DRAMA, ANIME_JDRAMA,
   YOUTUBE_FREQ_V3, NETFLIX, DD2_MORPHMAN_NETFLIX,
-  WIKIPEDIA_V2, ADNO, DD2_MORPHMAN_SOL
+  WIKIPEDIA_V2, ADNO, DD2_MORPHMAN_SOL,
+  [EXTRA columns — informational only, not used for rank]
+  JITEN_ANIME_V2
 
 Sort order: RIRIKKU_RANK ascending (unranked words last), then word.
 """
@@ -40,6 +43,7 @@ OUT_FILE = os.path.join(ROOT, "data", "ALL", "RIRIKKU_CONSOLIDATED.csv")
 # Sources used for RIRIKKU_RANK computation and included as output columns.
 # Keys match all_sources dict keys (loaded below) or special CEJC keys.
 # MALTESAA_CSJ is intentionally excluded (formal academic speech, wrong register).
+# JITEN_ANIME_V2 is excluded from rank computation but included as an extra output column.
 SHORTLISTED = [
     "RSPEER",
     "cejc_combined_rank",
@@ -49,7 +53,7 @@ SHORTLISTED = [
     "CC100",
     "MALTESAA_NWJC",
     "JITEN_GLOBAL",
-    "JITEN_ANIME_V2",
+    "JITEN_DRAMA",
     "ANIME_JDRAMA",
     "YOUTUBE_FREQ_V3",
     "NETFLIX",
@@ -57,6 +61,11 @@ SHORTLISTED = [
     "WIKIPEDIA_V2",
     "ADNO",
     "DD2_MORPHMAN_SOL",
+]
+
+# Extra columns included in output for reference but NOT used for RIRIKKU_RANK computation.
+EXTRA_COLS = [
+    "JITEN_ANIME_V2",
 ]
 
 CEJC_SHORTLISTED = {"cejc_combined_rank", "cejc_small_talk_rank"}
@@ -137,33 +146,38 @@ def get_shortlisted_ranks(word: str) -> dict[str, int]:
     return result
 
 
+def get_extra_ranks(word: str) -> dict[str, int]:
+    return {col: jlookup.lookup(all_sources.get(col, {}), word) for col in EXTRA_COLS}
+
+
 rows = []
 for word in union_words:
     hira, kata = jlookup.get_reading(word)
     ranks = get_shortlisted_ranks(word)
+    extra = get_extra_ranks(word)
     valid = [r for r in ranks.values() if r != -1]
     ririkku_rank = min(valid) if len(valid) >= 3 else -1
-    rows.append((word, hira, kata, ririkku_rank, ranks))
+    rows.append((word, hira, kata, ririkku_rank, ranks, extra))
 
 # Sort: ranked words first (ascending), unranked last, then word alphabetically
 rows.sort(key=lambda x: (x[3] == -1, x[3], x[0]))
 
 # ── Write output ──────────────────────────────────────────────────────────────
-out_cols = ["word", "hiragana", "katakana", "RIRIKKU_RANK"] + SHORTLISTED
+out_cols = ["word", "hiragana", "katakana", "RIRIKKU_RANK"] + SHORTLISTED + EXTRA_COLS
 
 with open(OUT_FILE, "w", newline="", encoding="utf-8") as f:
     w = csv.writer(f)
     w.writerow(out_cols)
-    for word, hira, kata, ririkku_rank, ranks in rows:
-        w.writerow([word, hira, kata, ririkku_rank] + [ranks[col] for col in SHORTLISTED])
+    for word, hira, kata, ririkku_rank, ranks, extra in rows:
+        w.writerow([word, hira, kata, ririkku_rank] + [ranks[col] for col in SHORTLISTED] + [extra[col] for col in EXTRA_COLS])
 
-ranked_count = sum(1 for _, _, _, r, _ in rows if r != -1)
+ranked_count = sum(1 for _, _, _, r, _, _ in rows if r != -1)
 unranked_count = len(rows) - ranked_count
-missing_reading = sum(1 for _, h, _, _, _ in rows if h == "-")
+missing_reading = sum(1 for _, h, _, _, _, _ in rows if h == "-")
 pct_missing = missing_reading / len(rows) * 100 if rows else 0
 
 print(f"Total words:       {len(rows):,}")
-print(f"Ranked (>=2 src):  {ranked_count:,}")
-print(f"Unranked (<2 src): {unranked_count:,}")
+print(f"Ranked (>=3 src):  {ranked_count:,}")
+print(f"Unranked (<3 src): {unranked_count:,}")
 print(f"Missing reading:   {missing_reading:,} ({pct_missing:.1f}%)")
 print(f"Written to:        {OUT_FILE}")

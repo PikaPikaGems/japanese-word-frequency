@@ -2,6 +2,7 @@
 
 **Output:** [data/ALL/RIRIKKU_CONSOLIDATED.csv](../data/ALL/RIRIKKU_CONSOLIDATED.csv)
 **Script:** [data/ALL/___experiments1/data_generation/make_ririkku.py](../data/ALL/___experiments1/data_generation/make_ririkku.py)
+**Category tables script:** [data/ALL/___experiments3/category_tables.py](../data/ALL/___experiments3/category_tables.py)
 
 ---
 
@@ -52,7 +53,7 @@ These are the shortlisted datasets from `dataset-catalog.md` that are included i
 | `CC100`                | Broad contemporary web Japanese (~2020). Strong overlap with YOUTUBE_FREQ_V3 (~75%); well-differentiated rankings.                                                                                                                   |
 | `MALTESAA_NWJC`        | Web Japanese corpus (~25.8B tokens). Broad informal written coverage.                                                                                                                                                                |
 | `JITEN_GLOBAL`         | All jiten.moe media combined. Actively maintained; covers anime, manga, VN, novels, games.                                                                                                                                           |
-| `JITEN_ANIME_V2`       | Anime-specific frequency. Directly relevant to anime song vocabulary. Most recent jiten.moe export.                                                                                                                                  |
+| `JITEN_DRAMA`          | Japanese drama frequency from jiten.moe (~217k source entries). Directly relevant to J-drama vocabulary — the live-action register closest to song lyrics.                                                                          |
 | `ANIME_JDRAMA`         | Anime + J-drama subtitles. Widely cited in the immersion community. Close register to lyrics.                                                                                                                                        |
 | `YOUTUBE_FREQ_V3`      | Manually transcribed YouTube across 16 spoken domains. Spoken Japanese with broad domain coverage.                                                                                                                                   |
 | `NETFLIX`              | Netflix Japan subtitles (anime + drama + live-action). Broad subtitle coverage.                                                                                                                                                      |
@@ -66,9 +67,10 @@ These are the shortlisted datasets from `dataset-catalog.md` that are included i
 
 ## Excluded Sources (and Why)
 
-| Column ID      | Reason Excluded                                                                                                                  |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `MALTESAA_CSJ` | Corpus of Spontaneous Japanese — primarily formal academic monologues and conference presentations. Register is far from lyrics. |
+| Column ID        | Reason Excluded                                                                                                                                                                                                      |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MALTESAA_CSJ`   | Corpus of Spontaneous Japanese — primarily formal academic monologues and conference presentations. Register is far from lyrics.                                                                                      |
+| `JITEN_ANIME_V2` | Superseded by `JITEN_DRAMA` for the drama/lyrics use case. Still included as an informational column in `RIRIKKU_CONSOLIDATED.csv` but not used for rank computation. The global `JITEN_GLOBAL` already covers anime. |
 
 ### Note on CEJC Lemma Forms
 
@@ -82,39 +84,39 @@ CEJC uses UniDic lemma forms (e.g. 為る for する, 其れ for それ). This i
 
 | Tier     | Rank range    | Word count ≥3 |
 | -------- | ------------- | ------------- |
-| BASIC    | 1–1,800       | 7,271         |
-| COMMON   | 1,801–5,000   | 9,338         |
-| FLUENT   | 5,001–12,000  | 16,787        |
-| ADVANCED | 12,001–25,000 | 9,664         |
+| BASIC    | 1–1,800       | 7,250         |
+| COMMON   | 1,801–5,000   | 9,308         |
+| FLUENT   | 5,001–12,000  | 16,836        |
+| ADVANCED | 12,001–25,000 | 9,583         |
 
-> **Note on inflated BASIC:** because **RIRIKKU_RANK** uses the _minimum_ across 16 sources, a word only needs to be top-1.8k in _one_ of those sources to land in BASIC. The ≥3 source threshold provides meaningful cross-validation while preserving domain-specific lyric vocabulary — words appearing in only 1–2 sources are treated as RARE. The full list is a backend reference; users only see ranks for words that appear in lyric content.
+> **Note on inflated tiers:** because **RIRIKKU_RANK** uses the _minimum_ across 16 sources, a word only needs to be top-ranked in _one_ of those sources to land in BASIC, COMMON, or FLUENT. The ≥3 source threshold provides meaningful cross-validation while preserving domain-specific lyric vocabulary — words appearing in only 1–2 sources are treated as RARE. The full list is a backend reference; users only see ranks for words that appear in lyric content.
 
 We evaluated ≥2, ≥3, and ≥4 before settling on ≥3:
 
 | Threshold | TOTAL      | BASIC     | COMMON    | FLUENT     | ADVANCED  | Unranked   |
 | --------- | ---------- | --------- | --------- | ---------- | --------- | ---------- |
-| ≥2        | 63,539     | 7,873     | 11,023    | 22,549     | 22,094    | 28,553     |
-| **≥3** ✅ | **43,060** | **7,271** | **9,338** | **16,787** | **9,664** | **49,032** |
-| ≥4        | 36,130     | 7,129     | 8,908     | 14,375     | 5,718     | 55,962     |
+| ≥2        | 63,421     | 7,877     | 10,999    | 22,601     | 21,944    | 28,750     |
+| **≥3** ✅ | **42,977** | **7,250** | **9,308** | **16,836** | **9,583** | **49,194** |
+| ≥4        | 36,071     | 7,118     | 8,901     | 14,405     | 5,647     | 56,100     |
 
 ### Category Rank Ranges (Type B)
 
-| Tier     | Rank range    | Word count |
-| -------- | ------------- | ---------- |
-| BASIC    | 1–1,000       | 4,512      |
-| COMMON   | 1,001–4,000   | 9,379      |
-| FLUENT   | 4,001–10,000  | 15,480     |
-| ADVANCED | 10,001–25,000 | 13,689     |
+| Tier     | Rank range    | Word count ≥3 |
+| -------- | ------------- | ------------- |
+| BASIC    | 1–1,000       | 4,489         |
+| COMMON   | 1,001–4,000   | 9,359         |
+| FLUENT   | 4,001–10,000  | 15,486        |
+| ADVANCED | 10,001–25,000 | 13,643        |
 
-| Threshold | TOTAL  | BASIC | COMMON | FLUENT | ADVANCED | Unranked |
-| --------- | ------ | ----- | ------ | ------ | -------- | -------- |
-| ≥2        | 63,539 | 4,799 | 10,784 | 19,849 | 28,107   | 28,553   |
-| ≥3        | 43,060 | 4,512 | 9,379  | 15,480 | 13,689   | 49,032   |
-| ≥4        | 36,130 | 4,433 | 9,074  | 13,753 | 8,870    | 55,962   |
+| Threshold | TOTAL      | BASIC     | COMMON     | FLUENT     | ADVANCED   | Unranked   |
+| --------- | ---------- | --------- | ---------- | ---------- | ---------- | ---------- |
+| ≥2        | 63,421     | 4,788     | 10,793     | 19,872     | 27,968     | 28,750     |
+| **≥3** ✅ | **42,977** | **4,489** | **9,359**  | **15,486** | **13,643** | **49,194** |
+| ≥4        | 36,071     | 4,413     | 9,072      | 13,772     | 8,814      | 56,100     |
 
 BASIC/COMMON/FLUENT are stable across all three thresholds — truly common words appear in many sources regardless. The threshold almost entirely controls how many ADVANCED words survive vs. fall into RARE.
 
-≥3 was chosen over ≥4 because the shortlisted sources include 7 media/subtitle sources (ANIME_JDRAMA, NETFLIX, DD2_MORPHMAN_NETFLIX, YOUTUBE_FREQ_V3, DD2_MORPHMAN_SOL, JITEN_ANIME_V2, JITEN_GLOBAL). A word appearing in 3 of these is genuine signal — domain-specific lyric vocabulary that would be unfairly discarded at ≥4. Going ≥2 was rejected because two sources is insufficient cross-validation and produces an ADVANCED tier (28k words) that is too broad.
+≥3 was chosen over ≥4 because the shortlisted sources include 7 media/subtitle sources (ANIME_JDRAMA, NETFLIX, DD2_MORPHMAN_NETFLIX, YOUTUBE_FREQ_V3, DD2_MORPHMAN_SOL, JITEN_DRAMA, JITEN_GLOBAL). A word appearing in 3 of these is genuine signal — domain-specific lyric vocabulary that would be unfairly discarded at ≥4. Going ≥2 was rejected because two sources is insufficient cross-validation and produces an ADVANCED tier (28k words) that is too broad.
 
 ---
 
