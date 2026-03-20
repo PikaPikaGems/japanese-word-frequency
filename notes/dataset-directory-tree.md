@@ -72,6 +72,8 @@ Each subdirectory contains a standardized `DATA.csv` (columns: `WORD`, `FREQUENC
 | HERMITDAVE_2016            | Subtitle corpus (2016)                              |
 | HERMITDAVE_2018            | Subtitle corpus (2018)                              |
 | HINGSTON                   | Japanese internet word frequency (Leeds corpus)     |
+| HLORENZI_ANIMEDRAMA        | Anime & drama subtitle rankings (hlorenzi/jisho-open) |
+| HLORENZI_WIKIPEDIA         | Wikipedia word rankings (hlorenzi/jisho-open)       |
 | H_FREQ                     | Adult content corpus                                |
 | ILYASEMENOV                | Wikipedia word frequency                            |
 | INNOCENT_RANKED            | Innocent Corpus (novels)                            |
