@@ -15,7 +15,7 @@ Output columns:
   YOUTUBE_FREQ_V3, NETFLIX, DD2_MORPHMAN_NETFLIX,
   WIKIPEDIA_V2, ADNO, DD2_MORPHMAN_SOL,
   [EXTRA columns — informational only, not used for rank]
-  JITEN_ANIME_V2
+  JITEN_ANIME_V2, MALTESAA_CSJ
 
 Sort order: RIRIKKU_RANK ascending (unranked words last), then word.
 """
@@ -42,7 +42,8 @@ OUT_FILE = os.path.join(ROOT, "data", "ALL", "RIRIKKU_CONSOLIDATED.csv")
 
 # Sources used for RIRIKKU_RANK computation and included as output columns.
 # Keys match all_sources dict keys (loaded below) or special CEJC keys.
-# MALTESAA_CSJ is intentionally excluded (formal academic speech, wrong register).
+# MALTESAA_CSJ is excluded from rank computation (formal academic speech, wrong register)
+# but included as an extra informational column.
 # JITEN_ANIME_V2 is excluded from rank computation but included as an extra output column.
 SHORTLISTED = [
     "RSPEER",
@@ -66,6 +67,7 @@ SHORTLISTED = [
 # Extra columns included in output for reference but NOT used for RIRIKKU_RANK computation.
 EXTRA_COLS = [
     "JITEN_ANIME_V2",
+    "MALTESAA_CSJ",
 ]
 
 CEJC_SHORTLISTED = {"cejc_combined_rank", "cejc_small_talk_rank"}
