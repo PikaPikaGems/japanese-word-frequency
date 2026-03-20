@@ -136,10 +136,11 @@ All jiten.moe frequency lists. Regularly maintained and updated.
 ### Anime & Drama
 
 | Column ID             | Source                | Description                                                                                                                                         |
-| --------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| --------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
 | `ANIME_JDRAMA`        | Shoui                 | Anime and J-drama subtitles (~100k entries). Widely cited in the community.                                                                         |
 | `HLORENZI_ANIMEDRAMA` | hlorenzi / jisho-open | Anime & drama subtitle rankings used by jisho-open (~100k source, top 25k included). Lightweight cross-check for entertainment subtitle vocabulary. |
-| `JITEN_DRAMA`         | jiten.moe             | Japanese drama frequency (~217k source entries). Live-action drama register.                                                                        |
+| `JITEN_DRAMA`         | jiten.moe             | Japanese drama frequency (~217k source entries). Live-action drama register.                                                                        |     |
+| `JITEN_ANIME_V2`      | ~215k                 | Anime — direct CSV export. Most recent. Included as informational column in                                                                         |
 
 ### Slice of Life
 
