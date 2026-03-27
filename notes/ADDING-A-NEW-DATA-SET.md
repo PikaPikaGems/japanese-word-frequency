@@ -139,14 +139,27 @@ Verify the output:
 
 ---
 
-## Step 6 — Run the consolidation scripts
+## Step 6 — Check for duplicate columns
 
-The three scripts below regenerate all `consolidated.csv` and `categorized.csv` files across all anchor variants. They automatically include every `___FILTERED/*/DATA.csv` (sorted alphabetically), so the new source will be picked up without any code changes.
+Run the duplicate-column check **before** running the full consolidation. This does a quick consolidation pass to verify the new source is not identical to an existing one:
 
 ```bash
-# CEJC anchor (data/ALL/CEJC_anchor/)
+# First, run only the CEJC consolidation so the new column exists
 python data/ALL/___data_generation/SCRIPT.py
 
+# Then check for duplicates
+python data/ALL/___experiments1/check_duplicate_rank_columns.py
+```
+
+The script exits with code 1 and prints any duplicate pairs if found. **If duplicates are detected, stop here** — the new source is redundant. Either remove it or document why it is kept before proceeding.
+
+---
+
+## Step 7 — Run the remaining consolidation scripts
+
+Once the duplicate check passes, run the remaining scripts to regenerate all anchor variants. They automatically include every `___FILTERED/*/DATA.csv` (sorted alphabetically), so the new source will be picked up without any code changes.
+
+```bash
 # JPDB, YOUTUBE_FREQ_V3, ANIME_JDRAMA, NETFLIX anchors
 python data/ALL/___data_generation/make_anchored.py
 
@@ -162,7 +175,7 @@ head -1 data/ALL/CEJC_anchor/consolidated.csv | tr ',' '\n' | grep -n <SOURCE_NA
 
 ---
 
-## Step 7 — Update CONSOLIDATED_CSV_REFERENCEV1.md
+## Step 8 — Update CONSOLIDATED_CSV_REFERENCEV1.md
 
 Edit [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md):
 
@@ -177,7 +190,7 @@ Edit [CONSOLIDATED_CSV_REFERENCEV1.md](CONSOLIDATED_CSV_REFERENCEV1.md):
 
 ---
 
-## Step 8 — Update notes/dataset-directory-tree.md
+## Step 9 — Update notes/dataset-directory-tree.md
 
 Add a row to the table in the `RAW/___FILTERED — 60+ Source Datasets + RSPEER` section of [notes/dataset-directory-tree.md](notes/dataset-directory-tree.md). Insert alphabetically by source name:
 
@@ -185,7 +198,7 @@ Add a row to the table in the `RAW/___FILTERED — 60+ Source Datasets + RSPEER`
 | <SOURCE_NAME> | <Short description> |
 ```
 
-## Step 9 — Update notes/dataset-catalog.md
+## Step 10 — Update notes/dataset-catalog.md
 
 Add a row to [notes/dataset-catalog.md](dataset-catalog.md) describing the new source. Insert it into the section that best fits the source type (Academic / Research Corpora, Written Corpora, Subtitle / Media, etc.). If the source is particularly high-quality or widely useful, also add it to the **⭐ Highlighted (Shortlisted)** table at the top.
 
