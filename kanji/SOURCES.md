@@ -1,6 +1,7 @@
 - https://github.com/Kuuuube/yomitan-dictionaries/blob/main/data/jpdbv2_kanji_frequency_2026-02-09.csv
 - https://jiten.moe/other
-
+- https://github.com/gabor-kovacs/the-kanji-map/blob/main/data/
+radicallist.json
 
 # See also 
 - https://github.com/ppasupat/vocab-kanji/
@@ -8,3 +9,10 @@
 - https://github.com/vadasambar/kanji_order/blob/master/final_order.txt
 - https://github.com/mifunetoshiro/kanjium/blob/master/data/source_files/kanjidict.txt
 - https://github.com/kanjialive/kanji-data-media/blob/master/language-data/japanese-radicals.csv
+- https://github.com/gabor-kovacs/the-kanji-map/blob/main/preprocess/radicals/kanji-radicals.csv
+- https://github.com/MaxDailene/yomichan-dictionaries/blob/master/japanese/kanji/thekanjimap/readingHints.tsv
+- https://github.com/gabor-kovacs/the-kanji-map/blob/main/preprocess/radicals/kanji-radicals.csv
+- https://github.com/kanjialive/kanji-data-media/blob/master/language-data/japanese-radicals.csv
+- https://github.com/sph-mn/nihongo/blob/master/data/jouyou-kanji.csv
+- https://github.com/sph-mn/nihongo/blob/master/data/chinese-japanese-overlap.csv
+- https://github.com/ScottOglesby/kanji-bakuhatsu/blob/master/raw/kanji-composition-map.txt
